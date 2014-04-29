@@ -6,7 +6,7 @@
  * @copyright   2011 Josh Lockhart
  * @link        http://www.slimframework.com
  * @license     http://www.slimframework.com/license
- * @version     2.4.0
+ * @version     2.4.2
  * @package     Slim
  *
  * MIT LICENSE
@@ -54,7 +54,7 @@ class Slim
     /**
      * @const string
      */
-    const VERSION = '2.4.0';
+    const VERSION = '2.4.2';
 
     /**
      * @var \Slim\Helper\Set
@@ -308,7 +308,9 @@ class Slim
             'cookies.cipher' => MCRYPT_RIJNDAEL_256,
             'cookies.cipher_mode' => MCRYPT_MODE_CBC,
             // HTTP
-            'http.version' => '1.1'
+            'http.version' => '1.1',
+            // Routing
+            'routes.case_sensitive' => true
         );
     }
 
@@ -333,16 +335,20 @@ class Slim
      */
     public function config($name, $value = null)
     {
-        if (func_num_args() === 1) {
-            if (is_array($name)) {
-                $this->settings = array_merge($this->settings, $name);
+        $c = $this->container;
+
+        if (is_array($name)) {
+            if (true === $value) {
+                $c['settings'] = array_merge_recursive($c['settings'], $name);
             } else {
-                return isset($this->settings[$name]) ? $this->settings[$name] : null;
+                $c['settings'] = array_merge($c['settings'], $name);
             }
+        } elseif (func_num_args() === 1) {
+            return isset($c['settings'][$name]) ? $c['settings'][$name] : null;
         } else {
-            $settings = $this->settings;
+            $settings = $c['settings'];
             $settings[$name] = $value;
-            $this->settings = $settings;
+            $c['settings'] = $settings;
         }
     }
 
@@ -434,7 +440,7 @@ class Slim
     {
         $pattern = array_shift($args);
         $callable = array_pop($args);
-        $route = new \Slim\Route($pattern, $callable);
+        $route = new \Slim\Route($pattern, $callable, $this->settings['routes.case_sensitive']);
         $this->router->map($route);
         if (count($args) > 0) {
             $route->setMiddleware($args);
@@ -1231,6 +1237,10 @@ class Slim
      */
     public function add(\Slim\Middleware $newMiddleware)
     {
+        if(in_array($newMiddleware, $this->middleware)) {
+            $middleware_class = get_class($newMiddleware);
+            throw new \RuntimeException("Circular Middleware setup detected. Tried to queue the same Middleware instance ({$middleware_class}) twice.");
+        }
         $newMiddleware->setApplication($this);
         $newMiddleware->setNextMiddleware($this->middleware[0]);
         array_unshift($this->middleware, $newMiddleware);
@@ -1289,6 +1299,8 @@ class Slim
             echo $body;
         }
 
+        $this->applyHook('slim.after');
+
         restore_error_handler();
     }
 
@@ -1327,7 +1339,6 @@ class Slim
             $this->stop();
         } catch (\Slim\Exception\Stop $e) {
             $this->response()->write(ob_get_clean());
-            $this->applyHook('slim.after');
         } catch (\Exception $e) {
             if ($this->config('debug')) {
                 throw $e;

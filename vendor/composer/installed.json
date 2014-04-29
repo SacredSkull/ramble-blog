@@ -1,17 +1,76 @@
 [
     {
-        "name": "slim/slim",
-        "version": "2.4.0",
-        "version_normalized": "2.4.0.0",
+        "name": "twig/twig",
+        "version": "v1.15.1",
+        "version_normalized": "1.15.1.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/codeguy/Slim.git",
-            "reference": "ff7d7148848fa4f45712984d7b91ac3cbced586b"
+            "url": "https://github.com/fabpot/Twig.git",
+            "reference": "1fb5784662f438d7d96a541e305e28b812e2eeed"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/codeguy/Slim/zipball/ff7d7148848fa4f45712984d7b91ac3cbced586b",
-            "reference": "ff7d7148848fa4f45712984d7b91ac3cbced586b",
+            "url": "https://api.github.com/repos/fabpot/Twig/zipball/1fb5784662f438d7d96a541e305e28b812e2eeed",
+            "reference": "1fb5784662f438d7d96a541e305e28b812e2eeed",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.4"
+        },
+        "time": "2014-02-13 10:19:29",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.15-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Twig_": "lib/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com",
+                "homepage": "http://fabien.potencier.org",
+                "role": "Lead Developer"
+            },
+            {
+                "name": "Armin Ronacher",
+                "email": "armin.ronacher@active-4.com",
+                "role": "Project Founder"
+            },
+            {
+                "name": "Twig Team",
+                "homepage": "https://github.com/fabpot/Twig/graphs/contributors",
+                "role": "Contributors"
+            }
+        ],
+        "description": "Twig, the flexible, fast, and secure template language for PHP",
+        "homepage": "http://twig.sensiolabs.org",
+        "keywords": [
+            "templating"
+        ]
+    },
+    {
+        "name": "slim/slim",
+        "version": "2.4.3",
+        "version_normalized": "2.4.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/codeguy/Slim.git",
+            "reference": "4906b77a07c7bd6ff1a99aea903e940a2d4fa106"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/codeguy/Slim/zipball/4906b77a07c7bd6ff1a99aea903e940a2d4fa106",
+            "reference": "4906b77a07c7bd6ff1a99aea903e940a2d4fa106",
             "shasum": ""
         },
         "require": {
@@ -20,7 +79,7 @@
         "suggest": {
             "ext-mcrypt": "Required for HTTP cookie encryption"
         },
-        "time": "2013-11-29 20:33:36",
+        "time": "2014-04-05 18:33:59",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -48,70 +107,19 @@
         ]
     },
     {
-        "name": "twig/twig",
-        "version": "v1.15.0",
-        "version_normalized": "1.15.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/fabpot/Twig.git",
-            "reference": "85e4ff98000157ff753d934b9f13659a953f5666"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/fabpot/Twig/zipball/85e4ff98000157ff753d934b9f13659a953f5666",
-            "reference": "85e4ff98000157ff753d934b9f13659a953f5666",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.2.4"
-        },
-        "time": "2013-12-06 07:47:10",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.15-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Twig_": "lib/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            },
-            {
-                "name": "Armin Ronacher",
-                "email": "armin.ronacher@active-4.com"
-            }
-        ],
-        "description": "Twig, the flexible, fast, and secure template language for PHP",
-        "homepage": "http://twig.sensiolabs.org",
-        "keywords": [
-            "templating"
-        ]
-    },
-    {
         "name": "slim/views",
-        "version": "0.1.1",
-        "version_normalized": "0.1.1.0",
+        "version": "0.1.2",
+        "version_normalized": "0.1.2.0",
         "target-dir": "Slim/Views",
         "source": {
             "type": "git",
             "url": "https://github.com/codeguy/Slim-Views.git",
-            "reference": "8c7e0f3067e5e10b7b4ca98f29bdef8d5cfe5371"
+            "reference": "f0a05ea0b654218e40de692ed7cddcad1cf4b828"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/codeguy/Slim-Views/zipball/8c7e0f3067e5e10b7b4ca98f29bdef8d5cfe5371",
-            "reference": "8c7e0f3067e5e10b7b4ca98f29bdef8d5cfe5371",
+            "url": "https://api.github.com/repos/codeguy/Slim-Views/zipball/f0a05ea0b654218e40de692ed7cddcad1cf4b828",
+            "reference": "f0a05ea0b654218e40de692ed7cddcad1cf4b828",
             "shasum": ""
         },
         "require": {
@@ -122,7 +130,7 @@
             "smarty/smarty": "Smarty templating system",
             "twig/twig": "Twig templating system"
         },
-        "time": "2013-12-08 10:18:35",
+        "time": "2014-04-03 16:31:10",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
