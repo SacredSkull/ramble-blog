@@ -14,6 +14,7 @@ else
 }
 
 require 'vendor/autoload.php';
+require 'lib/rb.phar';
 
 $app = new \Slim\Slim(array(
     'view' => new \Slim\Views\Twig(),
