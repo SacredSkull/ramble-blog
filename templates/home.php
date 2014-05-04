@@ -75,7 +75,7 @@
 					opacity: "0.0"
 				}, 300,function(){
 					//Animation finished
-				})
+				});
 				if(!bPinned){
 					$("header").animate({
 						height: "70"
@@ -94,12 +94,12 @@
 			$('#head-nav-pin').hover(
 				//mouse over
 				function(){
-					$(this).css('background-image','url("/images/pinned.png")');
+					$(this).css('background-image','url("/include/img/pinned.png")');
 				},
 				//mouse out
 				function() {
 					if(!bPinned){
-						$(this).css('background-image','url("/images/unpinned.png")');
+						$(this).css('background-image','url("/include/img/unpinned.png")');
 					}
 				}
 			);
