@@ -2,144 +2,88 @@
 	<head>
 		<title>SacredSkull</title>
 		<link href='http://fonts.googleapis.com/css?family=Passion+One|Basic|Droid+Sans:400,700|Inika:700' rel='stylesheet' type='text/css'>
-		<style>
-			{{ css_output|raw }}
-		</style>
-		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<link href='include/css/nanoscroller.css' rel='stylesheet' type='text/css'>
+		{%if wireframe%}<link href='include/css/wireframe.less' rel='stylesheet/less' type='text/css'>{%elseif debug%}<link href='include/css/styles.less' rel='stylesheet/less' type='text/css'>{%else%}<link href='include/css/styles.css' rel='stylesheet' type='text/css'>{%endif%}
 		<meta charset="UTF-8" />
 	</head>
-	<body class="nano">
-		<div id="container">
-			<header>
-				<span id='skull'></span>
-				<span id='head-nav-bg'>
-					<a href='Pin Navigation Links' onclick='return false;' id='head-nav-pin'></a>
-				</span>
-				<a href="/forums" class="head-nav-link">
-					<span>FORUMS</span>
-				</a>
-				<a href="/contact" class="head-nav-link">
-					<span>CONTACT</span>
-				</a>
-				<a href="/about" class="head-nav-link">
-					<span>ABOUT</span>
-				</a>
-				<span id="head-logo">
-					<a href="#" onclick="return false;">
-						<h1>Sacred<span id='secondword'>Skull</span><h2>. . .</h2></h1>
-					</a>
-				</span>
-				<div id='skull-bubble' class='bubble'><p>{{ skull_greeting }}</p></div>
-			</header>
-			<div id="maincontainer">
-				<div id="content">
-                    <h3>AWESOME CONTENT</h3>
+	<body class="">
+		<header class="navbar navbar-fixed-top">
+			<a href="#" id="head-logo">
+				<span id="first-word">Sacred<span id="second-word">Skull</span></span>
+				<span id="dotdotdot">. . .</span>
+			</a>
+			<span id='skull'></span>
+			<span id='head-nav-bg'>
+			</span>
+			<a href="/forums" class="head-nav-link">
+				<span>FORUMS</span>
+			</a>
+			<a href="/contact" class="head-nav-link">
+				<span>CONTACT</span>
+			</a>
+			<a href="/about" class="head-nav-link">
+				<span>ABOUT</span>
+			</a>
+			<div id='skull-bubble' class='bubble'><p>{{ skull_greeting }}</p></div>
+		</header>
+		<div id="wrapper">
+			<div id="main" class="container-fluid">
+				<div class="col-md-1"></div>
+				<div id="left-nav" class="col-md-2">
+					<div class="row">
+						<h3>{{newestpost.pollquestion}}</h3>
+						<span class="pull-left glyphicon glyphicon-thumbs-up"></span>
+						<span class="pull=right glyphicon glyphicon-thumbs-down"></span>
+                    	<h3>	{{newestpost.date}}		</h3>
+					</div>
+					<div class="row">
+						<h2>Popular</h2>
+						<div class="media">
+							<a class="pull-left" href="#">
+							    <img class="media-object" height="60px" src="./include/img/skull.png" alt="...">
+							</a>
+							<div class="media-body">
+							   	<h4 class="media-heading">Example Post</h4>
+							    Something so awesome it got 4321 views, in some unknown timeframe we won't reveal to make it look better.
+							    <span title="int views per week" class='pull-right label label-danger'>4321 <span class="glyphicon glyphicon-fire"></span></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6" id="content">
+					<h1>	{{newestpost.title}}	</h1>
+                    <p>		{{newestpost.body}}		</p>
+				</div>
+				<div id="right-nav" class="col-md-2">
+					<div class="row">
+						<h2>Recent</h2>
+						<div class="media">
+							<a class="pull-left" href="#">
+							    <img class="media-object" height="60px" src="./include/img/skull.png" alt="...">
+							</a>
+							<div class="media-body">
+							   	<h4 class="media-heading">Media heading</h4>
+							    ...
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+		  	</div>
+		</div>
+		<div class="footer">
+			<span id='footer-white'>&nbsp;</span>
+			<div class="container">
+				<div class="row">
+					<p></p>
 				</div>
 			</div>
 		</div>
-		<footer>
-			You should prolly get rid of this.
-		</footer>
 		 {{ your_name }}
-		</div>
+		{%if debug%}<script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.0/less.min.js"></script>{%endif%}
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script type="text/javascript" src="/include/js/bootstrap-min.js"></script>
 		<script type="text/javascript" src="/include/js/jquery.nanoscroller.js"></script>
-		<script>
-			//$(".nano").nanoScroller();
-			
-			var bPinned = false;
-			
-			$("header").hover(function(){
-				$("h1").css({color: "#fff"});
-				$("#secondword").css({color: "#F26101"});
-				$("#bubble path").css({fill: "#D9CB9E"});
-				$("h2").animate({
-					bottom: "75",
-					opacity: "1.0"
-				}, 300,function(){
-					//Animation finished
-				});
-				$("header").animate({
-					height: "110"
-				}, 300, function(){
-					//Animation finished
-				});
-				$("header.span").animate({
-					top: "10"
-				}, 300);
-			},function(){
-				$("h1").css({color: "#F26101"});
-				$("#secondword").css({color: "#fff"});
-				$("#bubble path").css({fill: "#fff"});
-				$("h2").animate({
-					bottom: "60",
-					opacity: "0.0"
-				}, 300,function(){
-					//Animation finished
-				});
-				if(!bPinned){
-					$("header").animate({
-						height: "70"
-					}, 300, function(){
-						//Animation finished
-					});
-					$("header.span").animate({
-						top: "-10"
-					}, 300);
-				}
-			});
-			$("h1").click(function(){
-				
-			});
-			
-			$('#head-nav-pin').hover(
-				//mouse over
-				function(){
-					$(this).css('background-image','url("/include/img/pinned.png")');
-				},
-				//mouse out
-				function() {
-					if(!bPinned){
-						$(this).css('background-image','url("/include/img/unpinned.png")');
-					}
-				}
-			);
-			
-			$('#head-nav-pin').click(
-				function(){
-					if(!bPinned){
-						bPinned = true;
-					} else {
-						bPinned = false;
-					}
-				}
-			);
-			
-			$('document').ready( function (){
-				var iPhraseLength = $('#skull-bubble').text().length;
-				var iFontSize = $('#skull-bubble p').css('font-size');
-				iFontSize = window.parseInt(iFontSize);
-				iFontSize = iFontSize * 0.5;
-				$('.bubble').animate({
-					width: iPhraseLength * iFontSize + 25 + "px",
-					opacity: 1
-				}, 500);
-			});
-			
-			$(window).resize( function () {
-				if(document.body.clientWidth < 1000){
-					$('#skull-bubble').fadeOut(100);
-				} else {
-					var iPhraseLength = $('#skull-bubble').text().length;
-					var iFontSize = $('#skull-bubble p').css('font-size');
-					iFontSize = window.parseInt(iFontSize);
-					iFontSize = iFontSize * 0.5;
-					$('.bubble').animate({
-						width: iPhraseLength * iFontSize + 25 + "px",
-						opacity: 1
-					}, 500);
-				}
-			});
-			
-		</script>
+		<script type="text/javascript" src="/include/js/custom.js"></script>
 	</body>
 </html>
