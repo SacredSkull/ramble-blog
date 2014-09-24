@@ -1,0 +1,9 @@
+{
+	"settings":
+	{
+		"xdebug":
+		{
+			"url": "http://sacredskull.net/index.php"
+		}
+	}
+}
