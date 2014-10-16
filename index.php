@@ -1,8 +1,6 @@
 <?php
 
 define('DEBUG', true);
-<<<<<<< Updated upstream
-=======
 define('WIREFRAME', false);
 
 // Composer
@@ -11,11 +9,10 @@ require './vendor/autoload.php';
 require './restricted/constants.php';
 // Propel auto-conf
 require './generated-conf/config.php';
-// BBCodes
+// BBCode Twig Extension
+require './lib/Twig_Extension_BBCode.php';
+// Defined BBCodes
 require './lib/bbcodes.php';
-// Twig Extension class file
-require './lib/Twig_BBCode_Extension.php';
->>>>>>> Stashed changes
 
 if(DEBUG == true)
 {
@@ -28,9 +25,6 @@ else
     error_reporting(0);
 }
 
-<<<<<<< Updated upstream
-require 'vendor/autoload.php';
-=======
 $defaultTheme = new ThemeQuery();
 if(!$defaultTheme->findPK(1)){
    	$theme = new Theme();
@@ -38,51 +32,24 @@ if(!$defaultTheme->findPK(1)){
    	$theme->setThemeRoot('/');
    	$theme->save();
 }
->>>>>>> Stashed changes
 
 $app = new \Slim\Slim(array(
     'view' => new \Slim\Views\Twig(),
 	'templates.path' => './templates'
 ));
 
-//ini_set('magic_quotes_gpc', 'On');
-//ini_set('magic_quotes_runtime', 'On');
-
 $view = $app->view();
+
+$view->parserOptions = array(
+    'cache' => dirname(__FILE__) . '/cache',
+    'debug' => DEBUG,
+);
 
 $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
     new Twig_Extension_BBCode($arrayBB)
 );
 
-<<<<<<< Updated upstream
-$app->get('/', function () use ($app) {
-	$sayings = explode("\n", file_get_contents('include/etc/skull-phrases.txt'));
-	$random = rand(0,sizeof($sayings)-1);
-	if(!DEBUG){
-		require 'include/php/cssmin-v3.0.1-minified.php';
-		$result = "";
-		$files = glob('include/css/*.{css}', GLOB_BRACE);
-		foreach($files as $file) {
-			$result .= CssMin::minify(file_get_contents($file));
-		}
-		$app->render('testTemplate.php', array(
-			'css_output' => $result,
-			'skull_greeting' => $sayings[$random]
-		));
-	} else {
-		$files = glob('include/css/*.{css}', GLOB_BRACE);
-		$result = "";
-		foreach($files as $file) {
-			$result .= html_entity_decode(file_get_contents("$file"));
-		}
-		$app->render('testTemplate.php', array(
-			'css_output' => $result,
-			'skull_greeting' => $sayings[$random]
-		));
-	}
-    //echo "You passed me \"" . $name . "\"." ;
-=======
 $sayings = explode("\n", file_get_contents('include/etc/skull-phrases.txt'));
 $random = rand(0,sizeof($sayings)-1);
 $quote = $sayings[$random];
@@ -134,7 +101,6 @@ $app->get('/:slug', function($slug) use ($app, $arrayBB, $quote) {
         'skull_greeting' => $quote,
         'newestpost' => $post
     ));
->>>>>>> Stashed changes
 });
 
 $app->run();

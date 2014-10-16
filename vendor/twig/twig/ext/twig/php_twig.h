@@ -15,11 +15,7 @@
 #ifndef PHP_TWIG_H
 #define PHP_TWIG_H
 
-<<<<<<< Updated upstream
-#define PHP_TWIG_VERSION "1.15.0"
-=======
 #define PHP_TWIG_VERSION "1.16.1"
->>>>>>> Stashed changes
 
 #include "php.h"
 

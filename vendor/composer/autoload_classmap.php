@@ -6,8 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-<<<<<<< Updated upstream
-=======
     'Article' => $baseDir . '/generated-classes/Article.php',
     'ArticleQuery' => $baseDir . '/generated-classes/ArticleQuery.php',
     'Base\\Article' => $baseDir . '/generated-classes/Base/Article.php',
@@ -23,5 +21,4 @@ return array(
     'ThemeQuery' => $baseDir . '/generated-classes/ThemeQuery.php',
     'View' => $baseDir . '/generated-classes/View.php',
     'ViewQuery' => $baseDir . '/generated-classes/ViewQuery.php',
->>>>>>> Stashed changes
 );

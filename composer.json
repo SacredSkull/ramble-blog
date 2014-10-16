@@ -1,10 +1,8 @@
 {
     "require": {
         "slim/slim": "2.*",
-<<<<<<< Updated upstream
-	"twig/twig": "1.*",
-	"slim/views": "0.1.*"
-=======
+		"twig/twig": "1.*",
+		"slim/views": "0.1.*",
         "twig/twig": "1.*",
         "slim/views": "0.1.*",
         "propel/propel": "~2.0@dev",
@@ -12,6 +10,5 @@
     },
     "autoload": {
         "classmap": ["./generated-classes/"]
->>>>>>> Stashed changes
     }
 }
