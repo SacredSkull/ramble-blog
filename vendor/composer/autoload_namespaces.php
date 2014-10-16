@@ -9,4 +9,9 @@ return array(
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'Slim\\Views' => array($vendorDir . '/slim/views'),
     'Slim' => array($vendorDir . '/slim/slim'),
+<<<<<<< Updated upstream
+=======
+    'Psr\\Log\\' => array($vendorDir . '/psr/log'),
+    'Propel' => array($vendorDir . '/propel/propel/src'),
+>>>>>>> Stashed changes
 );

@@ -16,7 +16,11 @@
  */
 class Twig_Environment
 {
+<<<<<<< Updated upstream
     const VERSION = '1.15.0';
+=======
+    const VERSION = '1.16.1';
+>>>>>>> Stashed changes
 
     protected $charset;
     protected $loader;

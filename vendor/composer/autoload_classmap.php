@@ -6,4 +6,22 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+<<<<<<< Updated upstream
+=======
+    'Article' => $baseDir . '/generated-classes/Article.php',
+    'ArticleQuery' => $baseDir . '/generated-classes/ArticleQuery.php',
+    'Base\\Article' => $baseDir . '/generated-classes/Base/Article.php',
+    'Base\\ArticleQuery' => $baseDir . '/generated-classes/Base/ArticleQuery.php',
+    'Base\\Theme' => $baseDir . '/generated-classes/Base/Theme.php',
+    'Base\\ThemeQuery' => $baseDir . '/generated-classes/Base/ThemeQuery.php',
+    'Base\\View' => $baseDir . '/generated-classes/Base/View.php',
+    'Base\\ViewQuery' => $baseDir . '/generated-classes/Base/ViewQuery.php',
+    'Map\\ArticleTableMap' => $baseDir . '/generated-classes/Map/ArticleTableMap.php',
+    'Map\\ThemeTableMap' => $baseDir . '/generated-classes/Map/ThemeTableMap.php',
+    'Map\\ViewTableMap' => $baseDir . '/generated-classes/Map/ViewTableMap.php',
+    'Theme' => $baseDir . '/generated-classes/Theme.php',
+    'ThemeQuery' => $baseDir . '/generated-classes/ThemeQuery.php',
+    'View' => $baseDir . '/generated-classes/View.php',
+    'ViewQuery' => $baseDir . '/generated-classes/ViewQuery.php',
+>>>>>>> Stashed changes
 );

@@ -830,7 +830,15 @@ PHP_FUNCTION(twig_template_get_attributes)
 			if (is_object($object)) {
 				throw new Twig_Error_Runtime(sprintf('Key "%s" in object (with ArrayAccess) of type "%s" does not exist', $arrayItem, get_class($object)), -1, $this->getTemplateName());
 			} elseif (is_array($object)) {
+<<<<<<< Updated upstream
 				throw new Twig_Error_Runtime(sprintf('Key "%s" for array with keys "%s" does not exist', $arrayItem, implode(', ', array_keys($object))), -1, $this->getTemplateName());
+=======
+				if (empty($object)) {
+				    $message = sprintf('Key "%s" does not exist as the array is empty', $arrayItem);
+				} else {
+				    $message = sprintf('Key "%s" for array with keys "%s" does not exist', $arrayItem, implode(', ', array_keys($object)));
+				}
+>>>>>>> Stashed changes
 			} elseif (Twig_Template::ARRAY_CALL === $type) {
 				throw new Twig_Error_Runtime(sprintf('Impossible to access a key ("%s") on a %s variable ("%s")', $item, gettype($object), $object), -1, $this->getTemplateName());
 			} else {
@@ -842,7 +850,11 @@ PHP_FUNCTION(twig_template_get_attributes)
 			if (Z_TYPE_P(object) == IS_OBJECT) {
 				TWIG_RUNTIME_ERROR(template TSRMLS_CC, "Key \"%s\" in object (with ArrayAccess) of type \"%s\" does not exist", item, TWIG_GET_CLASS_NAME(object TSRMLS_CC));
 			} else if (Z_TYPE_P(object) == IS_ARRAY) {
-				TWIG_RUNTIME_ERROR(template TSRMLS_CC, "Key \"%s\" for array with keys \"%s\" does not exist", item, TWIG_IMPLODE_ARRAY_KEYS(", ", object TSRMLS_CC));
+				if (0 == zend_hash_num_elements(Z_ARRVAL_P(object))) {
+					TWIG_RUNTIME_ERROR(template TSRMLS_CC, "Key \"%s\" does not exist as the array is empty", item);
+				} else {
+					TWIG_RUNTIME_ERROR(template TSRMLS_CC, "Key \"%s\" for array with keys \"%s\" does not exist", item, TWIG_IMPLODE_ARRAY_KEYS(", ", object TSRMLS_CC));
+				}
 			} else {
 				char *type_name = zend_zval_type_name(object);
 				Z_ADDREF_P(object);

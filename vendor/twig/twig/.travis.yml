@@ -5,6 +5,11 @@ php:
   - 5.3
   - 5.4
   - 5.5
+<<<<<<< Updated upstream
+=======
+  - 5.6
+  - hhvm
+>>>>>>> Stashed changes
 
 env:
   - TWIG_EXT=no
