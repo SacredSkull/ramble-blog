@@ -1,107 +1,425 @@
 <?php
 
+use Aws\S3\S3Client;
+
 define('DEBUG', true);
 define('WIREFRAME', false);
+define('CERT_AUTH', true);
 
 // Composer
 require './vendor/autoload.php';
-// Constants
-require './restricted/constants.php';
 // Propel auto-conf
 require './generated-conf/config.php';
 // BBCode Twig Extension
 require './lib/Twig_Extension_BBCode.php';
+// Markdown Twig Extension
+require './lib/Twig_Extension_Parsedown.php';
 // Defined BBCodes
 require './lib/bbcodes.php';
 
+//session_start();
+
 if(DEBUG == true)
 {
-    ini_set('display_errors', 'On');
-    error_reporting(E_ALL);
+	ini_set('display_errors', 'On');
+	error_reporting(E_ALL);
 }
 else
 {
-    ini_set('display_errors', 'Off');
-    error_reporting(0);
+	ini_set('display_errors', 'Off');
+	error_reporting(0);
 }
 
 $defaultTheme = new ThemeQuery();
 if(!$defaultTheme->findPK(1)){
-   	$theme = new Theme();
-   	$theme->setName('Default');
-   	$theme->setThemeRoot('/');
-   	$theme->save();
+	$theme = new Theme();
+	$theme->setName('Stuff');
+	$theme->setRoot('/');
+	$theme->save();
 }
 
 $app = new \Slim\Slim(array(
-    'view' => new \Slim\Views\Twig(),
+	'view' => new \Slim\Views\Twig(),
 	'templates.path' => './templates'
 ));
 
 $view = $app->view();
 
 $view->parserOptions = array(
-    'cache' => dirname(__FILE__) . '/cache',
-    'debug' => DEBUG,
+	'cache' => dirname(__FILE__) . '/cache',
+	'debug' => DEBUG,
 );
 
 $view->parserExtensions = array(
-    new \Slim\Views\TwigExtension(),
-    new Twig_Extension_BBCode($arrayBB)
+	new \Slim\Views\TwigExtension(),
+	new Twig_Extension_Parsedown(),
+	new Twig_Extensions_Extension_Text(),
 );
 
 $sayings = explode("\n", file_get_contents('include/etc/skull-phrases.txt'));
 $random = rand(0,sizeof($sayings)-1);
+
 $quote = $sayings[$random];
 
-$app->get('/', function () use ($app, $arrayBB, $defaultTheme, $quote) {
+$jsonThemes = array();
+$themes = ThemeQuery::create()->setQueryKey('get all themes')->find();
+foreach ($themes as $theme) {
+	$jsonThemes[$theme->getId()] = $theme->getName();
+}
+$jsonThemes = json_encode($jsonThemes);
+
+$app->get('/test/', function() use ($app, $quote, $defaultTheme){
+
+	$client = S3Client::factory(array(
+		'key' => 'AKIAJ6LFRWILE2M7YCGA',
+		'secret' => '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',
+	));
+
+	$filepath = './include/img/skull.png';
+	$result = "";
+	try{
+		$result = $client->putObject(array(
+			'Bucket' => 'sacredskull-blog',
+			'Key'          => 'images/asd.jpg',
+			'SourceFile'   => $filepath,
+			'ContentType'  => mime_content_type($filepath),
+			'ACL'          => 'public-read',
+			'StorageClass' => 'REDUCED_REDUNDANCY',
+			'Metadata'     => array(
+				'category' => 'image',
+				'description' => 'skull'
+			)
+		));
+		var_dump($result['ObjectURL']);
+	} catch(S3Exception $e){
+		echo $e->getMessage();
+	}
+
+	var_dump($result);
+
+	/*
+	$generator = Faker\Factory::create('en_UK');
 
 
+	for ($i=1; $i < 60; $i++) {
+		$theme = new Theme();
+		$theme->setName($generator->company);
+		$theme->setRoot('/');
+		$theme->setColour($generator->hexcolor);
+		$theme->save();
 
-    /*
-	$newPost = R::dispense('post');
-	$newPost->title = "Interesting Title To Inspire Readers";
-	$newPost->body = "[b]Hi![/b] This is an [i]initial post to test[/i] the actual script to ensure it's working! This would be an interesting, and hopefully, [deleted]original[/deleted] nothing-new-under-the-sun post about something I'm interested in. Whether or not anyone else is interested is another story!";
-	$newPost->date = date('Y-m-d H:i:s');
-    $newPost->poll = true;
-	$id = R::store($newPost);
+		$post = new Article();
+		$post->setTitle($generator->realText(25));
+		$post->setBody($generator->realText(700));
+		$preparedFromWebFromArray = array('New Post', '#Excited');
+		$tagArray = implode(',', $preparedFromWebFromArray);
+		$post->setTags($tagArray);
+		$post->setTheme($theme);
+		$post->save();
+	}
 
-	$newestPost = R::findOne('post', 'ORDER BY id DESC');
+	$post = ArticleQuery::create()
+		->orderById()
+		->findOne();
+	/*
+	$post = new Article();
+	$post->setTitle('');
+	$post->setBody('');
+	$preparedFromWebFromArray = array('New Post', '#Excited');
+	$tagArray = implode(',', $preparedFromWebFromArray);
+	$post->setTags($tagArray);
+	$post->setTheme($defaultTheme->findPK(1));
+	$post->save();
+	*/
+	$app->render('test.php', array(
+		'admin' => isAdmin(),
+		'debug' => DEBUG,
+		'wireframe' => WIREFRAME,
+		'skull_greeting' => $quote,
+		//'posts' => $posts,
+		//'json_theme' => $jsonThemes
+	));
+});
 
-	$newestPost = array(
-		'title' => $newestPost->title,
-		'body' => bbcode_parse($arrayBB, $newestPost->body),
-		'date' => date('H:i l d, F o', strtotime($newestPost->date)),
-	);
-    */
+$app->get('/', function () use ($app, $quote, $defaultTheme, $jsonThemes) {
+	$page = 1;
+	$posts = ArticleQuery::create()
+		->setQueryKey('get paginated descending by ID articles')
+		->orderById('DESC')
+		->paginate($page, $maxPerPage = 10);
 
+	$pagelist = $posts->getLinks(5);
+	$maxPages = round($posts->getNbResults() / $maxPerPage);
+
+	$app->render('home.php', array(
+		'admin' => isAdmin(),
+		'debug' => DEBUG,
+		'wireframe' => WIREFRAME,
+		'skull_greeting' => $quote,
+		'posts' => $posts,
+		'current_page' => $page,
+		'page_list' => $pagelist,
+		'max_pages' => $maxPages,
+		'json_theme' => $jsonThemes,
+	));
+});
+
+$app->get('/:page', function ($page) use ($app, $quote, $defaultTheme, $jsonThemes) {
+
+	$maxPerPage = 10;
+
+	$posts = ArticleQuery::create()
+		->setQueryKey('get paginated descending by ID articles')
+		->orderById('DESC')
+		->paginate($page, $maxPerPage);
+
+	$maxPages = ceil($posts->getNbResults() / $maxPerPage);
+	$pagelist = $posts->getLinks(5);
+
+	if($page > $maxPages){
+		$app->flash('denied', "Don't have that many pages!");
+		$app->redirect('/1');
+	}
+
+	$app->render('home.php', array(
+		'admin' => isAdmin(),
+		'debug' => DEBUG,
+		'wireframe' => WIREFRAME,
+		'skull_greeting' => $quote,
+		'posts' => $posts,
+		'current_page' => $page,
+		'page_list' => $pagelist,
+		'max_pages' => $maxPages,
+		'json_theme' => $jsonThemes,
+	));
+})->conditions(array('page' => '\d{1,4}'));
+
+$app->get('/post/:idArticle', function($idArticle) use ($app, $quote){
+	$post = ArticleQuery::create()->findPK($idArticle);
+	$app->render('post.php', array(
+		'admin' => isAdmin(),
+		'debug' => DEBUG,
+		'wireframe' => WIREFRAME,
+		'skull_greeting' => $quote,
+		'post' => $post,
+	));
+})->conditions(array('idArticle' => '\d{1,10}'));
+
+$app->get('/post/:slugArticle', function($slugArticle) use ($app, $quote) {
+	$post = ArticleQuery::create()->findOneBySlug($slugArticle);
+	$app->render('post.php', array(
+		'admin' => isAdmin(),
+		'debug' => DEBUG,
+		'wireframe' => WIREFRAME,
+		'skull_greeting' => $quote,
+		'post' => $post,
+	));
+});
+
+$app->get('/category/:slugTheme', function($slugTheme) use ($app, $quote){
+	$theme = ThemeQuery::create()->findOneBySlug($slugTheme);
+	$themedPosts = ArticleQuery::create()->setQueryKey('find posts with particular id')->filterByTheme($theme);
+	echo "Hi!";
+});
+
+// Either use cheap network access control list or expensive
+// but quality client certificate authorisation
+// Defined via the CERT_AUTH constant.
+function isAdmin(){
+	if(CERT_AUTH){
+		if($_SERVER['HTTPS'] == "on" && $_SERVER['VERIFIED'] == "SUCCESS"){
+			return true;
+		}
+		return false;
+	} else{
+		$allowedips = array('127.0.0.1', '192.168.1.102');
+		$ip = $_SERVER['REMOTE_ADDR'];
+		if(in_array($ip, $allowedips)){
+			return true;
+		}
+		return false;
+	}
+}
+
+// Admin page
+$app->get('/admin', function() use ($app, $defaultTheme){
+
+	if(!isAdmin()){
+		$req = $app->request;
+		$app->flash('denied', "Sorry, you aren't allowed in ". $req->getResourceUri() . "!");
+		$app->redirect('/');
+	}
+
+	$client = S3Client::factory(array(
+		'key' => 'AKIAJ6LFRWILE2M7YCGA',
+		'secret' => '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',
+	));
+
+	$filepath = './include/img/skull.png';
+	$result = "";
+	try{
+		$result = $client->putObject(array(
+			'Bucket' => 'sacredskull-blog',
+			'Key'          => 'images/asd.jpg',
+			'SourceFile'   => $filepath,
+			'ContentType'  => mime_content_type($filepath),
+			'ACL'          => 'public-read',
+			'StorageClass' => 'REDUCED_REDUNDANCY',
+			'Metadata'     => array(
+				'category' => 'image',
+				'description' => 'skull'
+			)
+		));
+		var_dump($result['ObjectURL']);
+	} catch(S3Exception $e){
+		echo $e->getMessage();
+	}
+
+	var_dump($result);
 
     $post = new Article();
-    $post->setTitle('Inspiring title to make people read it!');
-    $post->setBody("[b]Hi![/b] <a href='#'>Dodgy link!</a>This is an [i]initial post to test[/i] the actual script to ensure it's working! This would be an interesting, and hopefully, [deleted]original[/deleted] nothing-new-under-the-sun post about something I'm interested in. Whether or not anyone else is interested is another story!");
+    $post->setTitle('');
+    $post->setBody('');
     $preparedFromWebFromArray = array('New Post', '#Excited');
     $tagArray = implode(',', $preparedFromWebFromArray);
     $post->setTags($tagArray);
     $post->setTheme($defaultTheme->findPK(1));
+
     $post->save();
 
-    $app->render('home.php', array(
+    $app->flash('mode', 'new');
+    $app->redirect('/admin/' . $post->getId());
+
+	$quote = "  CREATION MODE!  ";
+	$app->render('create.php', array(
 		'debug' => DEBUG,
 		'wireframe' => WIREFRAME,
-		'skull_greeting' => /*$quote*/ $post->getSlug(),
-		'newestpost' => $post
+		'skull_greeting' => $quote,
+		'mode' => 'new',
+	));
+});
+// Create base, redirect form for create/admin
+/*
+$app->post('/admin', function() use ($app, $defaultTheme){
+	$allPostVars = $app->request->post();
+	$post = new Article();
+	$post->setTitle($allPostVars['title']);
+	$post->setBody($allPostVars['body']);
+	$preparedFromWebFromArray = array('New Post', '#Excited');
+	$tagArray = implode(',', $preparedFromWebFromArray);
+	$post->setTags($tagArray);
+	$post->setTheme($defaultTheme->findPK(1));
+	$post->save();
+	echo $post->getId();
+});
+*/
+
+// Admin page, edit an existing post.
+$app->get('/admin/:id', function($id) use ($app){
+	// Add an update
+
+	if(!isAdmin()){
+		$req = $app->request;
+		$app->flash('denied', "Sorry, you aren't allowed in ". $req->getResourceUri() . "!");
+		$app->redirect('/');
+	}
+
+	$quote = "  EDITING #". $id . "!  ";
+
+	$post = ArticleQuery::create()->findPK($id);
+
+	$app->render('create.php', array(
+		'debug' => DEBUG,
+		'wireframe' => WIREFRAME,
+		'skull_greeting' => $quote,
+		'mode' => 'edit',
+		'post' => $post,
+	));
+})->conditions(array('id' => '\d{1,10}'));
+
+
+// Update post by ID
+$app->post('/admin/:id', function($id) use ($app){
+    $post = ArticleQuery::create()->findOneById($id);
+    $allPostVars = $app->request->post();
+    $post->setTitle($allPostVars['title']);
+    $post->setBody($allPostVars['body']);
+    $post->save();
+    echo $post->getId();
+})->conditions(array('id' => '\d{1,10}'));
+
+$app->get('/admin/:slugArticle', function($slugArticle) use ($app) {
+	$quote = "  EDITING SLUG ". $slugArticle . "!  ";
+	$post = ArticleQuery::create()->findOneBySlug($slugArticle);
+	$app->render('create.php', array(
+		'debug' => DEBUG,
+		'wireframe' => WIREFRAME,
+		'skull_greeting' => $quote,
+		'mode' => 'edit',
 	));
 });
 
-$app->get('/:slug', function($slug) use ($app, $arrayBB, $quote) {
-    $post = ArticleQuery::create()->findOneBySlug($slug);
-    $app->render('home.php', array(
-        'debug' => DEBUG,
-        'wireframe' => WIREFRAME,
-        'skull_greeting' => $quote,
-        'newestpost' => $post
-    ));
+$app->group('/api', function() use ($app){
+	$app->get('/post', function() use($app){
+		$app->redirect('/api/posts/', 301);
+	});
+	$app->get('/posts/', function(){
+		$allPosts = ArticleQuery::create()->find();
+		$posts[] = null;
+		foreach($allPosts as $post){
+			$posts[$post->getId()] = array('title' => $post->getTitle(), 'theme' => $post->getTheme()->getName());
+		}
+		unset($posts[0]);
+		echo json_encode((object)$posts);
+    });
+    $app->get('/post/:id', function($id){
+        // Output JSON snippet of specific post Id
+    })->conditions(array('id' => '\d{1,10}'));
+
+    $app->get('/post/:slugArticle', function($slugArticle){
+        // Output JSON snippet of specific post slug
+    });
 });
+
+$app->post('/upload/:post', function($post) use ($app){
+    if(isAdmin()){
+
+		$local_path = "./images/uploads/" . $post . "/" . pathinfo($_FILES['uploadedfile']['name'], PATHINFO_EXTENSION);
+		$remote_path = "images/" . $post . "/" . pathinfo($_FILES['uploadedfile']['name'], PATHINFO_EXTENSION);
+
+		if(!move_uploaded_file($_FILES['uploadedfile']['tmp_name'] , $local_path)){
+			echo '{"error": "could not upload"}';
+		}
+
+		$client = S3Client::factory(array(
+			'key' => 'AKIAJ6LFRWILE2M7YCGA',
+			'secret' => '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',
+		));
+
+		$filepath = './include/img/skull.png';
+		$result = "";
+		try{
+			$result = $client->putObject(array(
+				'Bucket' => 'sacredskull-blog',
+				'Key'          => $remote_path,
+				'SourceFile'   => $local_path,
+				'ContentType'  => mime_content_type($local_path),
+				'ACL'          => 'public-read',
+				'StorageClass' => 'STANDARD',
+				'Metadata'     => array(
+					'category' => 'image',
+					'description' => 'skull'
+				)
+			));
+			echo '{"url": "https://d3dcca3zf9ihpu.cloudfront.net/' . $remote_path . '"}';
+		} catch(S3Exception $e){
+			echo '{"error": "'.$e->getMessage().'"}';
+		}
+    } else{
+        $app->flash('denied', "Sorry, you aren't allowed in ". $req->getResourceUri() . "!");
+        $app->redirect('/');
+    }
+})->conditions(array('post' => '\d{1,10}'));
 
 $app->run();
 

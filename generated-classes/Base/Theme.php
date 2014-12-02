@@ -76,10 +76,22 @@ abstract class Theme implements ActiveRecordInterface
     protected $name;
 
     /**
-     * The value for the theme_root field.
+     * The value for the root field.
      * @var        string
      */
-    protected $theme_root;
+    protected $root;
+
+    /**
+     * The value for the colour field.
+     * @var        string
+     */
+    protected $colour;
+
+    /**
+     * The value for the slug field.
+     * @var        string
+     */
+    protected $slug;
 
     /**
      * @var        ObjectCollection|ChildArticle[] Collection to store aggregation of ChildArticle objects.
@@ -339,13 +351,33 @@ abstract class Theme implements ActiveRecordInterface
     }
 
     /**
-     * Get the [theme_root] column value.
+     * Get the [root] column value.
      * 
      * @return string
      */
-    public function getThemeRoot()
+    public function getRoot()
     {
-        return $this->theme_root;
+        return $this->root;
+    }
+
+    /**
+     * Get the [colour] column value.
+     * 
+     * @return string
+     */
+    public function getColour()
+    {
+        return $this->colour;
+    }
+
+    /**
+     * Get the [slug] column value.
+     * 
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 
     /**
@@ -389,24 +421,64 @@ abstract class Theme implements ActiveRecordInterface
     } // setName()
 
     /**
-     * Set the value of [theme_root] column.
+     * Set the value of [root] column.
      * 
      * @param  string $v new value
      * @return $this|\Theme The current object (for fluent API support)
      */
-    public function setThemeRoot($v)
+    public function setRoot($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->theme_root !== $v) {
-            $this->theme_root = $v;
-            $this->modifiedColumns[ThemeTableMap::COL_THEME_ROOT] = true;
+        if ($this->root !== $v) {
+            $this->root = $v;
+            $this->modifiedColumns[ThemeTableMap::COL_ROOT] = true;
         }
 
         return $this;
-    } // setThemeRoot()
+    } // setRoot()
+
+    /**
+     * Set the value of [colour] column.
+     * 
+     * @param  string $v new value
+     * @return $this|\Theme The current object (for fluent API support)
+     */
+    public function setColour($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->colour !== $v) {
+            $this->colour = $v;
+            $this->modifiedColumns[ThemeTableMap::COL_COLOUR] = true;
+        }
+
+        return $this;
+    } // setColour()
+
+    /**
+     * Set the value of [slug] column.
+     * 
+     * @param  string $v new value
+     * @return $this|\Theme The current object (for fluent API support)
+     */
+    public function setSlug($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->slug !== $v) {
+            $this->slug = $v;
+            $this->modifiedColumns[ThemeTableMap::COL_SLUG] = true;
+        }
+
+        return $this;
+    } // setSlug()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -450,8 +522,14 @@ abstract class Theme implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ThemeTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
             $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ThemeTableMap::translateFieldName('ThemeRoot', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->theme_root = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ThemeTableMap::translateFieldName('Root', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->root = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ThemeTableMap::translateFieldName('Colour', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->colour = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ThemeTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->slug = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -460,7 +538,7 @@ abstract class Theme implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = ThemeTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = ThemeTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Theme'), 0, $e);
@@ -583,6 +661,13 @@ abstract class Theme implements ActiveRecordInterface
         return $con->transaction(function () use ($con) {
             $isInsert = $this->isNew();
             $ret = $this->preSave($con);
+            // sluggable behavior
+            
+            if ($this->isColumnModified(ThemeTableMap::COL_SLUG) && $this->getSlug()) {
+                $this->setSlug($this->makeSlugUnique($this->getSlug()));
+            } else {
+                $this->setSlug($this->createSlug());
+            }
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
             } else {
@@ -682,8 +767,14 @@ abstract class Theme implements ActiveRecordInterface
         if ($this->isColumnModified(ThemeTableMap::COL_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'name';
         }
-        if ($this->isColumnModified(ThemeTableMap::COL_THEME_ROOT)) {
-            $modifiedColumns[':p' . $index++]  = 'theme_root';
+        if ($this->isColumnModified(ThemeTableMap::COL_ROOT)) {
+            $modifiedColumns[':p' . $index++]  = 'root';
+        }
+        if ($this->isColumnModified(ThemeTableMap::COL_COLOUR)) {
+            $modifiedColumns[':p' . $index++]  = 'colour';
+        }
+        if ($this->isColumnModified(ThemeTableMap::COL_SLUG)) {
+            $modifiedColumns[':p' . $index++]  = 'slug';
         }
 
         $sql = sprintf(
@@ -702,8 +793,14 @@ abstract class Theme implements ActiveRecordInterface
                     case 'name':                        
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case 'theme_root':                        
-                        $stmt->bindValue($identifier, $this->theme_root, PDO::PARAM_STR);
+                    case 'root':                        
+                        $stmt->bindValue($identifier, $this->root, PDO::PARAM_STR);
+                        break;
+                    case 'colour':                        
+                        $stmt->bindValue($identifier, $this->colour, PDO::PARAM_STR);
+                        break;
+                    case 'slug':                        
+                        $stmt->bindValue($identifier, $this->slug, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -774,7 +871,13 @@ abstract class Theme implements ActiveRecordInterface
                 return $this->getName();
                 break;
             case 2:
-                return $this->getThemeRoot();
+                return $this->getRoot();
+                break;
+            case 3:
+                return $this->getColour();
+                break;
+            case 4:
+                return $this->getSlug();
                 break;
             default:
                 return null;
@@ -808,7 +911,9 @@ abstract class Theme implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
-            $keys[2] => $this->getThemeRoot(),
+            $keys[2] => $this->getRoot(),
+            $keys[3] => $this->getColour(),
+            $keys[4] => $this->getSlug(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -872,7 +977,13 @@ abstract class Theme implements ActiveRecordInterface
                 $this->setName($value);
                 break;
             case 2:
-                $this->setThemeRoot($value);
+                $this->setRoot($value);
+                break;
+            case 3:
+                $this->setColour($value);
+                break;
+            case 4:
+                $this->setSlug($value);
                 break;
         } // switch()
 
@@ -907,7 +1018,13 @@ abstract class Theme implements ActiveRecordInterface
             $this->setName($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setThemeRoot($arr[$keys[2]]);
+            $this->setRoot($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setColour($arr[$keys[3]]);
+        }
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setSlug($arr[$keys[4]]);
         }
     }
 
@@ -950,8 +1067,14 @@ abstract class Theme implements ActiveRecordInterface
         if ($this->isColumnModified(ThemeTableMap::COL_NAME)) {
             $criteria->add(ThemeTableMap::COL_NAME, $this->name);
         }
-        if ($this->isColumnModified(ThemeTableMap::COL_THEME_ROOT)) {
-            $criteria->add(ThemeTableMap::COL_THEME_ROOT, $this->theme_root);
+        if ($this->isColumnModified(ThemeTableMap::COL_ROOT)) {
+            $criteria->add(ThemeTableMap::COL_ROOT, $this->root);
+        }
+        if ($this->isColumnModified(ThemeTableMap::COL_COLOUR)) {
+            $criteria->add(ThemeTableMap::COL_COLOUR, $this->colour);
+        }
+        if ($this->isColumnModified(ThemeTableMap::COL_SLUG)) {
+            $criteria->add(ThemeTableMap::COL_SLUG, $this->slug);
         }
 
         return $criteria;
@@ -1040,7 +1163,9 @@ abstract class Theme implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setName($this->getName());
-        $copyObj->setThemeRoot($this->getThemeRoot());
+        $copyObj->setRoot($this->getRoot());
+        $copyObj->setColour($this->getColour());
+        $copyObj->setSlug($this->getSlug());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1326,7 +1451,9 @@ abstract class Theme implements ActiveRecordInterface
     {
         $this->id = null;
         $this->name = null;
-        $this->theme_root = null;
+        $this->root = null;
+        $this->colour = null;
+        $this->slug = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1358,11 +1485,157 @@ abstract class Theme implements ActiveRecordInterface
     /**
      * Return the string representation of this object
      *
-     * @return string
+     * @return string The value of the 'name' column
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ThemeTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->getName();
+    }
+
+    // sluggable behavior
+    
+    /**
+     * Create a unique slug based on the object
+     *
+     * @return string The object slug
+     */
+    protected function createSlug()
+    {
+        $slug = $this->createRawSlug();
+        $slug = $this->limitSlugSize($slug);
+        $slug = $this->makeSlugUnique($slug);
+    
+        return $slug;
+    }
+    
+    /**
+     * Create the slug from the appropriate columns
+     *
+     * @return string
+     */
+    protected function createRawSlug()
+    {
+        return $this->cleanupSlugPart($this->__toString());
+    }
+    
+    /**
+     * Cleanup a string to make a slug of it
+     * Removes special characters, replaces blanks with a separator, and trim it
+     *
+     * @param     string $slug        the text to slugify
+     * @param     string $replacement the separator used by slug
+     * @return    string               the slugified text
+     */
+    protected static function cleanupSlugPart($slug, $replacement = '-')
+    {
+        // transliterate
+        if (function_exists('iconv')) {
+            $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
+        }
+    
+        // lowercase
+        if (function_exists('mb_strtolower')) {
+            $slug = mb_strtolower($slug);
+        } else {
+            $slug = strtolower($slug);
+        }
+    
+        // remove accents resulting from OSX's iconv
+        $slug = str_replace(array('\'', '`', '^'), '', $slug);
+    
+        // replace non letter or digits with separator
+        $slug = preg_replace('/\W+/', $replacement, $slug);
+    
+        // trim
+        $slug = trim($slug, $replacement);
+    
+        if (empty($slug)) {
+            return 'n-a';
+        }
+    
+        return $slug;
+    }
+    
+    
+    /**
+     * Make sure the slug is short enough to accommodate the column size
+     *
+     * @param    string $slug            the slug to check
+     *
+     * @return string                        the truncated slug
+     */
+    protected static function limitSlugSize($slug, $incrementReservedSpace = 3)
+    {
+        // check length, as suffix could put it over maximum
+        if (strlen($slug) > (255 - $incrementReservedSpace)) {
+            $slug = substr($slug, 0, 255 - $incrementReservedSpace);
+        }
+    
+        return $slug;
+    }
+    
+    
+    /**
+     * Get the slug, ensuring its uniqueness
+     *
+     * @param    string $slug            the slug to check
+     * @param    string $separator       the separator used by slug
+     * @param    int    $alreadyExists   false for the first try, true for the second, and take the high count + 1
+     * @return   string                   the unique slug
+     */
+    protected function makeSlugUnique($slug, $separator = '-', $alreadyExists = false)
+    {
+        if (!$alreadyExists) {
+            $slug2 = $slug;
+        } else {
+            $slug2 = $slug . $separator;
+    
+            $count = \ThemeQuery::create()
+                ->filterBySlug($this->getSlug())
+                ->filterByPrimaryKey($this->getPrimaryKey())
+            ->count();
+    
+            if (1 == $count) {
+                return $this->getSlug();
+            }
+        }
+    
+        $adapter = \Propel\Runtime\Propel::getServiceContainer()->getAdapter('blog');
+        $col = 'q.Slug';
+        $compare = $alreadyExists ? $adapter->compareRegex($col, '?') : sprintf('%s = ?', $col);
+    
+        $query = \ThemeQuery::create('q')
+            ->where($compare, $alreadyExists ? '^' . $slug2 . '[0-9]+$' : $slug2)
+            ->prune($this)
+        ;
+    
+        if (!$alreadyExists) {
+            $count = $query->count();
+            if ($count > 0) {
+                return $this->makeSlugUnique($slug, $separator, true);
+            }
+    
+            return $slug2;
+        }
+    
+        $adapter = \Propel\Runtime\Propel::getServiceContainer()->getAdapter('blog');
+        // Already exists
+        $object = $query
+            ->addDescendingOrderByColumn($adapter->strLength('slug'))
+            ->addDescendingOrderByColumn('slug')
+        ->findOne();
+    
+        // First duplicate slug
+        if (null == $object) {
+            return $slug2 . '1';
+        }
+    
+        $slugNum = substr($object->getSlug(), strlen($slug) + 1);
+        if (0 == $slugNum[0]) {
+            $slugNum[0] = 1;
+        }
+    
+        return $slug2 . ($slugNum + 1);
     }
 
     /**

@@ -37,16 +37,17 @@ $("header").hover(function(){
 	}
 });
 $("h1").click(function(){
-	
+
 });
 
 $('document').ready( function (){
-	var iPhraseLength = $('#skull-bubble').text().length;
+	var iPhraseLength = $('#skull-bubble p').text().length + 1;
 	var iFontSize = $('#skull-bubble p').css('font-size');
+	$('#skull-bubble').css('opacity', '1');
 	iFontSize = window.parseInt(iFontSize);
 	iFontSize = iFontSize * 0.5;
 	$('.bubble').animate({
-		width: iPhraseLength * iFontSize + 27 + "px",
+		width: (iPhraseLength * 10) +  "px",
 		opacity: 1
 	}, 500);
 });
@@ -55,12 +56,13 @@ $(window).resize( function () {
 	if(document.body.clientWidth < 1000){
 		$('#skull-bubble').fadeOut(100);
 	} else {
-		var iPhraseLength = $('#skull-bubble').text().length;
+		var iPhraseLength = $('#skull-bubble p').text().length + 1;
 		var iFontSize = $('#skull-bubble p').css('font-size');
 		iFontSize = window.parseInt(iFontSize);
 		iFontSize = iFontSize * 0.5;
+		$('#skull-bubble').fadeIn(100);
 		$('.bubble').animate({
-			width: iPhraseLength * iFontSize + 27 + "px",
+			width: (iPhraseLength * 10) +  "px",
 			opacity: 1
 		}, 500);
 	}

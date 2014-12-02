@@ -6,7 +6,13 @@
         "twig/twig": "1.*",
         "slim/views": "0.1.*",
         "propel/propel": "~2.0@dev",
-        "monolog/monolog": "~1.11"
+        "monolog/monolog": "~1.11",
+        "erusev/parsedown": "~1.1",
+        "twig/extensions": "~1.1.0",
+        "aws/aws-sdk-php": "2.*"
+    },
+    "require-dev": {
+        "fzaninotto/faker": "1.*"
     },
     "autoload": {
         "classmap": ["./generated-classes/"]

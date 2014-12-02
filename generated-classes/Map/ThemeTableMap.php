@@ -59,7 +59,7 @@ class ThemeTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ThemeTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the id field
@@ -82,9 +82,19 @@ class ThemeTableMap extends TableMap
     const COL_NAME = 'theme.name';
 
     /**
-     * the column name for the theme_root field
+     * the column name for the root field
      */
-    const COL_THEME_ROOT = 'theme.theme_root';
+    const COL_ROOT = 'theme.root';
+
+    /**
+     * the column name for the colour field
+     */
+    const COL_COLOUR = 'theme.colour';
+
+    /**
+     * the column name for the slug field
+     */
+    const COL_SLUG = 'theme.slug';
 
     /**
      * The default string format for model objects of the related table
@@ -98,11 +108,11 @@ class ThemeTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'ThemeRoot', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'themeRoot', ),
-        self::TYPE_COLNAME       => array(ThemeTableMap::COL_ID, ThemeTableMap::COL_NAME, ThemeTableMap::COL_THEME_ROOT, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'theme_root', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Root', 'Colour', 'Slug', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'root', 'colour', 'slug', ),
+        self::TYPE_COLNAME       => array(ThemeTableMap::COL_ID, ThemeTableMap::COL_NAME, ThemeTableMap::COL_ROOT, ThemeTableMap::COL_COLOUR, ThemeTableMap::COL_SLUG, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'root', 'colour', 'slug', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -112,11 +122,11 @@ class ThemeTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'ThemeRoot' => 2, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'themeRoot' => 2, ),
-        self::TYPE_COLNAME       => array(ThemeTableMap::COL_ID => 0, ThemeTableMap::COL_NAME => 1, ThemeTableMap::COL_THEME_ROOT => 2, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'theme_root' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Root' => 2, 'Colour' => 3, 'Slug' => 4, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'root' => 2, 'colour' => 3, 'slug' => 4, ),
+        self::TYPE_COLNAME       => array(ThemeTableMap::COL_ID => 0, ThemeTableMap::COL_NAME => 1, ThemeTableMap::COL_ROOT => 2, ThemeTableMap::COL_COLOUR => 3, ThemeTableMap::COL_SLUG => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'root' => 2, 'colour' => 3, 'slug' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -137,8 +147,11 @@ class ThemeTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('name', 'Name', 'VARCHAR', true, 128, null);
-        $this->addColumn('theme_root', 'ThemeRoot', 'VARCHAR', true, 128, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', true, 30, null);
+        $this->getColumn('name')->setPrimaryString(true);
+        $this->addColumn('root', 'Root', 'VARCHAR', true, 128, null);
+        $this->addColumn('colour', 'Colour', 'VARCHAR', false, 10, null);
+        $this->addColumn('slug', 'Slug', 'VARCHAR', false, 255, null);
     } // initialize()
 
     /**
@@ -148,6 +161,20 @@ class ThemeTableMap extends TableMap
     {
         $this->addRelation('Article', '\\Article', RelationMap::ONE_TO_MANY, array('id' => 'theme_id', ), null, null, 'Articles');
     } // buildRelations()
+
+    /**
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
+     */
+    public function getBehaviors()
+    {
+        return array(
+            'query_cache' => array('backend' => 'apc', 'lifetime' => '3600', ),
+            'sluggable' => array('slug_column' => 'slug', 'slug_pattern' => '', 'replace_pattern' => '/\W+/', 'replacement' => '-', 'separator' => '-', 'permanent' => 'false', 'scope_column' => '', ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -292,11 +319,15 @@ class ThemeTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(ThemeTableMap::COL_ID);
             $criteria->addSelectColumn(ThemeTableMap::COL_NAME);
-            $criteria->addSelectColumn(ThemeTableMap::COL_THEME_ROOT);
+            $criteria->addSelectColumn(ThemeTableMap::COL_ROOT);
+            $criteria->addSelectColumn(ThemeTableMap::COL_COLOUR);
+            $criteria->addSelectColumn(ThemeTableMap::COL_SLUG);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.name');
-            $criteria->addSelectColumn($alias . '.theme_root');
+            $criteria->addSelectColumn($alias . '.root');
+            $criteria->addSelectColumn($alias . '.colour');
+            $criteria->addSelectColumn($alias . '.slug');
         }
     }
 

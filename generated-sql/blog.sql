@@ -27,6 +27,7 @@ CREATE TABLE `article`
     CONSTRAINT `article_fk_e23503`
         FOREIGN KEY (`theme_id`)
         REFERENCES `theme` (`id`)
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -38,9 +39,12 @@ DROP TABLE IF EXISTS `theme`;
 CREATE TABLE `theme`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(128) NOT NULL,
-    `theme_root` VARCHAR(128) NOT NULL,
-    PRIMARY KEY (`id`)
+    `name` VARCHAR(30) NOT NULL,
+    `root` VARCHAR(128) NOT NULL,
+    `colour` VARCHAR(10) DEFAULT 'blue',
+    `slug` VARCHAR(255),
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `theme_slug` (`slug`(255))
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -60,6 +64,7 @@ CREATE TABLE `view`
     CONSTRAINT `view_fk_3610e9`
         FOREIGN KEY (`article_id`)
         REFERENCES `article` (`id`)
+        ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 # This restores the fkey checks, after having unset them earlier

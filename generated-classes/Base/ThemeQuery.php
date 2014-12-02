@@ -22,11 +22,15 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildThemeQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildThemeQuery orderByName($order = Criteria::ASC) Order by the name column
- * @method     ChildThemeQuery orderByThemeRoot($order = Criteria::ASC) Order by the theme_root column
+ * @method     ChildThemeQuery orderByRoot($order = Criteria::ASC) Order by the root column
+ * @method     ChildThemeQuery orderByColour($order = Criteria::ASC) Order by the colour column
+ * @method     ChildThemeQuery orderBySlug($order = Criteria::ASC) Order by the slug column
  *
  * @method     ChildThemeQuery groupById() Group by the id column
  * @method     ChildThemeQuery groupByName() Group by the name column
- * @method     ChildThemeQuery groupByThemeRoot() Group by the theme_root column
+ * @method     ChildThemeQuery groupByRoot() Group by the root column
+ * @method     ChildThemeQuery groupByColour() Group by the colour column
+ * @method     ChildThemeQuery groupBySlug() Group by the slug column
  *
  * @method     ChildThemeQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildThemeQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -43,18 +47,25 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildTheme findOneById(int $id) Return the first ChildTheme filtered by the id column
  * @method     ChildTheme findOneByName(string $name) Return the first ChildTheme filtered by the name column
- * @method     ChildTheme findOneByThemeRoot(string $theme_root) Return the first ChildTheme filtered by the theme_root column
+ * @method     ChildTheme findOneByRoot(string $root) Return the first ChildTheme filtered by the root column
+ * @method     ChildTheme findOneByColour(string $colour) Return the first ChildTheme filtered by the colour column
+ * @method     ChildTheme findOneBySlug(string $slug) Return the first ChildTheme filtered by the slug column
  *
  * @method     ChildTheme[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildTheme objects based on current ModelCriteria
  * @method     ChildTheme[]|ObjectCollection findById(int $id) Return ChildTheme objects filtered by the id column
  * @method     ChildTheme[]|ObjectCollection findByName(string $name) Return ChildTheme objects filtered by the name column
- * @method     ChildTheme[]|ObjectCollection findByThemeRoot(string $theme_root) Return ChildTheme objects filtered by the theme_root column
+ * @method     ChildTheme[]|ObjectCollection findByRoot(string $root) Return ChildTheme objects filtered by the root column
+ * @method     ChildTheme[]|ObjectCollection findByColour(string $colour) Return ChildTheme objects filtered by the colour column
+ * @method     ChildTheme[]|ObjectCollection findBySlug(string $slug) Return ChildTheme objects filtered by the slug column
  * @method     ChildTheme[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
 abstract class ThemeQuery extends ModelCriteria
 {
     
+    // query_cache behavior
+    protected $queryKey = '';
+
     /**
      * Initializes internal state of \Base\ThemeQuery object.
      *
@@ -140,7 +151,7 @@ abstract class ThemeQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, theme_root FROM theme WHERE id = :p0';
+        $sql = 'SELECT id, name, root, colour, slug FROM theme WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);            
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -301,32 +312,90 @@ abstract class ThemeQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the theme_root column
+     * Filter the query on the root column
      *
      * Example usage:
      * <code>
-     * $query->filterByThemeRoot('fooValue');   // WHERE theme_root = 'fooValue'
-     * $query->filterByThemeRoot('%fooValue%'); // WHERE theme_root LIKE '%fooValue%'
+     * $query->filterByRoot('fooValue');   // WHERE root = 'fooValue'
+     * $query->filterByRoot('%fooValue%'); // WHERE root LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $themeRoot The value to use as filter.
+     * @param     string $root The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildThemeQuery The current query, for fluid interface
      */
-    public function filterByThemeRoot($themeRoot = null, $comparison = null)
+    public function filterByRoot($root = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($themeRoot)) {
+            if (is_array($root)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $themeRoot)) {
-                $themeRoot = str_replace('*', '%', $themeRoot);
+            } elseif (preg_match('/[\%\*]/', $root)) {
+                $root = str_replace('*', '%', $root);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(ThemeTableMap::COL_THEME_ROOT, $themeRoot, $comparison);
+        return $this->addUsingAlias(ThemeTableMap::COL_ROOT, $root, $comparison);
+    }
+
+    /**
+     * Filter the query on the colour column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByColour('fooValue');   // WHERE colour = 'fooValue'
+     * $query->filterByColour('%fooValue%'); // WHERE colour LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $colour The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildThemeQuery The current query, for fluid interface
+     */
+    public function filterByColour($colour = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($colour)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $colour)) {
+                $colour = str_replace('*', '%', $colour);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(ThemeTableMap::COL_COLOUR, $colour, $comparison);
+    }
+
+    /**
+     * Filter the query on the slug column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterBySlug('fooValue');   // WHERE slug = 'fooValue'
+     * $query->filterBySlug('%fooValue%'); // WHERE slug LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $slug The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildThemeQuery The current query, for fluid interface
+     */
+    public function filterBySlug($slug = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($slug)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $slug)) {
+                $slug = str_replace('*', '%', $slug);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(ThemeTableMap::COL_SLUG, $slug, $comparison);
     }
 
     /**
@@ -477,6 +546,128 @@ abstract class ThemeQuery extends ModelCriteria
 
             return $affectedRows;
         });
+    }
+
+    // query_cache behavior
+    
+    public function setQueryKey($key)
+    {
+        $this->queryKey = $key;
+    
+        return $this;
+    }
+    
+    public function getQueryKey()
+    {
+        return $this->queryKey;
+    }
+    
+    public function cacheContains($key)
+    {
+    
+        return apc_fetch($key);
+    }
+    
+    public function cacheFetch($key)
+    {
+    
+        return apc_fetch($key);
+    }
+    
+    public function cacheStore($key, $value, $lifetime = 3600)
+    {
+        apc_store($key, $value, $lifetime);
+    }
+    
+    public function doSelect(ConnectionInterface $con = null)
+    {
+        // check that the columns of the main class are already added (if this is the primary ModelCriteria)
+        if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
+            $this->addSelfSelectColumns();
+        }
+        $this->configureSelectColumns();
+    
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ThemeTableMap::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(ThemeTableMap::DATABASE_NAME);
+    
+        $key = $this->getQueryKey();
+        if ($key && $this->cacheContains($key)) {
+            $params = $this->getParams();
+            $sql = $this->cacheFetch($key);
+        } else {
+            $params = array();
+            $sql = $this->createSelectSql($params);
+            if ($key) {
+                $this->cacheStore($key, $sql);
+            }
+        }
+    
+        try {
+            $stmt = $con->prepare($sql);
+            $db->bindValues($stmt, $params, $dbMap);
+            $stmt->execute();
+            } catch (Exception $e) {
+                Propel::log($e->getMessage(), Propel::LOG_ERR);
+                throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), 0, $e);
+            }
+    
+        return $con->getDataFetcher($stmt);
+    }
+    
+    public function doCount(ConnectionInterface $con = null)
+    {
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
+        $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
+    
+        $key = $this->getQueryKey();
+        if ($key && $this->cacheContains($key)) {
+            $params = $this->getParams();
+            $sql = $this->cacheFetch($key);
+        } else {
+            // check that the columns of the main class are already added (if this is the primary ModelCriteria)
+            if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
+                $this->addSelfSelectColumns();
+            }
+    
+            $this->configureSelectColumns();
+    
+            $needsComplexCount = $this->getGroupByColumns()
+                || $this->getOffset()
+                || $this->getLimit()
+                || $this->getHaving()
+                || in_array(Criteria::DISTINCT, $this->getSelectModifiers());
+    
+            $params = array();
+            if ($needsComplexCount) {
+                if ($this->needsSelectAliases()) {
+                    if ($this->getHaving()) {
+                        throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
+                    }
+                    $db->turnSelectColumnsToAliases($this);
+                }
+                $selectSql = $this->createSelectSql($params);
+                $sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') propelmatch4cnt';
+            } else {
+                // Replace SELECT columns with COUNT(*)
+                $this->clearSelectColumns()->addSelectColumn('COUNT(*)');
+                $sql = $this->createSelectSql($params);
+            }
+    
+            if ($key) {
+                $this->cacheStore($key, $sql);
+            }
+        }
+    
+        try {
+            $stmt = $con->prepare($sql);
+            $db->bindValues($stmt, $params, $dbMap);
+            $stmt->execute();
+        } catch (Exception $e) {
+            Propel::log($e->getMessage(), Propel::LOG_ERR);
+            throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
+        }
+    
+        return $con->getDataFetcher($stmt);
     }
 
 } // ThemeQuery
