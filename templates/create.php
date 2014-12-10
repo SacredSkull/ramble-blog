@@ -38,9 +38,9 @@
 				<button id="save" type="submit">
 					<span class="glyphicon glyphicon-floppy-save"></span>
 				</button>
-		</form>
-        <form action="/upload/{{post.getId}}" method="POST" enctype='multipart/form-data' style="display: none;">
-		  <input type="file" id="form_image">
+		</form >
+        <form action="/upload/{{post.getId}}" id="form_image_frm" method="POST" enctype='multipart/form-data' style="display: none;">
+			<input name="file" type="file" id="form_image" />
         </form>
 	{% endblock content %}
 
@@ -121,11 +121,14 @@
 			$('#form_image').click();
 			$('#form_image').change(function(){
 
+				var container, txtToAdd, altText, titleText;
                 var file_data = $('#form_image').prop('files')[0];   
+                console.log(file_data);
                 var form_data = new FormData();                  
                 form_data.append('file', file_data);
 
 				if($('#form_image').val().length > 1){
+					console.log(form_data);
                     $.ajax({
                         type: "POST",
                         url: "/upload/{{post.getId}}",
@@ -133,20 +136,24 @@
                         processData: false,
                         data: form_data,
                         success: function(stuff){
-                            JSON.parse(stuff);
+                        	console.log(stuff);
+                            var uploadedFile = JSON.parse(stuff);
+							altText = prompt("Please enter Alt text; important for google and those who disable images, so describe the image with keywords.");
+							titleText = prompt("Please enter the Image title, shows up on roll-over, can be witty, can be smart, can be stupid, but it needs to be relevant.");
+							container = $("#epiceditor iframe").contents().find("iframe#epiceditor-editor-frame").contents().find("body").get(0);
+							if(altText.length === 0)
+								altText = "";
+							if(titleText.length === 0)
+								altText = "";
+							txtToAdd = "!["+ altText + "]( "+ uploadedFile.url +" \""+ titleText +"\")";
+							insertAtCaret(container, txtToAdd);
+
                         },
                         error: function(error){
                         	console.log(error);
-                            JSON.parse(error);
                         }
                     });
 
-					var container, txtToAdd, altText, titleText;
-					altText = prompt("Please enter Alt text; important for google and those who disable images, so describe the image with keywords.");
-					titleText = prompt("Please enter the Image title, shows up on roll-over, can be witty, can be smart, can be stupid, but it needs to be relevant.");
-					container = $("#epiceditor iframe").contents().find("iframe#epiceditor-editor-frame").contents().find("body").get(0);
-					txtToAdd = "!["+ altText + "](https://sacredskull-blog.s3.amazonaws.com/images/test.jpg \""+ titleText +"\")";
-					insertAtCaret(container, txtToAdd);
 				}
 			});
 		});
@@ -155,22 +162,19 @@
 			$.getJSON('/api/posts/', function(jsonAllPosts){
 				$('#form_other-post-dropdown').html('<input type="text"></input>');
 				$('#form_other-post-dropdown input').focus();
-				/*
 				$.each(jsonAllPosts, function(index, value){
 					if(value !== null){
-						$('#form_other-post-dropdown').append('<li class="other-post-list"><a onclick="insertPostRef()" class="other-post-list-link" href="#">' + "<code>" + value.theme + "</code><kbd>" + value.title + '</kbd></li></a>');
+						$('#form_other-post-dropdown').append('<li class="other-post-list"><a onclick="insertPostRef(\''+ value.id +'\')" class="other-post-list-link" href="#">' + "<code>" + value.theme + "</code><kbd>" + value.title + '</kbd></li></a>');
 					}
 				});
-				*/
-
 				console.log(jsonAllPosts);
-				var container = $("#epiceditor iframe").contents().find("iframe#epiceditor-editor-frame").contents().find("body").get(0);
 				//insertAtCaret(container);
 			});
 		});
 
-		function asd(){
-			alert('lol');
+		function insertPostRef(name){
+			var container = $("#epiceditor iframe").contents().find("iframe#epiceditor-editor-frame").contents().find("body").get(0);
+			insertAtCaret(container, '[' + prompt('Enter URL text') + '](/post/' + name + ')');
 		}
 
 		$( "#save" ).click(function(){
@@ -193,8 +197,9 @@
 				if($.isNumeric(data)){
 					console.log(data + " seems to be numeric!");
 					window.location.href = "/post/" + data;
+				} else {
+					console.log('Not a number!');
 				}
-				console.log('Not a number!');
 			}).fail(function(){
 				$("#save span").removeClass('glyphicon-transfer');
 				$("#save span").addClass('glyphicon-remove');

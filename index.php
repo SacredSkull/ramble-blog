@@ -5,6 +5,8 @@ use Aws\S3\S3Client;
 define('DEBUG', true);
 define('WIREFRAME', false);
 define('CERT_AUTH', true);
+define ('SITE_ROOT', realpath(dirname(__FILE__)));
+define('USING_WINDOWS', (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'));
 
 // Composer
 require './vendor/autoload.php';
@@ -69,34 +71,6 @@ foreach ($themes as $theme) {
 $jsonThemes = json_encode($jsonThemes);
 
 $app->get('/test/', function() use ($app, $quote, $defaultTheme){
-
-	$client = S3Client::factory(array(
-		'key' => 'AKIAJ6LFRWILE2M7YCGA',
-		'secret' => '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',
-	));
-
-	$filepath = './include/img/skull.png';
-	$result = "";
-	try{
-		$result = $client->putObject(array(
-			'Bucket' => 'sacredskull-blog',
-			'Key'          => 'images/asd.jpg',
-			'SourceFile'   => $filepath,
-			'ContentType'  => mime_content_type($filepath),
-			'ACL'          => 'public-read',
-			'StorageClass' => 'REDUCED_REDUNDANCY',
-			'Metadata'     => array(
-				'category' => 'image',
-				'description' => 'skull'
-			)
-		));
-		var_dump($result['ObjectURL']);
-	} catch(S3Exception $e){
-		echo $e->getMessage();
-	}
-
-	var_dump($result);
-
 	/*
 	$generator = Faker\Factory::create('en_UK');
 
@@ -250,33 +224,6 @@ $app->get('/admin', function() use ($app, $defaultTheme){
 		$app->redirect('/');
 	}
 
-	$client = S3Client::factory(array(
-		'key' => 'AKIAJ6LFRWILE2M7YCGA',
-		'secret' => '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',
-	));
-
-	$filepath = './include/img/skull.png';
-	$result = "";
-	try{
-		$result = $client->putObject(array(
-			'Bucket' => 'sacredskull-blog',
-			'Key'          => 'images/asd.jpg',
-			'SourceFile'   => $filepath,
-			'ContentType'  => mime_content_type($filepath),
-			'ACL'          => 'public-read',
-			'StorageClass' => 'REDUCED_REDUNDANCY',
-			'Metadata'     => array(
-				'category' => 'image',
-				'description' => 'skull'
-			)
-		));
-		var_dump($result['ObjectURL']);
-	} catch(S3Exception $e){
-		echo $e->getMessage();
-	}
-
-	var_dump($result);
-
     $post = new Article();
     $post->setTitle('');
     $post->setBody('');
@@ -359,6 +306,10 @@ $app->get('/admin/:slugArticle', function($slugArticle) use ($app) {
 	));
 });
 
+function jsFriendly($string){
+	return htmlspecialchars($string, ENT_QUOTES);
+}
+
 $app->group('/api', function() use ($app){
 	$app->get('/post', function() use($app){
 		$app->redirect('/api/posts/', 301);
@@ -367,7 +318,9 @@ $app->group('/api', function() use ($app){
 		$allPosts = ArticleQuery::create()->find();
 		$posts[] = null;
 		foreach($allPosts as $post){
-			$posts[$post->getId()] = array('title' => $post->getTitle(), 'theme' => $post->getTheme()->getName());
+			$title_js_ready = jsFriendly( $post->getTitle() );
+			$theme_js_ready = jsFriendly( $post->getTheme()->getName() );
+			$posts[$post->getId()] = array('title' => $title_js_ready, 'theme' =>  $theme_js_ready, 'id' => $post->getId() );
 		}
 		unset($posts[0]);
 		echo json_encode((object)$posts);
@@ -381,14 +334,30 @@ $app->group('/api', function() use ($app){
     });
 });
 
+$app->get('/upload/:post', function($post) use ($app){
+	isAdmin() ? $app->redirect('/admin/' . $post) : $app->redirect('/');
+});
+
 $app->post('/upload/:post', function($post) use ($app){
     if(isAdmin()){
 
-		$local_path = "./images/uploads/" . $post . "/" . pathinfo($_FILES['uploadedfile']['name'], PATHINFO_EXTENSION);
-		$remote_path = "images/" . $post . "/" . pathinfo($_FILES['uploadedfile']['name'], PATHINFO_EXTENSION);
+		$local_path = SITE_ROOT . "\\images\\uploads\\" . $post . "\\" . str_replace(' ', '_', $_FILES['file']['name']);
+		$remote_path = "images/" . $post . "/" . str_replace(' ', '_', $_FILES['file']['name']);
 
-		if(!move_uploaded_file($_FILES['uploadedfile']['tmp_name'] , $local_path)){
-			echo '{"error": "could not upload"}';
+		// Trivia: @ operator suppresses error messages!
+		@mkdir(SITE_ROOT . "\\images\\uploads\\" . $post);
+
+		$temp = $_FILES['file']['tmp_name'];
+		move_uploaded_file( $temp, $local_path);
+
+		if(USING_WINDOWS){
+			// Use ugly, inefficient exec() work-around for PATH issues & general DLL nonsense on Windows.
+			exec("E:\\WPNXM\\bin\\imagick\\convert.exe " . $local_path . " -resize 600x600 " . $local_path);
+		} else {
+			// Nice, it's not a Windows environment! We can actually use OOP 
+			// programming without having to exec() something!
+			die("This section hasn't been set up for proper linux operation. Please complete the 
+				relevant ImageMagick / GraphicsMagick code");
 		}
 
 		$client = S3Client::factory(array(
@@ -403,12 +372,11 @@ $app->post('/upload/:post', function($post) use ($app){
 				'Bucket' => 'sacredskull-blog',
 				'Key'          => $remote_path,
 				'SourceFile'   => $local_path,
-				'ContentType'  => mime_content_type($local_path),
+				'ContentType'  => $_FILES['file']['type'],
 				'ACL'          => 'public-read',
 				'StorageClass' => 'STANDARD',
 				'Metadata'     => array(
 					'category' => 'image',
-					'description' => 'skull'
 				)
 			));
 			echo '{"url": "https://d3dcca3zf9ihpu.cloudfront.net/' . $remote_path . '"}';
