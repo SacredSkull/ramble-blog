@@ -1,25 +1,10 @@
 <?php
 
-use Aws\S3\S3Client;
-
 define('DEBUG', true);
 define('WIREFRAME', false);
-define('CERT_AUTH', true);
+define('CERT_AUTH', false);
 define ('SITE_ROOT', realpath(dirname(__FILE__)));
 define('USING_WINDOWS', (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'));
-
-// Composer
-require './vendor/autoload.php';
-// Propel auto-conf
-require './generated-conf/config.php';
-// BBCode Twig Extension
-require './lib/Twig_Extension_BBCode.php';
-// Markdown Twig Extension
-require './lib/Twig_Extension_Parsedown.php';
-// Defined BBCodes
-require './lib/bbcodes.php';
-
-//session_start();
 
 if(DEBUG == true)
 {
@@ -31,6 +16,21 @@ else
 	ini_set('display_errors', 'Off');
 	error_reporting(0);
 }
+
+// Composer
+require './vendor/autoload.php';
+// Propel auto-conf
+require './generated-conf/config.php';
+// BBCode Twig Extension
+//require './lib/Twig_Extension_BBCode.php';
+// Markdown Twig Extension
+require './lib/Twig_Extension_Parsedown.php';
+// Defined BBCodes
+require './lib/bbcodes.php';
+
+use Aws\S3\S3Client;
+
+//session_start();
 
 $defaultTheme = new ThemeQuery();
 if(!$defaultTheme->findPK(1)){
@@ -199,6 +199,7 @@ $app->get('/category/:slugTheme', function($slugTheme) use ($app, $quote){
 // Either use cheap network access control list or expensive
 // but quality client certificate authorisation
 // Defined via the CERT_AUTH constant.
+// Unfortunate that Cloudflare doesn't support two-way AUTH :(
 function isAdmin(){
 	if(CERT_AUTH){
 		if($_SERVER['HTTPS'] == "on" && $_SERVER['VERIFIED'] == "SUCCESS"){
@@ -206,6 +207,7 @@ function isAdmin(){
 		}
 		return false;
 	} else{
+		// use a cookie for auth?
 		$allowedips = array('127.0.0.1', '192.168.1.102');
 		$ip = $_SERVER['REMOTE_ADDR'];
 		if(in_array($ip, $allowedips)){
@@ -354,9 +356,9 @@ $app->post('/upload/:post', function($post) use ($app){
 			// Use ugly, inefficient exec() work-around for PATH issues & general DLL nonsense on Windows.
 			exec("E:\\WPNXM\\bin\\imagick\\convert.exe " . $local_path . " -resize 600x600 " . $local_path);
 		} else {
-			// Nice, it's not a Windows environment! We can actually use OOP 
+			// Nice, it's not a Windows environment! We can actually use OOP
 			// programming without having to exec() something!
-			die("This section hasn't been set up for proper linux operation. Please complete the 
+			die("This section hasn't been set up for proper linux operation. Please complete the
 				relevant ImageMagick / GraphicsMagick code");
 		}
 

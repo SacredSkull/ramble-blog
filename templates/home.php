@@ -4,7 +4,7 @@
 							color: black;
 						}
 					{% endblock additional_css %}
-					{% block article %}
+					{% block article_cont %}
 						{% for post in posts %}
 		                <div class="row">
 		                	{# Start title #}
@@ -67,4 +67,4 @@
                             </div>
 		                </div>
 		                {% endif %}
-					{% endblock article %}
+					{% endblock article_cont %}

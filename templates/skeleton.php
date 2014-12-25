@@ -66,7 +66,7 @@
 
 		<div id="wrapper">
 			<div id="main" class="container-fluid">
-				{% block article %}
+				{% block article_cont %}
 				<div style="height: 200px;" class="row">
 					{% block img_title %}
 					{% endblock img_title %}
@@ -96,7 +96,7 @@
 					</div>
 					<div class="col-md-1"></div>
 				</div>
-				{% endblock article %}
+				{% endblock article_cont %}
 			</div>
 			{% block additional_column %}
 			{% endblock additional_column %}

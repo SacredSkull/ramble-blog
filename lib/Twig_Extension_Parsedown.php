@@ -1,12 +1,12 @@
 <?php
 /**
- * This extension simply requires you to have require'd Parsedown,
+ * This extension simply needs you to have required Parsedown,
  * probably in Composer, or manually with an autoloader.
  *
  *
  *
  * @author Peter Clotworthy <clotters@gmail.com>
- * @tutorial
+ * @tutorial 
  */
 
 class Twig_Extension_Parsedown extends Twig_Extension
