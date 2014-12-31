@@ -152,7 +152,7 @@ class ViewTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Article', '\\Article', RelationMap::MANY_TO_ONE, array('article_id' => 'id', ), null, null);
+        $this->addRelation('Article', '\\Article', RelationMap::MANY_TO_ONE, array('article_id' => 'id', ), 'CASCADE', null);
     } // buildRelations()
 
     /**
@@ -164,7 +164,7 @@ class ViewTableMap extends TableMap
     public function getBehaviors()
     {
         return array(
-            'query_cache' => array('backend' => 'apc', 'lifetime' => '3600', ),
+            'query_cache' => array('backend' => 'custom', 'lifetime' => '3600', ),
         );
     } // getBehaviors()
 
@@ -211,7 +211,7 @@ class ViewTableMap extends TableMap
                 : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
         ];
     }
-    
+
     /**
      * The class that the tableMap will make instances of.
      *
@@ -272,7 +272,7 @@ class ViewTableMap extends TableMap
     public static function populateObjects(DataFetcherInterface $dataFetcher)
     {
         $results = array();
-    
+
         // set the class once to avoid overhead in the loop
         $cls = static::getOMClass(false);
         // populate the object(s)

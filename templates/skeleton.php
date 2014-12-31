@@ -105,7 +105,7 @@
 			<span id='footer-white'>&nbsp;</span>
 			<div class="container">
 				<div class="row">
-					<p></p>
+					<p><!--sse-->Contact me at clotters@gmail.com<!--/sse--></p>
 				</div>
 			</div>
 		</div>

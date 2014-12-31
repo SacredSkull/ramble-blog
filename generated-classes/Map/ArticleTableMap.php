@@ -189,8 +189,8 @@ class ArticleTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Theme', '\\Theme', RelationMap::MANY_TO_ONE, array('theme_id' => 'id', ), null, null);
-        $this->addRelation('View', '\\View', RelationMap::ONE_TO_MANY, array('id' => 'article_id', ), null, null, 'Views');
+        $this->addRelation('Theme', '\\Theme', RelationMap::MANY_TO_ONE, array('theme_id' => 'id', ), 'CASCADE', null);
+        $this->addRelation('View', '\\View', RelationMap::ONE_TO_MANY, array('id' => 'article_id', ), 'CASCADE', null, 'Views');
     } // buildRelations()
 
     /**
@@ -203,10 +203,19 @@ class ArticleTableMap extends TableMap
     {
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
-            'query_cache' => array('backend' => 'apc', 'lifetime' => '3600', ),
+            'query_cache' => array('backend' => 'custom', 'lifetime' => '3600', ),
             'sluggable' => array('slug_column' => 'slug', 'slug_pattern' => '', 'replace_pattern' => '/\W+/', 'replacement' => '-', 'separator' => '-', 'permanent' => 'false', 'scope_column' => '', ),
         );
     } // getBehaviors()
+    /**
+     * Method to invalidate the instance pool of all tables related to article     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool()
+    {
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ViewTableMap::clearInstancePool();
+    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -251,7 +260,7 @@ class ArticleTableMap extends TableMap
                 : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
         ];
     }
-    
+
     /**
      * The class that the tableMap will make instances of.
      *
@@ -312,7 +321,7 @@ class ArticleTableMap extends TableMap
     public static function populateObjects(DataFetcherInterface $dataFetcher)
     {
         $results = array();
-    
+
         // set the class once to avoid overhead in the loop
         $cls = static::getOMClass(false);
         // populate the object(s)

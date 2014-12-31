@@ -18,7 +18,7 @@ use Propel\Runtime\Exception\PropelException;
 /**
  * Base class that represents a query for the 'article' table.
  *
- * 
+ *
  *
  * @method     ChildArticleQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildArticleQuery orderByTitle($order = Criteria::ASC) Order by the title column
@@ -86,9 +86,10 @@ use Propel\Runtime\Exception\PropelException;
  */
 abstract class ArticleQuery extends ModelCriteria
 {
-    
+
     // query_cache behavior
     protected $queryKey = '';
+    protected static $cacheBackend;
 
     /**
      * Initializes internal state of \Base\ArticleQuery object.
@@ -177,7 +178,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         $sql = 'SELECT id, title, body, tags, positive_votes, negative_votes, theme_id, created_at, updated_at, slug FROM article WHERE id = :p0';
         try {
-            $stmt = $con->prepare($sql);            
+            $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
             $stmt->execute();
         } catch (Exception $e) {
@@ -850,9 +851,9 @@ abstract class ArticleQuery extends ModelCriteria
         // for more than one table or we could emulating ON DELETE CASCADE, etc.
         return $con->transaction(function () use ($con, $criteria) {
             $affectedRows = 0; // initialize var to track total num of affected rows
-            
+
             ArticleTableMap::removeInstanceFromPool($criteria);
-        
+
             $affectedRows += ModelCriteria::delete($con);
             ArticleTableMap::clearRelatedInstancePool();
 
@@ -861,7 +862,7 @@ abstract class ArticleQuery extends ModelCriteria
     }
 
     // timestampable behavior
-    
+
     /**
      * Filter by the latest updated
      *
@@ -873,7 +874,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addUsingAlias(ArticleTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
     }
-    
+
     /**
      * Order by update date desc
      *
@@ -883,7 +884,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addDescendingOrderByColumn(ArticleTableMap::COL_UPDATED_AT);
     }
-    
+
     /**
      * Order by update date asc
      *
@@ -893,7 +894,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addAscendingOrderByColumn(ArticleTableMap::COL_UPDATED_AT);
     }
-    
+
     /**
      * Order by create date desc
      *
@@ -903,7 +904,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addDescendingOrderByColumn(ArticleTableMap::COL_CREATED_AT);
     }
-    
+
     /**
      * Filter by the latest created
      *
@@ -915,7 +916,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addUsingAlias(ArticleTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
     }
-    
+
     /**
      * Order by create date asc
      *
@@ -927,36 +928,34 @@ abstract class ArticleQuery extends ModelCriteria
     }
 
     // query_cache behavior
-    
+
     public function setQueryKey($key)
     {
         $this->queryKey = $key;
-    
+
         return $this;
     }
-    
+
     public function getQueryKey()
     {
         return $this->queryKey;
     }
-    
+
     public function cacheContains($key)
     {
-    
-        return apc_fetch($key);
+        throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-    
+
     public function cacheFetch($key)
     {
-    
-        return apc_fetch($key);
+        throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-    
+
     public function cacheStore($key, $value, $lifetime = 3600)
     {
-        apc_store($key, $value, $lifetime);
+        throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-    
+
     public function doSelect(ConnectionInterface $con = null)
     {
         // check that the columns of the main class are already added (if this is the primary ModelCriteria)
@@ -964,10 +963,10 @@ abstract class ArticleQuery extends ModelCriteria
             $this->addSelfSelectColumns();
         }
         $this->configureSelectColumns();
-    
+
         $dbMap = Propel::getServiceContainer()->getDatabaseMap(ArticleTableMap::DATABASE_NAME);
         $db = Propel::getServiceContainer()->getAdapter(ArticleTableMap::DATABASE_NAME);
-    
+
         $key = $this->getQueryKey();
         if ($key && $this->cacheContains($key)) {
             $params = $this->getParams();
@@ -979,7 +978,7 @@ abstract class ArticleQuery extends ModelCriteria
                 $this->cacheStore($key, $sql);
             }
         }
-    
+
         try {
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);
@@ -988,15 +987,15 @@ abstract class ArticleQuery extends ModelCriteria
                 Propel::log($e->getMessage(), Propel::LOG_ERR);
                 throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), 0, $e);
             }
-    
+
         return $con->getDataFetcher($stmt);
     }
-    
+
     public function doCount(ConnectionInterface $con = null)
     {
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
         $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
-    
+
         $key = $this->getQueryKey();
         if ($key && $this->cacheContains($key)) {
             $params = $this->getParams();
@@ -1006,15 +1005,15 @@ abstract class ArticleQuery extends ModelCriteria
             if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
                 $this->addSelfSelectColumns();
             }
-    
+
             $this->configureSelectColumns();
-    
+
             $needsComplexCount = $this->getGroupByColumns()
                 || $this->getOffset()
                 || $this->getLimit()
                 || $this->getHaving()
                 || in_array(Criteria::DISTINCT, $this->getSelectModifiers());
-    
+
             $params = array();
             if ($needsComplexCount) {
                 if ($this->needsSelectAliases()) {
@@ -1030,12 +1029,12 @@ abstract class ArticleQuery extends ModelCriteria
                 $this->clearSelectColumns()->addSelectColumn('COUNT(*)');
                 $sql = $this->createSelectSql($params);
             }
-    
+
             if ($key) {
                 $this->cacheStore($key, $sql);
             }
         }
-    
+
         try {
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);
@@ -1044,7 +1043,7 @@ abstract class ArticleQuery extends ModelCriteria
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
         }
-    
+
         return $con->getDataFetcher($stmt);
     }
 

@@ -6,7 +6,10 @@ return [
             'connections' => [
                 'blog' => [
                     'adapter'    => 'mysql',
-                    'classname'  => 'Propel\Runtime\Connection\ConnectionWrapper',
+                    //debugging
+                    'classname'  => 'Propel\Runtime\Connection\DebugPDO',
+                    //production
+                    //'classname'  => 'Propel\Runtime\Connection\ConnectionWrapper',
                     'dsn'        => 'mysql:host=localhost;dbname=blog',
                     'user'       => 'blog',
                     'password'   => 'sacredskullBlog',
@@ -20,12 +23,8 @@ return [
             'log' => [
                 'defaultLogger' => [
                     'type' => 'stream',
-                    'path' => 'E:\WPNXM\www\blog\logs\propel.log',
-                    'level' => 300
-                ],
-                'bookstore' => [
-                    'type' => 'stream',
-                    'path' => 'E:\WPNXM\www\blog\logs\propel_blog.log',
+                    'path' => '/var/www/html/html/logs/propel.log',
+                    'level' => 100
                 ]
             ]
         ],

@@ -9,7 +9,9 @@
 		<column name="negative_votes" type="integer" required="false" defaultValue="0" />
 		<column name="theme_id" type="integer" required="true" defaultValue="0" />
 		<behavior name="timestampable"/>
-		<behavior name="query_cache" />
+		<behavior name="query_cache">
+			<parameter name="backend" value="custom" />
+		</behavior>
 		<foreign-key foreignTable="theme" phpName="Theme" onDelete="CASCADE" refPhpName="Article">
 			<reference local="theme_id" foreign="id"/>
 		</foreign-key>
@@ -20,7 +22,9 @@
 		<column name="name" type="varchar" size="30" required="true" primaryString="true" />
 		<column name="root" type="varchar" size="128" required="true" />
 		<column name="colour" type="varchar" size="10" required="false" defaultValue="blue" />
-		<behavior name="query_cache" />
+		<behavior name="query_cache">
+			<parameter name="backend" value="custom" />
+		</behavior>
 		<behavior name="sluggable" />
 	</table>
 	<table name="view" phpName="View">
@@ -28,7 +32,9 @@
 		<column name="ip_address" type="varchar" size="30" required="true" />
 		<column name="time" type="timestamp" defaultExpr="CURRENT_TIMESTAMP" required="true"/>
 		<column name="article_id" type="integer" required="true" defaultValue="0" />
-		<behavior name="query_cache" />
+		<behavior name="query_cache">
+			<parameter name="backend" value="custom" />
+		</behavior>
 		<foreign-key foreignTable="article" phpName="Article" onDelete="CASCADE" refPhpName="View">
 			<reference local="article_id" foreign="id"/>
 	 	</foreign-key>

@@ -25,11 +25,11 @@ use Propel\Runtime\Util\PropelDateTime;
 /**
  * Base class that represents a row from the 'view' table.
  *
- * 
+ *
  *
 * @package    propel.generator..Base
 */
-abstract class View implements ActiveRecordInterface 
+abstract class View implements ActiveRecordInterface
 {
     /**
      * TableMap class name
@@ -334,7 +334,7 @@ abstract class View implements ActiveRecordInterface
 
     /**
      * Get the [id] column value.
-     * 
+     *
      * @return int
      */
     public function getId()
@@ -344,7 +344,7 @@ abstract class View implements ActiveRecordInterface
 
     /**
      * Get the [ip_address] column value.
-     * 
+     *
      * @return string
      */
     public function getIpAddress()
@@ -354,7 +354,7 @@ abstract class View implements ActiveRecordInterface
 
     /**
      * Get the [optionally formatted] temporal [time] column value.
-     * 
+     *
      *
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
      *                            If format is NULL, then the raw DateTime object will be returned.
@@ -374,7 +374,7 @@ abstract class View implements ActiveRecordInterface
 
     /**
      * Get the [article_id] column value.
-     * 
+     *
      * @return int
      */
     public function getArticleId()
@@ -384,7 +384,7 @@ abstract class View implements ActiveRecordInterface
 
     /**
      * Set the value of [id] column.
-     * 
+     *
      * @param  int $v new value
      * @return $this|\View The current object (for fluent API support)
      */
@@ -404,7 +404,7 @@ abstract class View implements ActiveRecordInterface
 
     /**
      * Set the value of [ip_address] column.
-     * 
+     *
      * @param  string $v new value
      * @return $this|\View The current object (for fluent API support)
      */
@@ -424,7 +424,7 @@ abstract class View implements ActiveRecordInterface
 
     /**
      * Sets the value of [time] column to a normalized version of the date/time value specified.
-     * 
+     *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
      * @return $this|\View The current object (for fluent API support)
@@ -444,7 +444,7 @@ abstract class View implements ActiveRecordInterface
 
     /**
      * Set the value of [article_id] column.
-     * 
+     *
      * @param  int $v new value
      * @return $this|\View The current object (for fluent API support)
      */
@@ -708,10 +708,10 @@ abstract class View implements ActiveRecordInterface
                 // persist changes
                 if ($this->isNew()) {
                     $this->doInsert($con);
+                    $affectedRows += 1;
                 } else {
-                    $this->doUpdate($con);
+                    $affectedRows += $this->doUpdate($con);
                 }
-                $affectedRows += 1;
                 $this->resetModified();
             }
 
@@ -764,16 +764,16 @@ abstract class View implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'id':                        
+                    case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'ip_address':                        
+                    case 'ip_address':
                         $stmt->bindValue($identifier, $this->ip_address, PDO::PARAM_STR);
                         break;
-                    case 'time':                        
+                    case 'time':
                         $stmt->bindValue($identifier, $this->time ? $this->time->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
-                    case 'article_id':                        
+                    case 'article_id':
                         $stmt->bindValue($identifier, $this->article_id, PDO::PARAM_INT);
                         break;
                 }
@@ -889,10 +889,10 @@ abstract class View implements ActiveRecordInterface
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
         }
-        
+
         if ($includeForeignObjects) {
             if (null !== $this->aArticle) {
-                
+
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
                         $key = 'article';
@@ -903,7 +903,7 @@ abstract class View implements ActiveRecordInterface
                     default:
                         $key = 'Article';
                 }
-        
+
                 $result[$key] = $this->aArticle->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
@@ -999,19 +999,25 @@ abstract class View implements ActiveRecordInterface
      * $book->importFrom('JSON', '{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
      * </code>
      *
+     * You can specify the key type of the array by additionally passing one
+     * of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME,
+     * TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
+     * The default key type is the column's TableMap::TYPE_PHPNAME.
+     *
      * @param mixed $parser A AbstractParser instance,
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data The source data to import from
+     * @param string $keyType The type of keys the array uses.
      *
      * @return $this|\View The current object, for fluid interface
      */
-    public function importFrom($parser, $data)
+    public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
         if (!$parser instanceof AbstractParser) {
             $parser = AbstractParser::getParser($parser);
         }
 
-        $this->fromArray($parser->toArray($data), TableMap::TYPE_PHPNAME);
+        $this->fromArray($parser->toArray($data), $keyType);
 
         return $this;
     }
@@ -1080,7 +1086,7 @@ abstract class View implements ActiveRecordInterface
 
         return spl_object_hash($this);
     }
-        
+
     /**
      * Returns the primary key for this object (row).
      * @return int
