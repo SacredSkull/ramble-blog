@@ -50,6 +50,7 @@ $('document').ready( function (){
 		width: (iPhraseLength * 10) +  "px",
 		opacity: 1
 	}, 500);
+	$("#left-nav").mCustomScrollbar();
 });
 
 $(window).resize( function () {

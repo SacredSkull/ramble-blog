@@ -5,7 +5,9 @@ define('DEBUG', true);
 define('WIREFRAME', false);
 define('CERT_AUTH', false);
 define('SITE_ROOT', realpath(dirname(__FILE__)));
-define('USING_WINDOWS', (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'));
+if (defined('USING_WINDOWS')) {
+    define('USING_WINDOWS', (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'));
+}
 define('USING_BBCODE', false);
 
 if (DEBUG == true) {
@@ -44,13 +46,13 @@ if (!$defaultTheme->findPK(1)) {
 $app = new \Slim\Slim(array(
     'view' => new \Slim\Views\Twig(),
     'templates.path' => './templates',
-    'debug' => DEBUG_SLIM
+    'debug' => DEBUG_SLIM,
 ));
 
 $view = $app->view();
 
 $view->parserOptions = array(
-    'cache' => dirname(__FILE__) . '/cache',
+    'cache' => dirname(__FILE__).'/cache',
     'debug' => DEBUG,
 );
 
@@ -65,21 +67,16 @@ $random = rand(0, sizeof($sayings)-1);
 
 $quote = $sayings[$random];
 
-$jsonThemes = array();
 $themes = ThemeQuery::create()
     ->setQueryKey('get_all_themes')
     ->find();
-foreach ($themes as $theme) {
-    $jsonThemes[$theme->getId()] = $theme->getName();
-}
-$jsonThemes = json_encode($jsonThemes);
 
-$app->get('/test/', function() use ($app, $quote, $defaultTheme) {
-    /*
+$app->get('/test/', function () use ($app, $quote, $defaultTheme) {
+
     $generator = Faker\Factory::create('en_UK');
 
-
-    for ($i=1; $i < 60; $i++) {
+    /*
+    for ($i=1; $i < 200; $i++) {
         $theme = new Theme();
         $theme->setName($generator->company);
         $theme->setRoot('/');
@@ -90,7 +87,7 @@ $app->get('/test/', function() use ($app, $quote, $defaultTheme) {
         $post->setTitle($generator->realText(25));
         $post->setBody($generator->realText(700));
         $preparedFromWebFromArray = array('New Post', '#Excited');
-        $tagArray = implode(',', $preparedFromWebFromArray);
+        $tagArray = implode(';', $preparedFromWebFromArray);
         $post->setTags($tagArray);
         $post->setTheme($theme);
         $post->save();
@@ -119,7 +116,7 @@ $app->get('/test/', function() use ($app, $quote, $defaultTheme) {
     ));
 });
 
-$app->get('/', function () use ($app, $quote, $defaultTheme, $jsonThemes) {
+$app->get('/', function () use ($app, $quote, $defaultTheme, $themes) {
 
     $page = 1;
     $perPage = 10;
@@ -148,20 +145,26 @@ $app->get('/', function () use ($app, $quote, $defaultTheme, $jsonThemes) {
         'posts' => $posts,
         'current_page' => $page,
         'page_list' => $pagelist,
+        'themes' => $themes,
         'max_pages' => $maxPages,
-        'json_theme' => $jsonThemes,
     ));
 
     //*/
 
 });
 
-$app->get('/:page', function ($page) use ($app, $quote, $defaultTheme, $jsonThemes) {
+$app->get('/:page', function ($page) use ($app, $quote, $defaultTheme) {
 
     $maxPerPage = 10;
 
+    // Paginate() is currently not compatible with setQueryKey, and only caches the first
+    // count query, which is useless because then it causes Twig to throw an exception
+    // because propel threw an exception. It was horrible to diagnose and you'd better take
+    // your own word for it!
+    //
+    // TL;DR - paginate() & setQueryKey() do not play well together currently!
     $posts = ArticleQuery::create()
-        ->setQueryKey('homepage')
+        //->setQueryKey('homepage')
         ->orderById('DESC')
         ->paginate($page, $maxPerPage);
 
@@ -182,11 +185,10 @@ $app->get('/:page', function ($page) use ($app, $quote, $defaultTheme, $jsonThem
         'current_page' => $page,
         'page_list' => $pagelist,
         'max_pages' => $maxPages,
-        'json_theme' => $jsonThemes,
     ));
 })->conditions(array('page' => '\d{1,4}'));
 
-$app->get('/post/:idArticle', function($idArticle) use ($app, $quote) {
+$app->get('/post/:idArticle', function ($idArticle) use ($app, $quote) {
     $post = ArticleQuery::create()->findPK($idArticle);
     $app->render('post.php', array(
         'admin' => isAdmin(),
@@ -197,7 +199,7 @@ $app->get('/post/:idArticle', function($idArticle) use ($app, $quote) {
     ));
 })->conditions(array('idArticle' => '\d{1,10}'));
 
-$app->get('/post/:slugArticle', function($slugArticle) use ($app, $quote) {
+$app->get('/post/:slugArticle', function ($slugArticle) use ($app, $quote) {
     $post = ArticleQuery::create()->findOneBySlug($slugArticle);
     $app->render('post.php', array(
         'admin' => isAdmin(),
@@ -208,7 +210,7 @@ $app->get('/post/:slugArticle', function($slugArticle) use ($app, $quote) {
     ));
 });
 
-$app->get('/category/:slugTheme', function($slugTheme) use ($app, $quote) {
+$app->get('/category/:slugTheme', function ($slugTheme) use ($app, $quote) {
     $theme = ThemeQuery::create()->findOneBySlug($slugTheme);
     $themedPosts = ArticleQuery::create()->setQueryKey('posts_of_particular_theme')->filterByTheme($theme);
     echo "Hi!";
@@ -224,6 +226,7 @@ function isAdmin()
         if ($_SERVER['HTTPS'] == "on" && $_SERVER['VERIFIED'] == "SUCCESS") {
             return true;
         }
+
         return false;
     } else {
         // use a cookie for auth?
@@ -232,16 +235,17 @@ function isAdmin()
         if (in_array($ips, $allowedips)) {
             return true;
         }
+
         return false;
     }
 }
 
 // Admin page
-$app->get('/admin', function() use ($app, $defaultTheme) {
+$app->get('/admin', function () use ($app, $defaultTheme) {
 
     if (!isAdmin()) {
         $req = $app->request;
-        $app->flash('denied', "Sorry, you aren't allowed in ". $req->getResourceUri() . "!");
+        $app->flash('denied', "Sorry, you aren't allowed in ".$req->getResourceUri()."!");
         $app->redirect('/');
     }
 
@@ -256,7 +260,7 @@ $app->get('/admin', function() use ($app, $defaultTheme) {
     $post->save();
 
     $app->flash('mode', 'new');
-    $app->redirect('/admin/' . $post->getId());
+    $app->redirect('/admin/'.$post->getId());
 
     $quote = "  CREATION MODE!  ";
     $app->render('create.php', array(
@@ -283,16 +287,16 @@ $app->post('/admin', function() use ($app, $defaultTheme){
 */
 
 // Admin page, edit an existing post.
-$app->get('/admin/:id', function($id) use ($app) {
+$app->get('/admin/:id', function ($id) use ($app) {
     // Add an update
 
     if (!isAdmin()) {
         $req = $app->request;
-        $app->flash('denied', "Sorry, you aren't allowed in ". $req->getResourceUri() . "!");
+        $app->flash('denied', "Sorry, you aren't allowed in ".$req->getResourceUri()."!");
         $app->redirect('/');
     }
 
-    $quote = "  EDITING #". $id . "!  ";
+    $quote = "  EDITING #".$id."!  ";
 
     $post = ArticleQuery::create()->findPK($id);
 
@@ -305,9 +309,8 @@ $app->get('/admin/:id', function($id) use ($app) {
     ));
 })->conditions(array('id' => '\d{1,10}'));
 
-
 // Update post by ID
-$app->post('/admin/:id', function($id) use ($app) {
+$app->post('/admin/:id', function ($id) use ($app) {
     $post = ArticleQuery::create()->findOneById($id);
     $allPostVars = $app->request->post();
     $post->setTitle($allPostVars['title']);
@@ -316,8 +319,8 @@ $app->post('/admin/:id', function($id) use ($app) {
     echo $post->getId();
 })->conditions(array('id' => '\d{1,10}'));
 
-$app->get('/admin/:slugArticle', function($slugArticle) use ($app) {
-    $quote = "  EDITING SLUG ". $slugArticle . "!  ";
+$app->get('/admin/:slugArticle', function ($slugArticle) use ($app) {
+    $quote = "  EDITING SLUG ".$slugArticle."!  ";
     $post = ArticleQuery::create()->findOneBySlug($slugArticle);
     $app->render('create.php', array(
         'debug' => DEBUG,
@@ -332,11 +335,11 @@ function jsFriendly($string)
     return htmlspecialchars($string, ENT_QUOTES);
 }
 
-$app->group('/api', function() use ($app) {
-    $app->get('/post', function() use ($app) {
+$app->group('/api', function () use ($app) {
+    $app->get('/post', function () use ($app) {
         $app->redirect('/api/posts/', 301);
     });
-    $app->get('/posts/', function() {
+    $app->get('/posts/', function () {
         $allPosts = ArticleQuery::create()->find();
         $posts[] = null;
         foreach ($allPosts as $post) {
@@ -345,35 +348,35 @@ $app->group('/api', function() use ($app) {
             $posts[$post->getId()] = array('title' => $title_js_ready, 'theme' =>  $theme_js_ready, 'id' => $post->getId() );
         }
         unset($posts[0]);
-        echo json_encode((object)$posts);
+        echo json_encode((object) $posts);
     });
-    $app->get('/post/:id', function($id) {
+    $app->get('/post/:id', function ($id) {
         // Output JSON snippet of specific post Id
     })->conditions(array('id' => '\d{1,10}'));
 
-    $app->get('/post/:slugArticle', function($slugArticle) {
+    $app->get('/post/:slugArticle', function ($slugArticle) {
         // Output JSON snippet of specific post slug
     });
 });
 
-$app->get('/upload/:post', function($post) use ($app) {
-    isAdmin() ? $app->redirect('/admin/' . $post) : $app->redirect('/');
+$app->get('/upload/:post', function ($post) use ($app) {
+    isAdmin() ? $app->redirect('/admin/'.$post) : $app->redirect('/');
 });
 
-$app->post('/upload/:post', function($post) use ($app) {
+$app->post('/upload/:post', function ($post) use ($app) {
     if (isAdmin()) {
-        $local_path = SITE_ROOT . "\\images\\uploads\\" . $post . "\\" . str_replace(' ', '_', $_FILES['file']['name']);
-        $remote_path = "images/" . $post . "/" . str_replace(' ', '_', $_FILES['file']['name']);
+        $local_path = SITE_ROOT."\\images\\uploads\\".$post."\\".str_replace(' ', '_', $_FILES['file']['name']);
+        $remote_path = "images/".$post."/".str_replace(' ', '_', $_FILES['file']['name']);
 
         // Trivia: @ operator suppresses error messages!
-        @mkdir(SITE_ROOT . "\\images\\uploads\\" . $post);
+        @mkdir(SITE_ROOT."\\images\\uploads\\".$post);
 
         $temp = $_FILES['file']['tmp_name'];
         move_uploaded_file($temp, $local_path);
 
         if (USING_WINDOWS) {
             // Use ugly, inefficient exec() work-around for PATH issues & general DLL nonsense on Windows.
-            exec("E:\\WPNXM\\bin\\imagick\\convert.exe " . $local_path . " -resize 600x600 " . $local_path);
+            exec("E:\\WPNXM\\bin\\imagick\\convert.exe ".$local_path." -resize 600x600 ".$local_path);
         } else {
             // Nice, it's not a Windows environment! We can actually use OOP
             // programming without having to exec() something!
@@ -398,14 +401,14 @@ $app->post('/upload/:post', function($post) use ($app) {
                 'StorageClass' => 'STANDARD',
                 'Metadata'     => array(
                     'category' => 'image',
-                )
+                ),
             ));
-            echo '{"url": "https://d3dcca3zf9ihpu.cloudfront.net/' . $remote_path . '"}';
+            echo '{"url": "https://d3dcca3zf9ihpu.cloudfront.net/'.$remote_path.'"}';
         } catch (S3Exception $e) {
             echo '{"error": "'.$e->getMessage().'"}';
         }
     } else {
-        $app->flash('denied', "Sorry, you aren't allowed in ". $req->getResourceUri() . "!");
+        $app->flash('denied', "Sorry, you aren't allowed in ".$req->getResourceUri()."!");
         $app->redirect('/');
     }
 })->conditions(array('post' => '\d{1,10}'));

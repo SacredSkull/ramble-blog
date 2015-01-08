@@ -5,12 +5,18 @@
   src: url('../fonts/Chunkfive.otf');
   font-weight: 400;
 }
+
+html, body{
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: 'Roboto Slab', serif;
   //background-image: url("../img/green.png");
   //background-repeat: repeat;
   background-color: #6F256F;
-  color: #A8A8A8;
+  color: #595959;
 }
 
 #wrapper{
@@ -293,14 +299,18 @@ form .input-group{
 // Content & whitespace
 
 #main{
-  overflow:auto;
-  padding-top: 120px;
-  padding-bottom: 200px;
+  overflow-x: visible;
+  overflow-y: auto;
+  height: 100%;
+  margin-top: 120px;
+  //padding-bottom: 200px;
+  margin-left: -20px;
+  margin-right: -20px;
 }
 
 #whitespace{
   height: 150px;
-  background-color: #2D2D2D;
+  background-color: #F7F7F7;
   // Below: enables shadows on borders of column, see below #content
   //box-shadow: inset 25px 0px 25px -25px rgba(0, 0, 0, 0.45), inset -25px 0px 25px -25px rgba(0, 0, 0, 0.45);
   padding: 25px;
@@ -315,13 +325,59 @@ form .input-group{
 }
 
 #left-nav{
+  position: fixed;
+  height: 85%;
   padding-right: 10px;
-  font-family: 'Droid Sans', sans-serif;
-  //background-color: #fff;
+  padding-left: 0px;
+  //font-family: 'Droid Sans', sans-serif;
+  background-color: #282828;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin-right: -20px;
+  width: 450px;
 }
 
-#left-nav>div{
-  padding: 10px;
+#left-nav h2{
+  padding-left: 10px;
+}
+
+#left-nav-categories{
+  width: 400px;
+}
+
+.category{
+  float: left;
+  clear: both;
+  width: 100%;
+  height: 40px;
+  background-color: #3C3C3C;
+  border-bottom: medium solid #292929;
+  padding-top: 9px;
+  padding-left: 15px;
+  overflow:hidden;
+  margin-bottom: 2px;
+}
+
+.category img{
+  float: left;
+  padding: 0px;
+  padding-right: 10px;
+}
+
+.category p{
+  padding-left: 10px;
+}
+
+#spacer{
+  position: relative;
+}
+
+#left-nav-cap{
+  position: fixed;
+  bottom: 0px;
+  width: inherit;
+  height: 30px;
+  background-color: #282828;
 }
 
 #content {
@@ -332,8 +388,8 @@ form .input-group{
   padding-left: 30px;
   // Below: enables shadows on borders of column, see above #whitespace
   //box-shadow: inset 25px 0px 25px -25px rgba(0, 0, 0, 0.45), inset -25px 0px 25px -25px rgba(0, 0, 0, 0.45);
-  background-color: #2D2D2D;
-  min-height: 500px;
+  background-color: #F7F7F7;
+  min-height: 300px;
 }
 
 #end-poll-container{
@@ -363,15 +419,24 @@ form .input-group{
 }
 
 // Content & whitespace
+
+#spacer{
+  margin-right: -20px;
+  margin-left: -20px;
+}
+
 // END
 
 .footer {
   position: relative;
-  margin-top: -170px;
+  margin-bottom: 100px;
   clear:both;
   box-shadow: 10px 5px 5px rgba(127, 0, 0, 0.2);
-  height: 170px;
+  height: 300px;
   background: #375d81;
+  color: #fff;
+  margin-right: -20px;
+  margin-left: -20px;
 }
 
 #footer-white{

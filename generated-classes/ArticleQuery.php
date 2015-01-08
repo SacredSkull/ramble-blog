@@ -13,6 +13,8 @@ use Base\ArticleQuery as BaseArticleQuery;
  *
  */
 
+//define('USING_WINDOWS', (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'));
+
 class ArticleQuery extends BaseArticleQuery
 {
 	public function cacheContains($key){
@@ -33,16 +35,30 @@ class ArticleQuery extends BaseArticleQuery
 	}
 
 	protected function getCacheBackend(){
-		self::$cacheBackend = new Memcached();
-		$servers = self::$cacheBackend->getServerList();
-		if(is_array($servers)) {
-			foreach ($servers as $server){
-				if($server['host'] == 'localhost' and $server['port'] == '11211'){
-					return self::$cacheBackend;
+		if(USING_WINDOWS == false){
+			self::$cacheBackend = new Memcached();
+			$servers = self::$cacheBackend->getServerList();
+			if(is_array($servers)) {
+				foreach ($servers as $server){
+					if($server['host'] == 'localhost' and $server['port'] == '11211'){
+						return self::$cacheBackend;
+					}
 				}
 			}
+			self::$cacheBackend->addServer('localhost', 11211);
+			return self::$cacheBackend;
+		} else {
+			self::$cacheBackend = new Memcache();
+			$servers = self::$cacheBackend->getServerList();
+			if(is_array($servers)) {
+				foreach ($servers as $server){
+					if($server['host'] == 'localhost' and $server['port'] == '11211'){
+						return self::$cacheBackend;
+					}
+				}
+			}
+			self::$cacheBackend->addServer('localhost', 11211);
+			return self::$cacheBackend;
 		}
-		self::$cacheBackend->addServer('localhost', 11211);
-		return self::$cacheBackend;
 	}
 }

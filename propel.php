@@ -23,7 +23,8 @@ return [
             'log' => [
                 'defaultLogger' => [
                     'type' => 'stream',
-                    'path' => '/var/www/html/html/logs/propel.log',
+                    //'path' => '/var/www/html/html/logs/propel.log',
+                    'path' => 'E:/WPNXM/www/blog/logs/propel.log',
                     'level' => 100
                 ]
             ]

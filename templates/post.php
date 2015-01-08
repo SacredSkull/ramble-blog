@@ -5,7 +5,7 @@
 						<hr>
 						<h4>{{post.getCreatedAt|date("d l, F Y G:i")}}</h4>
 					{% endblock title %}
-					{% block left_nav %}
+					{% block left_side %}
 						<div class="row">
 							<h3>{{ post.pollquestion }}</h3>
 						</div>
@@ -22,7 +22,7 @@
 								</div>
 							</div>
 						</div>
-					{% endblock left_nav %}
+					{% endblock left_side %}
 					{% block img_title %}
 							<div style="position: absolute; top: 120px; width: 100%; height: 260px;">
 								<div id="post_img_container" style="text-align: center;">

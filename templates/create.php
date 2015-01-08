@@ -122,9 +122,9 @@
 			$('#form_image').change(function(){
 
 				var container, txtToAdd, altText, titleText;
-                var file_data = $('#form_image').prop('files')[0];   
+                var file_data = $('#form_image').prop('files')[0];
                 console.log(file_data);
-                var form_data = new FormData();                  
+                var form_data = new FormData();
                 form_data.append('file', file_data);
 
 				if($('#form_image').val().length > 1){
