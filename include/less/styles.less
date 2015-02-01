@@ -6,6 +6,11 @@
   font-weight: 400;
 }
 
+.no-side-margins{
+  margin-left: 10px;
+  margin-right: 0px;
+}
+
 html, body{
   height: 100%;
   overflow: hidden;
@@ -44,9 +49,15 @@ a:hover,
 a:active {
   text-decoration: none;
 }
+
+a:active {
+  outline:none;
+}
+
 a:visited {
   text-decoration: none;
-  color: #F3FFE2;
+  font-style: italic;
+  color: #F26101;
 }
 
 hr{
@@ -90,6 +101,14 @@ header {
   z-index: 100;
 }
 
+header a, header a:visited, header a:active{
+  color: #fff;
+}
+
+a.title_link{
+  color: #F26101;
+}
+
 #first-word{
   font-family: 'Passion One', arial;
   font-size: 35px;
@@ -130,6 +149,11 @@ border: #CC5500 solid 6px;
 -webkit-border-radius: 13px;
 -moz-border-radius: 13px;
 border-radius: 13px;
+}
+
+.post-cont-link{
+  font-size: 50px;
+  height: 50px;
 }
 
 .bubble:after
@@ -287,6 +311,10 @@ form .input-group{
   background-color: #FF6600;
 }
 
+#post_img{
+  max-width: 100%;
+}
+
 .head-nav-link > span{
   position: relative;
   bottom: 3px;
@@ -303,9 +331,41 @@ form .input-group{
   overflow-y: auto;
   height: 100%;
   margin-top: 120px;
-  //padding-bottom: 200px;
   margin-left: -20px;
   margin-right: -20px;
+}
+
+#left-cont{
+  margin-left: 0;
+  margin-right: 0;
+}
+
+#post_details_cont{
+  position: fixed;
+  width: 25%;
+  top: 120px;
+  background: #282828;
+}
+
+#post_spacer{
+  height: 20px;
+  background: #282828;
+  margin-left: -20px;
+  margin-right: -20px;
+  z-index: -1;
+}
+
+#post_details{
+  background: #484848;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 40px;
+  padding-right: 40px;
+  min-height: 100%;
+}
+
+#right-cont{
+
 }
 
 #whitespace{
@@ -315,6 +375,8 @@ form .input-group{
   //box-shadow: inset 25px 0px 25px -25px rgba(0, 0, 0, 0.45), inset -25px 0px 25px -25px rgba(0, 0, 0, 0.45);
   padding: 25px;
   position: relative;
+  // Stops post image spacer from overlapping
+  z-index: 1;
 }
 
 #whitespace>h4{
@@ -437,6 +499,10 @@ form .input-group{
   color: #fff;
   margin-right: -20px;
   margin-left: -20px;
+}
+
+.footer a, .footer a:visited, .footer a:active{
+  color: #fff;
 }
 
 #footer-white{

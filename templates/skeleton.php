@@ -64,13 +64,10 @@
 				{% endspaceless %}
 			</div>
 		</header>
-
+        {% block additional_posthead %}
+        {% endblock additional_posthead %}
 		<div id="main" class="container-fluid">
 			{% block article_cont %}
-			<div style="height: 200px;" class="row">
-				{% block img_title %}
-				{% endblock img_title %}
-			</div>
 			<div class="row">
 				<div class="col-md-3"></div>
 				<div id="whitespace" class="col-md-6">
@@ -80,8 +77,7 @@
 				<div class="col-md-3"></div>
 			</div>
 			<div class="row">
-				<div class="col-md-1"></div>
-				<div id="left-side" class="col-md-2">
+				<div id="left-cont" class="col-md-3">
 					{% block left_side %}
 					{% endblock left_side %}
 				</div>
@@ -90,7 +86,7 @@
 						{% if admin %}<a class="pull-right" title="Edit Post" style="font-size: 32px;" href="/admin/{{post.getId}}"><span class="glyphicon glyphicon-edit"></span></a>{% endif %}
 					{% endblock content %}
 				</div>
-				<div id="right-nav" class="col-md-2">
+				<div id="right-cont" class="col-md-2">
 					{% block right_nav %}
 					{% endblock right_nav %}
 				</div>
@@ -102,8 +98,8 @@
 				<div class="container">
 					<br>
 					<div class="row">
-						<p class="pull-left">Coding this blog from scratch was great fun. Why not try yourself?</p>
-						<p class="pull-right"><!--sse-->Contact me at clotters@gmail.com<!--/sse--></p>
+						<p class="pull-left">I thoroughly recommend creating a blog as your next coding project!</p>
+						<!--sse--><p class="pull-right">If you prefer, email me directly: clotters@gmail.com</p><!--/sse-->
 					</div>
 					<br>
 					<br>

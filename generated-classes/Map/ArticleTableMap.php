@@ -59,7 +59,7 @@ class ArticleTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 10;
+    const NUM_COLUMNS = 11;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ArticleTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 10;
+    const NUM_HYDRATE_COLUMNS = 11;
 
     /**
      * the column name for the id field
@@ -107,6 +107,11 @@ class ArticleTableMap extends TableMap
     const COL_THEME_ID = 'article.theme_id';
 
     /**
+     * the column name for the draft field
+     */
+    const COL_DRAFT = 'article.draft';
+
+    /**
      * the column name for the created_at field
      */
     const COL_CREATED_AT = 'article.created_at';
@@ -133,11 +138,11 @@ class ArticleTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Title', 'Body', 'Tags', 'PositiveVotes', 'NegativeVotes', 'ThemeId', 'CreatedAt', 'UpdatedAt', 'Slug', ),
-        self::TYPE_CAMELNAME     => array('id', 'title', 'body', 'tags', 'positiveVotes', 'negativeVotes', 'themeId', 'createdAt', 'updatedAt', 'slug', ),
-        self::TYPE_COLNAME       => array(ArticleTableMap::COL_ID, ArticleTableMap::COL_TITLE, ArticleTableMap::COL_BODY, ArticleTableMap::COL_TAGS, ArticleTableMap::COL_POSITIVE_VOTES, ArticleTableMap::COL_NEGATIVE_VOTES, ArticleTableMap::COL_THEME_ID, ArticleTableMap::COL_CREATED_AT, ArticleTableMap::COL_UPDATED_AT, ArticleTableMap::COL_SLUG, ),
-        self::TYPE_FIELDNAME     => array('id', 'title', 'body', 'tags', 'positive_votes', 'negative_votes', 'theme_id', 'created_at', 'updated_at', 'slug', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+        self::TYPE_PHPNAME       => array('Id', 'Title', 'Body', 'Tags', 'PositiveVotes', 'NegativeVotes', 'ThemeId', 'Draft', 'CreatedAt', 'UpdatedAt', 'Slug', ),
+        self::TYPE_CAMELNAME     => array('id', 'title', 'body', 'tags', 'positiveVotes', 'negativeVotes', 'themeId', 'draft', 'createdAt', 'updatedAt', 'slug', ),
+        self::TYPE_COLNAME       => array(ArticleTableMap::COL_ID, ArticleTableMap::COL_TITLE, ArticleTableMap::COL_BODY, ArticleTableMap::COL_TAGS, ArticleTableMap::COL_POSITIVE_VOTES, ArticleTableMap::COL_NEGATIVE_VOTES, ArticleTableMap::COL_THEME_ID, ArticleTableMap::COL_DRAFT, ArticleTableMap::COL_CREATED_AT, ArticleTableMap::COL_UPDATED_AT, ArticleTableMap::COL_SLUG, ),
+        self::TYPE_FIELDNAME     => array('id', 'title', 'body', 'tags', 'positive_votes', 'negative_votes', 'theme_id', 'draft', 'created_at', 'updated_at', 'slug', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
     /**
@@ -147,11 +152,11 @@ class ArticleTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Title' => 1, 'Body' => 2, 'Tags' => 3, 'PositiveVotes' => 4, 'NegativeVotes' => 5, 'ThemeId' => 6, 'CreatedAt' => 7, 'UpdatedAt' => 8, 'Slug' => 9, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'title' => 1, 'body' => 2, 'tags' => 3, 'positiveVotes' => 4, 'negativeVotes' => 5, 'themeId' => 6, 'createdAt' => 7, 'updatedAt' => 8, 'slug' => 9, ),
-        self::TYPE_COLNAME       => array(ArticleTableMap::COL_ID => 0, ArticleTableMap::COL_TITLE => 1, ArticleTableMap::COL_BODY => 2, ArticleTableMap::COL_TAGS => 3, ArticleTableMap::COL_POSITIVE_VOTES => 4, ArticleTableMap::COL_NEGATIVE_VOTES => 5, ArticleTableMap::COL_THEME_ID => 6, ArticleTableMap::COL_CREATED_AT => 7, ArticleTableMap::COL_UPDATED_AT => 8, ArticleTableMap::COL_SLUG => 9, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'title' => 1, 'body' => 2, 'tags' => 3, 'positive_votes' => 4, 'negative_votes' => 5, 'theme_id' => 6, 'created_at' => 7, 'updated_at' => 8, 'slug' => 9, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Title' => 1, 'Body' => 2, 'Tags' => 3, 'PositiveVotes' => 4, 'NegativeVotes' => 5, 'ThemeId' => 6, 'Draft' => 7, 'CreatedAt' => 8, 'UpdatedAt' => 9, 'Slug' => 10, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'title' => 1, 'body' => 2, 'tags' => 3, 'positiveVotes' => 4, 'negativeVotes' => 5, 'themeId' => 6, 'draft' => 7, 'createdAt' => 8, 'updatedAt' => 9, 'slug' => 10, ),
+        self::TYPE_COLNAME       => array(ArticleTableMap::COL_ID => 0, ArticleTableMap::COL_TITLE => 1, ArticleTableMap::COL_BODY => 2, ArticleTableMap::COL_TAGS => 3, ArticleTableMap::COL_POSITIVE_VOTES => 4, ArticleTableMap::COL_NEGATIVE_VOTES => 5, ArticleTableMap::COL_THEME_ID => 6, ArticleTableMap::COL_DRAFT => 7, ArticleTableMap::COL_CREATED_AT => 8, ArticleTableMap::COL_UPDATED_AT => 9, ArticleTableMap::COL_SLUG => 10, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'title' => 1, 'body' => 2, 'tags' => 3, 'positive_votes' => 4, 'negative_votes' => 5, 'theme_id' => 6, 'draft' => 7, 'created_at' => 8, 'updated_at' => 9, 'slug' => 10, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
     /**
@@ -179,6 +184,7 @@ class ArticleTableMap extends TableMap
         $this->addColumn('positive_votes', 'PositiveVotes', 'INTEGER', false, null, 0);
         $this->addColumn('negative_votes', 'NegativeVotes', 'INTEGER', false, null, 0);
         $this->addForeignKey('theme_id', 'ThemeId', 'INTEGER', 'theme', 'id', true, null, 0);
+        $this->addColumn('draft', 'Draft', 'BOOLEAN', false, 1, false);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('slug', 'Slug', 'VARCHAR', false, 255, null);
@@ -260,7 +266,7 @@ class ArticleTableMap extends TableMap
                 : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
         ];
     }
-
+    
     /**
      * The class that the tableMap will make instances of.
      *
@@ -321,7 +327,7 @@ class ArticleTableMap extends TableMap
     public static function populateObjects(DataFetcherInterface $dataFetcher)
     {
         $results = array();
-
+    
         // set the class once to avoid overhead in the loop
         $cls = static::getOMClass(false);
         // populate the object(s)
@@ -365,6 +371,7 @@ class ArticleTableMap extends TableMap
             $criteria->addSelectColumn(ArticleTableMap::COL_POSITIVE_VOTES);
             $criteria->addSelectColumn(ArticleTableMap::COL_NEGATIVE_VOTES);
             $criteria->addSelectColumn(ArticleTableMap::COL_THEME_ID);
+            $criteria->addSelectColumn(ArticleTableMap::COL_DRAFT);
             $criteria->addSelectColumn(ArticleTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(ArticleTableMap::COL_UPDATED_AT);
             $criteria->addSelectColumn(ArticleTableMap::COL_SLUG);
@@ -376,6 +383,7 @@ class ArticleTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.positive_votes');
             $criteria->addSelectColumn($alias . '.negative_votes');
             $criteria->addSelectColumn($alias . '.theme_id');
+            $criteria->addSelectColumn($alias . '.draft');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
             $criteria->addSelectColumn($alias . '.slug');

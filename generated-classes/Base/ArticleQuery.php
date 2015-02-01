@@ -18,7 +18,7 @@ use Propel\Runtime\Exception\PropelException;
 /**
  * Base class that represents a query for the 'article' table.
  *
- *
+ * 
  *
  * @method     ChildArticleQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildArticleQuery orderByTitle($order = Criteria::ASC) Order by the title column
@@ -27,6 +27,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticleQuery orderByPositiveVotes($order = Criteria::ASC) Order by the positive_votes column
  * @method     ChildArticleQuery orderByNegativeVotes($order = Criteria::ASC) Order by the negative_votes column
  * @method     ChildArticleQuery orderByThemeId($order = Criteria::ASC) Order by the theme_id column
+ * @method     ChildArticleQuery orderByDraft($order = Criteria::ASC) Order by the draft column
  * @method     ChildArticleQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildArticleQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  * @method     ChildArticleQuery orderBySlug($order = Criteria::ASC) Order by the slug column
@@ -38,6 +39,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticleQuery groupByPositiveVotes() Group by the positive_votes column
  * @method     ChildArticleQuery groupByNegativeVotes() Group by the negative_votes column
  * @method     ChildArticleQuery groupByThemeId() Group by the theme_id column
+ * @method     ChildArticleQuery groupByDraft() Group by the draft column
  * @method     ChildArticleQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildArticleQuery groupByUpdatedAt() Group by the updated_at column
  * @method     ChildArticleQuery groupBySlug() Group by the slug column
@@ -66,6 +68,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticle findOneByPositiveVotes(int $positive_votes) Return the first ChildArticle filtered by the positive_votes column
  * @method     ChildArticle findOneByNegativeVotes(int $negative_votes) Return the first ChildArticle filtered by the negative_votes column
  * @method     ChildArticle findOneByThemeId(int $theme_id) Return the first ChildArticle filtered by the theme_id column
+ * @method     ChildArticle findOneByDraft(boolean $draft) Return the first ChildArticle filtered by the draft column
  * @method     ChildArticle findOneByCreatedAt(string $created_at) Return the first ChildArticle filtered by the created_at column
  * @method     ChildArticle findOneByUpdatedAt(string $updated_at) Return the first ChildArticle filtered by the updated_at column
  * @method     ChildArticle findOneBySlug(string $slug) Return the first ChildArticle filtered by the slug column
@@ -78,6 +81,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticle[]|ObjectCollection findByPositiveVotes(int $positive_votes) Return ChildArticle objects filtered by the positive_votes column
  * @method     ChildArticle[]|ObjectCollection findByNegativeVotes(int $negative_votes) Return ChildArticle objects filtered by the negative_votes column
  * @method     ChildArticle[]|ObjectCollection findByThemeId(int $theme_id) Return ChildArticle objects filtered by the theme_id column
+ * @method     ChildArticle[]|ObjectCollection findByDraft(boolean $draft) Return ChildArticle objects filtered by the draft column
  * @method     ChildArticle[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildArticle objects filtered by the created_at column
  * @method     ChildArticle[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildArticle objects filtered by the updated_at column
  * @method     ChildArticle[]|ObjectCollection findBySlug(string $slug) Return ChildArticle objects filtered by the slug column
@@ -86,11 +90,11 @@ use Propel\Runtime\Exception\PropelException;
  */
 abstract class ArticleQuery extends ModelCriteria
 {
-
+    
     // query_cache behavior
     protected $queryKey = '';
     protected static $cacheBackend;
-
+                
     /**
      * Initializes internal state of \Base\ArticleQuery object.
      *
@@ -176,9 +180,9 @@ abstract class ArticleQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, title, body, tags, positive_votes, negative_votes, theme_id, created_at, updated_at, slug FROM article WHERE id = :p0';
+        $sql = 'SELECT id, title, body, tags, positive_votes, negative_votes, theme_id, draft, created_at, updated_at, slug FROM article WHERE id = :p0';
         try {
-            $stmt = $con->prepare($sql);
+            $stmt = $con->prepare($sql);            
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
             $stmt->execute();
         } catch (Exception $e) {
@@ -520,6 +524,33 @@ abstract class ArticleQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the draft column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByDraft(true); // WHERE draft = true
+     * $query->filterByDraft('yes'); // WHERE draft = true
+     * </code>
+     *
+     * @param     boolean|string $draft The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildArticleQuery The current query, for fluid interface
+     */
+    public function filterByDraft($draft = null, $comparison = null)
+    {
+        if (is_string($draft)) {
+            $draft = in_array(strtolower($draft), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(ArticleTableMap::COL_DRAFT, $draft, $comparison);
+    }
+
+    /**
      * Filter the query on the created_at column
      *
      * Example usage:
@@ -851,9 +882,9 @@ abstract class ArticleQuery extends ModelCriteria
         // for more than one table or we could emulating ON DELETE CASCADE, etc.
         return $con->transaction(function () use ($con, $criteria) {
             $affectedRows = 0; // initialize var to track total num of affected rows
-
+            
             ArticleTableMap::removeInstanceFromPool($criteria);
-
+        
             $affectedRows += ModelCriteria::delete($con);
             ArticleTableMap::clearRelatedInstancePool();
 
@@ -862,7 +893,7 @@ abstract class ArticleQuery extends ModelCriteria
     }
 
     // timestampable behavior
-
+    
     /**
      * Filter by the latest updated
      *
@@ -874,7 +905,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addUsingAlias(ArticleTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
     }
-
+    
     /**
      * Order by update date desc
      *
@@ -884,7 +915,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addDescendingOrderByColumn(ArticleTableMap::COL_UPDATED_AT);
     }
-
+    
     /**
      * Order by update date asc
      *
@@ -894,7 +925,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addAscendingOrderByColumn(ArticleTableMap::COL_UPDATED_AT);
     }
-
+    
     /**
      * Order by create date desc
      *
@@ -904,7 +935,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addDescendingOrderByColumn(ArticleTableMap::COL_CREATED_AT);
     }
-
+    
     /**
      * Filter by the latest created
      *
@@ -916,7 +947,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addUsingAlias(ArticleTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
     }
-
+    
     /**
      * Order by create date asc
      *
@@ -928,34 +959,34 @@ abstract class ArticleQuery extends ModelCriteria
     }
 
     // query_cache behavior
-
+    
     public function setQueryKey($key)
     {
         $this->queryKey = $key;
-
+    
         return $this;
     }
-
+    
     public function getQueryKey()
     {
         return $this->queryKey;
     }
-
+    
     public function cacheContains($key)
     {
         throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-
+    
     public function cacheFetch($key)
     {
         throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-
+    
     public function cacheStore($key, $value, $lifetime = 3600)
     {
         throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-
+    
     public function doSelect(ConnectionInterface $con = null)
     {
         // check that the columns of the main class are already added (if this is the primary ModelCriteria)
@@ -963,10 +994,10 @@ abstract class ArticleQuery extends ModelCriteria
             $this->addSelfSelectColumns();
         }
         $this->configureSelectColumns();
-
+    
         $dbMap = Propel::getServiceContainer()->getDatabaseMap(ArticleTableMap::DATABASE_NAME);
         $db = Propel::getServiceContainer()->getAdapter(ArticleTableMap::DATABASE_NAME);
-
+    
         $key = $this->getQueryKey();
         if ($key && $this->cacheContains($key)) {
             $params = $this->getParams();
@@ -978,7 +1009,7 @@ abstract class ArticleQuery extends ModelCriteria
                 $this->cacheStore($key, $sql);
             }
         }
-
+    
         try {
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);
@@ -987,15 +1018,15 @@ abstract class ArticleQuery extends ModelCriteria
                 Propel::log($e->getMessage(), Propel::LOG_ERR);
                 throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), 0, $e);
             }
-
+    
         return $con->getDataFetcher($stmt);
     }
-
+    
     public function doCount(ConnectionInterface $con = null)
     {
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
         $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
-
+    
         $key = $this->getQueryKey();
         if ($key && $this->cacheContains($key)) {
             $params = $this->getParams();
@@ -1005,15 +1036,15 @@ abstract class ArticleQuery extends ModelCriteria
             if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
                 $this->addSelfSelectColumns();
             }
-
+    
             $this->configureSelectColumns();
-
+    
             $needsComplexCount = $this->getGroupByColumns()
                 || $this->getOffset()
                 || $this->getLimit()
                 || $this->getHaving()
                 || in_array(Criteria::DISTINCT, $this->getSelectModifiers());
-
+    
             $params = array();
             if ($needsComplexCount) {
                 if ($this->needsSelectAliases()) {
@@ -1029,12 +1060,12 @@ abstract class ArticleQuery extends ModelCriteria
                 $this->clearSelectColumns()->addSelectColumn('COUNT(*)');
                 $sql = $this->createSelectSql($params);
             }
-
+    
             if ($key) {
                 $this->cacheStore($key, $sql);
             }
         }
-
+    
         try {
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);
@@ -1043,7 +1074,7 @@ abstract class ArticleQuery extends ModelCriteria
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
         }
-
+    
         return $con->getDataFetcher($stmt);
     }
 

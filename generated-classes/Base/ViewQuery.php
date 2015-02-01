@@ -18,7 +18,7 @@ use Propel\Runtime\Exception\PropelException;
 /**
  * Base class that represents a query for the 'view' table.
  *
- *
+ * 
  *
  * @method     ChildViewQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildViewQuery orderByIpAddress($order = Criteria::ASC) Order by the ip_address column
@@ -58,11 +58,11 @@ use Propel\Runtime\Exception\PropelException;
  */
 abstract class ViewQuery extends ModelCriteria
 {
-
+    
     // query_cache behavior
     protected $queryKey = '';
     protected static $cacheBackend;
-
+                
     /**
      * Initializes internal state of \Base\ViewQuery object.
      *
@@ -150,7 +150,7 @@ abstract class ViewQuery extends ModelCriteria
     {
         $sql = 'SELECT id, ip_address, time, article_id FROM view WHERE id = :p0';
         try {
-            $stmt = $con->prepare($sql);
+            $stmt = $con->prepare($sql);            
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
             $stmt->execute();
         } catch (Exception $e) {
@@ -538,9 +538,9 @@ abstract class ViewQuery extends ModelCriteria
         // for more than one table or we could emulating ON DELETE CASCADE, etc.
         return $con->transaction(function () use ($con, $criteria) {
             $affectedRows = 0; // initialize var to track total num of affected rows
-
+            
             ViewTableMap::removeInstanceFromPool($criteria);
-
+        
             $affectedRows += ModelCriteria::delete($con);
             ViewTableMap::clearRelatedInstancePool();
 
@@ -549,34 +549,34 @@ abstract class ViewQuery extends ModelCriteria
     }
 
     // query_cache behavior
-
+    
     public function setQueryKey($key)
     {
         $this->queryKey = $key;
-
+    
         return $this;
     }
-
+    
     public function getQueryKey()
     {
         return $this->queryKey;
     }
-
+    
     public function cacheContains($key)
     {
         throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-
+    
     public function cacheFetch($key)
     {
         throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-
+    
     public function cacheStore($key, $value, $lifetime = 3600)
     {
         throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-
+    
     public function doSelect(ConnectionInterface $con = null)
     {
         // check that the columns of the main class are already added (if this is the primary ModelCriteria)
@@ -584,10 +584,10 @@ abstract class ViewQuery extends ModelCriteria
             $this->addSelfSelectColumns();
         }
         $this->configureSelectColumns();
-
+    
         $dbMap = Propel::getServiceContainer()->getDatabaseMap(ViewTableMap::DATABASE_NAME);
         $db = Propel::getServiceContainer()->getAdapter(ViewTableMap::DATABASE_NAME);
-
+    
         $key = $this->getQueryKey();
         if ($key && $this->cacheContains($key)) {
             $params = $this->getParams();
@@ -599,7 +599,7 @@ abstract class ViewQuery extends ModelCriteria
                 $this->cacheStore($key, $sql);
             }
         }
-
+    
         try {
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);
@@ -608,15 +608,15 @@ abstract class ViewQuery extends ModelCriteria
                 Propel::log($e->getMessage(), Propel::LOG_ERR);
                 throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), 0, $e);
             }
-
+    
         return $con->getDataFetcher($stmt);
     }
-
+    
     public function doCount(ConnectionInterface $con = null)
     {
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
         $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
-
+    
         $key = $this->getQueryKey();
         if ($key && $this->cacheContains($key)) {
             $params = $this->getParams();
@@ -626,15 +626,15 @@ abstract class ViewQuery extends ModelCriteria
             if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
                 $this->addSelfSelectColumns();
             }
-
+    
             $this->configureSelectColumns();
-
+    
             $needsComplexCount = $this->getGroupByColumns()
                 || $this->getOffset()
                 || $this->getLimit()
                 || $this->getHaving()
                 || in_array(Criteria::DISTINCT, $this->getSelectModifiers());
-
+    
             $params = array();
             if ($needsComplexCount) {
                 if ($this->needsSelectAliases()) {
@@ -650,12 +650,12 @@ abstract class ViewQuery extends ModelCriteria
                 $this->clearSelectColumns()->addSelectColumn('COUNT(*)');
                 $sql = $this->createSelectSql($params);
             }
-
+    
             if ($key) {
                 $this->cacheStore($key, $sql);
             }
         }
-
+    
         try {
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);
@@ -664,7 +664,7 @@ abstract class ViewQuery extends ModelCriteria
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
         }
-
+    
         return $con->getDataFetcher($stmt);
     }
 

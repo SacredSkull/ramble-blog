@@ -1,5 +1,3 @@
-var bPinned = false;
-
 $("header").hover(function(){
 	$("#first-word").css({color: "#fff"});
 	$("#second-word").css({color: "#F26101"});
@@ -25,17 +23,8 @@ $("header").hover(function(){
 	}, 300,function(){
 		//Animation finished
 	});
-	if(!bPinned){
-		$("header").animate({
-
-		}, 300, function(){
-			//Animation finished
-		});
-		$("header.span").animate({
-			top: "-10"
-		}, 300);
-	}
 });
+
 $("h1").click(function(){
 
 });

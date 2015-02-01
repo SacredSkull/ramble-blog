@@ -25,11 +25,11 @@ use Propel\Runtime\Parser\AbstractParser;
 /**
  * Base class that represents a row from the 'theme' table.
  *
- *
+ * 
  *
 * @package    propel.generator..Base
 */
-abstract class Theme implements ActiveRecordInterface
+abstract class Theme implements ActiveRecordInterface 
 {
     /**
      * TableMap class name
@@ -346,7 +346,7 @@ abstract class Theme implements ActiveRecordInterface
 
     /**
      * Get the [id] column value.
-     *
+     * 
      * @return int
      */
     public function getId()
@@ -356,7 +356,7 @@ abstract class Theme implements ActiveRecordInterface
 
     /**
      * Get the [name] column value.
-     *
+     * 
      * @return string
      */
     public function getName()
@@ -366,7 +366,7 @@ abstract class Theme implements ActiveRecordInterface
 
     /**
      * Get the [root] column value.
-     *
+     * 
      * @return string
      */
     public function getRoot()
@@ -376,7 +376,7 @@ abstract class Theme implements ActiveRecordInterface
 
     /**
      * Get the [colour] column value.
-     *
+     * 
      * @return string
      */
     public function getColour()
@@ -386,7 +386,7 @@ abstract class Theme implements ActiveRecordInterface
 
     /**
      * Get the [slug] column value.
-     *
+     * 
      * @return string
      */
     public function getSlug()
@@ -396,7 +396,7 @@ abstract class Theme implements ActiveRecordInterface
 
     /**
      * Set the value of [id] column.
-     *
+     * 
      * @param  int $v new value
      * @return $this|\Theme The current object (for fluent API support)
      */
@@ -416,7 +416,7 @@ abstract class Theme implements ActiveRecordInterface
 
     /**
      * Set the value of [name] column.
-     *
+     * 
      * @param  string $v new value
      * @return $this|\Theme The current object (for fluent API support)
      */
@@ -436,7 +436,7 @@ abstract class Theme implements ActiveRecordInterface
 
     /**
      * Set the value of [root] column.
-     *
+     * 
      * @param  string $v new value
      * @return $this|\Theme The current object (for fluent API support)
      */
@@ -456,7 +456,7 @@ abstract class Theme implements ActiveRecordInterface
 
     /**
      * Set the value of [colour] column.
-     *
+     * 
      * @param  string $v new value
      * @return $this|\Theme The current object (for fluent API support)
      */
@@ -476,7 +476,7 @@ abstract class Theme implements ActiveRecordInterface
 
     /**
      * Set the value of [slug] column.
-     *
+     * 
      * @param  string $v new value
      * @return $this|\Theme The current object (for fluent API support)
      */
@@ -680,7 +680,7 @@ abstract class Theme implements ActiveRecordInterface
             $isInsert = $this->isNew();
             $ret = $this->preSave($con);
             // sluggable behavior
-
+            
             if ($this->isColumnModified(ThemeTableMap::COL_SLUG) && $this->getSlug()) {
                 $this->setSlug($this->makeSlugUnique($this->getSlug()));
             } else {
@@ -805,19 +805,19 @@ abstract class Theme implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'id':
+                    case 'id':                        
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'name':
+                    case 'name':                        
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case 'root':
+                    case 'root':                        
                         $stmt->bindValue($identifier, $this->root, PDO::PARAM_STR);
                         break;
-                    case 'colour':
+                    case 'colour':                        
                         $stmt->bindValue($identifier, $this->colour, PDO::PARAM_STR);
                         break;
-                    case 'slug':
+                    case 'slug':                        
                         $stmt->bindValue($identifier, $this->slug, PDO::PARAM_STR);
                         break;
                 }
@@ -937,10 +937,10 @@ abstract class Theme implements ActiveRecordInterface
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
         }
-
+        
         if ($includeForeignObjects) {
             if (null !== $this->collArticles) {
-
+                
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
                         $key = 'articles';
@@ -951,7 +951,7 @@ abstract class Theme implements ActiveRecordInterface
                     default:
                         $key = 'Articles';
                 }
-
+        
                 $result[$key] = $this->collArticles->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
@@ -1143,7 +1143,7 @@ abstract class Theme implements ActiveRecordInterface
 
         return spl_object_hash($this);
     }
-
+        
     /**
      * Returns the primary key for this object (row).
      * @return int
@@ -1364,7 +1364,7 @@ abstract class Theme implements ActiveRecordInterface
         /** @var ChildArticle[] $articlesToDelete */
         $articlesToDelete = $this->getArticles(new Criteria(), $con)->diff($articles);
 
-
+        
         $this->articlesScheduledForDeletion = $articlesToDelete;
 
         foreach ($articlesToDelete as $articleRemoved) {
@@ -1518,7 +1518,7 @@ abstract class Theme implements ActiveRecordInterface
     }
 
     // sluggable behavior
-
+    
     /**
      * Create a unique slug based on the object
      *
@@ -1529,10 +1529,10 @@ abstract class Theme implements ActiveRecordInterface
         $slug = $this->createRawSlug();
         $slug = $this->limitSlugSize($slug);
         $slug = $this->makeSlugUnique($slug);
-
+    
         return $slug;
     }
-
+    
     /**
      * Create the slug from the appropriate columns
      *
@@ -1542,7 +1542,7 @@ abstract class Theme implements ActiveRecordInterface
     {
         return $this->cleanupSlugPart($this->__toString());
     }
-
+    
     /**
      * Cleanup a string to make a slug of it
      * Removes special characters, replaces blanks with a separator, and trim it
@@ -1557,31 +1557,31 @@ abstract class Theme implements ActiveRecordInterface
         if (function_exists('iconv')) {
             $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
         }
-
+    
         // lowercase
         if (function_exists('mb_strtolower')) {
             $slug = mb_strtolower($slug);
         } else {
             $slug = strtolower($slug);
         }
-
+    
         // remove accents resulting from OSX's iconv
         $slug = str_replace(array('\'', '`', '^'), '', $slug);
-
+    
         // replace non letter or digits with separator
         $slug = preg_replace('/\W+/', $replacement, $slug);
-
+    
         // trim
         $slug = trim($slug, $replacement);
-
+    
         if (empty($slug)) {
             return 'n-a';
         }
-
+    
         return $slug;
     }
-
-
+    
+    
     /**
      * Make sure the slug is short enough to accommodate the column size
      *
@@ -1595,11 +1595,11 @@ abstract class Theme implements ActiveRecordInterface
         if (strlen($slug) > (255 - $incrementReservedSpace)) {
             $slug = substr($slug, 0, 255 - $incrementReservedSpace);
         }
-
+    
         return $slug;
     }
-
-
+    
+    
     /**
      * Get the slug, ensuring its uniqueness
      *
@@ -1614,52 +1614,52 @@ abstract class Theme implements ActiveRecordInterface
             $slug2 = $slug;
         } else {
             $slug2 = $slug . $separator;
-
+    
             $count = \ThemeQuery::create()
                 ->filterBySlug($this->getSlug())
                 ->filterByPrimaryKey($this->getPrimaryKey())
             ->count();
-
+    
             if (1 == $count) {
                 return $this->getSlug();
             }
         }
-
+    
         $adapter = \Propel\Runtime\Propel::getServiceContainer()->getAdapter('blog');
         $col = 'q.Slug';
         $compare = $alreadyExists ? $adapter->compareRegex($col, '?') : sprintf('%s = ?', $col);
-
+    
         $query = \ThemeQuery::create('q')
             ->where($compare, $alreadyExists ? '^' . $slug2 . '[0-9]+$' : $slug2)
             ->prune($this)
         ;
-
+    
         if (!$alreadyExists) {
             $count = $query->count();
             if ($count > 0) {
                 return $this->makeSlugUnique($slug, $separator, true);
             }
-
+    
             return $slug2;
         }
-
+    
         $adapter = \Propel\Runtime\Propel::getServiceContainer()->getAdapter('blog');
         // Already exists
         $object = $query
             ->addDescendingOrderByColumn($adapter->strLength('slug'))
             ->addDescendingOrderByColumn('slug')
         ->findOne();
-
+    
         // First duplicate slug
         if (null == $object) {
             return $slug2 . '1';
         }
-
+    
         $slugNum = substr($object->getSlug(), strlen($slug) + 1);
         if (0 == $slugNum[0]) {
             $slugNum[0] = 1;
         }
-
+    
         return $slug2 . ($slugNum + 1);
     }
 

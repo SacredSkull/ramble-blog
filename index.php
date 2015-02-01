@@ -3,7 +3,7 @@
 define('DEBUG_SLIM', true);
 define('DEBUG', true);
 define('WIREFRAME', false);
-define('CERT_AUTH', false);
+define('CERT_AUTH', true);
 define('SITE_ROOT', realpath(dirname(__FILE__)));
 if (defined('USING_WINDOWS')) {
     define('USING_WINDOWS', (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'));
@@ -26,6 +26,7 @@ require './generated-conf/config.php';
 //require './lib/Twig_Extension_BBCode.php';
 // Markdown Twig Extension
 require './lib/Twig_Extension_Parsedown.php';
+require './lib/Twig_Extension_Truncate_HTML.php';
 // Defined BBCodes, if set
 if (USING_BBCODE) {
     require './lib/bbcodes.php';
@@ -40,6 +41,7 @@ if (!$defaultTheme->findPK(1)) {
     $theme = new Theme();
     $theme->setName('Stuff');
     $theme->setRoot('/');
+    $theme->setColour('#66C4F0');
     $theme->save();
 }
 
@@ -58,8 +60,9 @@ $view->parserOptions = array(
 
 $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
-    new Twig_Extension_Parsedown(),
+    new TwigExtensionParsedown(),
     new Twig_Extensions_Extension_Text(),
+    new TwigExtensionHTMLTruncaterFilter(),
 );
 
 $sayings = explode("\n", file_get_contents('include/etc/skull-phrases.txt'));
@@ -75,8 +78,7 @@ $app->get('/test/', function () use ($app, $quote, $defaultTheme) {
 
     $generator = Faker\Factory::create('en_UK');
 
-    /*
-    for ($i=1; $i < 200; $i++) {
+    for ($i = 1; $i < 100; $i++) {
         $theme = new Theme();
         $theme->setName($generator->company);
         $theme->setRoot('/');
@@ -84,18 +86,15 @@ $app->get('/test/', function () use ($app, $quote, $defaultTheme) {
         $theme->save();
 
         $post = new Article();
+        $post->setDraft(false);
         $post->setTitle($generator->realText(25));
-        $post->setBody($generator->realText(700));
+        $post->setBody($generator->realText(4000));
         $preparedFromWebFromArray = array('New Post', '#Excited');
         $tagArray = implode(';', $preparedFromWebFromArray);
         $post->setTags($tagArray);
         $post->setTheme($theme);
         $post->save();
     }
-
-    $post = ArticleQuery::create()
-        ->orderById()
-        ->findOne();
     /*
     $post = new Article();
     $post->setTitle('');
@@ -130,6 +129,7 @@ $app->get('/', function () use ($app, $quote, $defaultTheme, $themes) {
     $posts = ArticleQuery::create()
         //->setQueryKey("homepage")
         ->orderById('DESC')
+        ->filterByDraft('0')
         ->paginate($page, $perPage);
 
     $pagelist = $posts->getLinks(5);
@@ -403,7 +403,7 @@ $app->post('/upload/:post', function ($post) use ($app) {
                     'category' => 'image',
                 ),
             ));
-            echo '{"url": "https://d3dcca3zf9ihpu.cloudfront.net/'.$remote_path.'"}';
+            echo '{"url": '.$remote_path.'"}';
         } catch (S3Exception $e) {
             echo '{"error": "'.$e->getMessage().'"}';
         }

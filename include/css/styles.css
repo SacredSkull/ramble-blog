@@ -5873,6 +5873,10 @@ button.close {
   src: url('../fonts/Chunkfive.otf');
   font-weight: 400;
 }
+.no-side-margins {
+  margin-left: 10px;
+  margin-right: 0px;
+}
 html,
 body {
   height: 100%;
@@ -5902,9 +5906,13 @@ a:hover,
 a:active {
   text-decoration: none;
 }
+a:active {
+  outline: none;
+}
 a:visited {
   text-decoration: none;
-  color: #F3FFE2;
+  font-style: italic;
+  color: #F26101;
 }
 hr {
   border: 0;
@@ -5944,6 +5952,14 @@ header {
   overflow: hidden;
   z-index: 100;
 }
+header a,
+header a:visited,
+header a:active {
+  color: #fff;
+}
+a.title_link {
+  color: #F26101;
+}
 #first-word {
   font-family: 'Passion One', arial;
   font-size: 35px;
@@ -5982,6 +5998,10 @@ header {
   -webkit-border-radius: 13px;
   -moz-border-radius: 13px;
   border-radius: 13px;
+}
+.post-cont-link {
+  font-size: 50px;
+  height: 50px;
 }
 .bubble:after {
   content: "";
@@ -6114,6 +6134,9 @@ form .input-group {
 .head-nav-link:hover {
   background-color: #FF6600;
 }
+#post_img {
+  max-width: 100%;
+}
 .head-nav-link > span {
   position: relative;
   bottom: 3px;
@@ -6126,11 +6149,37 @@ form .input-group {
   margin-left: -20px;
   margin-right: -20px;
 }
+#left-cont {
+  margin-left: 0;
+  margin-right: 0;
+}
+#post_details_cont {
+  position: fixed;
+  width: 25%;
+  top: 120px;
+  background: #282828;
+}
+#post_spacer {
+  height: 20px;
+  background: #282828;
+  margin-left: -20px;
+  margin-right: -20px;
+  z-index: -1;
+}
+#post_details {
+  background: #484848;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 40px;
+  padding-right: 40px;
+  min-height: 100%;
+}
 #whitespace {
   height: 150px;
   background-color: #F7F7F7;
   padding: 25px;
   position: relative;
+  z-index: 1;
 }
 #whitespace > h4 {
   font-family: 'Contrail One';
@@ -6227,6 +6276,11 @@ form .input-group {
   color: #fff;
   margin-right: -20px;
   margin-left: -20px;
+}
+.footer a,
+.footer a:visited,
+.footer a:active {
+  color: #fff;
 }
 #footer-white {
   display: block;

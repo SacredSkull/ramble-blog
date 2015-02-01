@@ -24,27 +24,26 @@
                         <div id="posts" class="col-md-6">
                             {% for post in posts %}
                             <div class="row">
-                                {# Start title #}
-                                {#<div class="col-md-2"></div>#}
                                 <div id="whitespace">
                                     <h1 class="title"  id="theme_name"><a style="color: {{post.getTheme.getColour}};" href="/{{post.getTheme.getName}}/">{{post.getTheme.getName}} &#62;</a></h1>
-                                    <a href="/post/{{post.getSlug}}"><p class="title">{{post.getTitle|title}}</p></a>
+                                    <p class="title"><a class="title_link" href="/post/{{post.getSlug}}">{{post.getTitle|title}}</a></p>
                                     <hr>
                                     <h4>{{post.getCreatedAt|date("d l, F Y G:i")}}</h4>
                                 </div>
-                                {#<div class="col-md-2"></div>#}
-                                {# End title #}
                             </div>
                             <div class="row">
-                                <!--<div class="col-md-1"></div>-->
+                                {#<div class="col-md-1"></div>#}
                                 {# Start content #}
                                 <div id="content">
                                     {% if admin %}<a class="pull-right" title="Edit Post" style="font-size: 32px;" href="/admin/{{post.getId}}"><span class="glyphicon glyphicon-edit"></span></a>{% endif %}
-                                    <a class="do-not-style" href="/post/{{post.getSlug}}">{{post.getBody|truncate(650, true, ' ...')|markdown}}</a>
+                                    {% set url = "/post/#{post.getSlug}" %}
+                                    {% set url = '<p class="text-center post-cont-link"><a href="' ~ url ~ '"> <span class="glyphicon glyphicon-chevron-down"></span></a></p>'%}
+                                    {{post.getBody|markdown|truncateHTML(2000, " ...")}}
+                                    {{ url|raw }}
                                     <hr>
                                 </div>
                                 {# end content #}
-                                <!--<div class="col-md-1"></div>-->
+                                {#<div class="col-md-1"></div>#}
                             </div>
                             {% endfor %}
                             {% if posts.haveToPaginate %}

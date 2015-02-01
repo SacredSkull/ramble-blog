@@ -18,6 +18,7 @@ CREATE TABLE `article`
     `positive_votes` INTEGER DEFAULT 0,
     `negative_votes` INTEGER DEFAULT 0,
     `theme_id` INTEGER DEFAULT 0 NOT NULL,
+    `draft` TINYINT(1) DEFAULT 0,
     `created_at` DATETIME,
     `updated_at` DATETIME,
     `slug` VARCHAR(255),
