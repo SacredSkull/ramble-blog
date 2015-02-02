@@ -5,6 +5,7 @@ define('DEBUG', true);
 define('WIREFRAME', false);
 define('CERT_AUTH', true);
 define('SITE_ROOT', realpath(dirname(__FILE__)));
+define('USING_PARSEDOWN', false);
 if (defined('USING_WINDOWS')) {
     define('USING_WINDOWS', (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'));
 }
@@ -26,10 +27,40 @@ require './generated-conf/config.php';
 //require './lib/Twig_Extension_BBCode.php';
 // Markdown Twig Extension
 require './lib/Twig_Extension_Parsedown.php';
+require './lib/TwigExtensionCiconia.php';
 require './lib/Twig_Extension_Truncate_HTML.php';
 // Defined BBCodes, if set
 if (USING_BBCODE) {
     require './lib/bbcodes.php';
+}
+
+// Either use cheap network access control list or expensive
+// but quality client certificate authorisation
+// Defined via the CERT_AUTH constant.
+// Unfortunate that Cloudflare doesn't support two-way AUTH :(
+function isAdmin()
+{
+    if (CERT_AUTH) {
+        if (($_SERVER['HTTPS'] == "on" && $_SERVER['VERIFIED'] == "SUCCESS") || $_SERVER['VERIFIED'] == "OVERRIDE") {
+            return true;
+        }
+
+        return false;
+    } else {
+        // use a cookie for auth?
+        $allowedips = array('127.0.0.1', '192.168.1.102');
+        $ips = $_SERVER['REMOTE_ADDR'];
+        if (in_array($ips, $allowedips)) {
+            return true;
+        }
+
+        return false;
+    }
+}
+
+function jsFriendly($string)
+{
+    return htmlspecialchars($string, ENT_QUOTES);
 }
 
 use Aws\S3\S3Client;
@@ -60,7 +91,8 @@ $view->parserOptions = array(
 
 $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
-    new TwigExtensionParsedown(),
+    //new TwigExtensionParsedown(),
+    new TwigExtensionCiconia(),
     new Twig_Extensions_Extension_Text(),
     new TwigExtensionHTMLTruncaterFilter(),
 );
@@ -79,6 +111,24 @@ $app->get('/test/', function () use ($app, $quote, $defaultTheme) {
     $generator = Faker\Factory::create('en_UK');
 
     for ($i = 1; $i < 100; $i++) {
+        if ($i == 99) {
+            $theme = new Theme();
+            $theme->setName('A real category!');
+            $theme->setRoot('/');
+            $theme->setColour('gold');
+            $theme->save();
+
+            $post = new Article();
+            $post->setDraft(false);
+            $post->setTitle('An article that was actually typed!');
+            $post->setBody("#A post's header\n##Some subtext for the header.\n**Finally, a bit of *bold***");
+            $preparedFromWebFromArray = array('New Post', '#Excited');
+            $tagArray = implode(';', $preparedFromWebFromArray);
+            $post->setTags($tagArray);
+            $post->setTheme($theme);
+            $post->save();
+            break;
+        }
         $theme = new Theme();
         $theme->setName($generator->company);
         $theme->setRoot('/');
@@ -153,7 +203,7 @@ $app->get('/', function () use ($app, $quote, $defaultTheme, $themes) {
 
 });
 
-$app->get('/:page', function ($page) use ($app, $quote, $defaultTheme) {
+$app->get('/:page', function ($page) use ($app, $quote, $defaultTheme, $themes) {
 
     $maxPerPage = 10;
 
@@ -184,6 +234,7 @@ $app->get('/:page', function ($page) use ($app, $quote, $defaultTheme) {
         'posts' => $posts,
         'current_page' => $page,
         'page_list' => $pagelist,
+        'themes' => $themes,
         'max_pages' => $maxPages,
     ));
 })->conditions(array('page' => '\d{1,4}'));
@@ -215,30 +266,6 @@ $app->get('/category/:slugTheme', function ($slugTheme) use ($app, $quote) {
     $themedPosts = ArticleQuery::create()->setQueryKey('posts_of_particular_theme')->filterByTheme($theme);
     echo "Hi!";
 });
-
-// Either use cheap network access control list or expensive
-// but quality client certificate authorisation
-// Defined via the CERT_AUTH constant.
-// Unfortunate that Cloudflare doesn't support two-way AUTH :(
-function isAdmin()
-{
-    if (CERT_AUTH) {
-        if ($_SERVER['HTTPS'] == "on" && $_SERVER['VERIFIED'] == "SUCCESS") {
-            return true;
-        }
-
-        return false;
-    } else {
-        // use a cookie for auth?
-        $allowedips = array('127.0.0.1', '192.168.1.102');
-        $ips = $_SERVER['REMOTE_ADDR'];
-        if (in_array($ips, $allowedips)) {
-            return true;
-        }
-
-        return false;
-    }
-}
 
 // Admin page
 $app->get('/admin', function () use ($app, $defaultTheme) {
@@ -330,11 +357,6 @@ $app->get('/admin/:slugArticle', function ($slugArticle) use ($app) {
     ));
 });
 
-function jsFriendly($string)
-{
-    return htmlspecialchars($string, ENT_QUOTES);
-}
-
 $app->group('/api', function () use ($app) {
     $app->get('/post', function () use ($app) {
         $app->redirect('/api/posts/', 301);
@@ -403,7 +425,7 @@ $app->post('/upload/:post', function ($post) use ($app) {
                     'category' => 'image',
                 ),
             ));
-            echo '{"url": '.$remote_path.'"}';
+            echo '{"url": "https://d3dcca3zf9ihpu.cloudfront.net/'.$remote_path.'"}';
         } catch (S3Exception $e) {
             echo '{"error": "'.$e->getMessage().'"}';
         }
