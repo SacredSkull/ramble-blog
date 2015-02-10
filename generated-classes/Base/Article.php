@@ -29,11 +29,11 @@ use Propel\Runtime\Util\PropelDateTime;
 /**
  * Base class that represents a row from the 'article' table.
  *
- * 
+ *
  *
 * @package    propel.generator..Base
 */
-abstract class Article implements ActiveRecordInterface 
+abstract class Article implements ActiveRecordInterface
 {
     /**
      * TableMap class name
@@ -80,6 +80,12 @@ abstract class Article implements ActiveRecordInterface
     protected $title;
 
     /**
+     * The value for the bodyhtml field.
+     * @var        string
+     */
+    protected $bodyhtml;
+
+    /**
      * The value for the body field.
      * @var        string
      */
@@ -111,6 +117,13 @@ abstract class Article implements ActiveRecordInterface
      * @var        int
      */
     protected $theme_id;
+
+    /**
+     * The value for the image field.
+     * Note: this column has a database default value of: 'default/post_img.png'
+     * @var        string
+     */
+    protected $image;
 
     /**
      * The value for the draft field.
@@ -173,6 +186,7 @@ abstract class Article implements ActiveRecordInterface
         $this->positive_votes = 0;
         $this->negative_votes = 0;
         $this->theme_id = 0;
+        $this->image = 'default/post_img.png';
         $this->draft = false;
     }
 
@@ -397,7 +411,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Get the [id] column value.
-     * 
+     *
      * @return int
      */
     public function getId()
@@ -407,7 +421,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Get the [title] column value.
-     * 
+     *
      * @return string
      */
     public function getTitle()
@@ -416,8 +430,18 @@ abstract class Article implements ActiveRecordInterface
     }
 
     /**
+     * Get the [bodyhtml] column value.
+     *
+     * @return string
+     */
+    public function getBodyhtml()
+    {
+        return $this->bodyhtml;
+    }
+
+    /**
      * Get the [body] column value.
-     * 
+     *
      * @return string
      */
     public function getBody()
@@ -427,7 +451,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Get the [tags] column value.
-     * 
+     *
      * @return string
      */
     public function getTags()
@@ -437,7 +461,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Get the [positive_votes] column value.
-     * 
+     *
      * @return int
      */
     public function getPositiveVotes()
@@ -447,7 +471,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Get the [negative_votes] column value.
-     * 
+     *
      * @return int
      */
     public function getNegativeVotes()
@@ -457,7 +481,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Get the [theme_id] column value.
-     * 
+     *
      * @return int
      */
     public function getThemeId()
@@ -466,8 +490,18 @@ abstract class Article implements ActiveRecordInterface
     }
 
     /**
+     * Get the [image] column value.
+     *
+     * @return string
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
      * Get the [draft] column value.
-     * 
+     *
      * @return boolean
      */
     public function getDraft()
@@ -477,7 +511,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Get the [draft] column value.
-     * 
+     *
      * @return boolean
      */
     public function isDraft()
@@ -487,7 +521,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Get the [optionally formatted] temporal [created_at] column value.
-     * 
+     *
      *
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
      *                            If format is NULL, then the raw DateTime object will be returned.
@@ -507,7 +541,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Get the [optionally formatted] temporal [updated_at] column value.
-     * 
+     *
      *
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
      *                            If format is NULL, then the raw DateTime object will be returned.
@@ -527,7 +561,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Get the [slug] column value.
-     * 
+     *
      * @return string
      */
     public function getSlug()
@@ -537,7 +571,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Set the value of [id] column.
-     * 
+     *
      * @param  int $v new value
      * @return $this|\Article The current object (for fluent API support)
      */
@@ -557,7 +591,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Set the value of [title] column.
-     * 
+     *
      * @param  string $v new value
      * @return $this|\Article The current object (for fluent API support)
      */
@@ -576,8 +610,28 @@ abstract class Article implements ActiveRecordInterface
     } // setTitle()
 
     /**
+     * Set the value of [bodyhtml] column.
+     *
+     * @param  string $v new value
+     * @return $this|\Article The current object (for fluent API support)
+     */
+    public function setBodyhtml($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->bodyhtml !== $v) {
+            $this->bodyhtml = $v;
+            $this->modifiedColumns[ArticleTableMap::COL_BODYHTML] = true;
+        }
+
+        return $this;
+    } // setBodyhtml()
+
+    /**
      * Set the value of [body] column.
-     * 
+     *
      * @param  string $v new value
      * @return $this|\Article The current object (for fluent API support)
      */
@@ -597,7 +651,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Set the value of [tags] column.
-     * 
+     *
      * @param  string $v new value
      * @return $this|\Article The current object (for fluent API support)
      */
@@ -617,7 +671,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Set the value of [positive_votes] column.
-     * 
+     *
      * @param  int $v new value
      * @return $this|\Article The current object (for fluent API support)
      */
@@ -637,7 +691,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Set the value of [negative_votes] column.
-     * 
+     *
      * @param  int $v new value
      * @return $this|\Article The current object (for fluent API support)
      */
@@ -657,7 +711,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Set the value of [theme_id] column.
-     * 
+     *
      * @param  int $v new value
      * @return $this|\Article The current object (for fluent API support)
      */
@@ -680,12 +734,32 @@ abstract class Article implements ActiveRecordInterface
     } // setThemeId()
 
     /**
+     * Set the value of [image] column.
+     *
+     * @param  string $v new value
+     * @return $this|\Article The current object (for fluent API support)
+     */
+    public function setImage($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->image !== $v) {
+            $this->image = $v;
+            $this->modifiedColumns[ArticleTableMap::COL_IMAGE] = true;
+        }
+
+        return $this;
+    } // setImage()
+
+    /**
      * Sets the value of the [draft] column.
      * Non-boolean arguments are converted using the following rules:
      *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
      * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-     * 
+     *
      * @param  boolean|integer|string $v The new value
      * @return $this|\Article The current object (for fluent API support)
      */
@@ -709,7 +783,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
-     * 
+     *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
      * @return $this|\Article The current object (for fluent API support)
@@ -729,7 +803,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
-     * 
+     *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
      * @return $this|\Article The current object (for fluent API support)
@@ -749,7 +823,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * Set the value of [slug] column.
-     * 
+     *
      * @param  string $v new value
      * @return $this|\Article The current object (for fluent API support)
      */
@@ -789,6 +863,10 @@ abstract class Article implements ActiveRecordInterface
                 return false;
             }
 
+            if ($this->image !== 'default/post_img.png') {
+                return false;
+            }
+
             if ($this->draft !== false) {
                 return false;
             }
@@ -825,37 +903,43 @@ abstract class Article implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ArticleTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, $indexType)];
             $this->title = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ArticleTableMap::translateFieldName('Body', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ArticleTableMap::translateFieldName('Bodyhtml', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->bodyhtml = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ArticleTableMap::translateFieldName('Body', TableMap::TYPE_PHPNAME, $indexType)];
             $this->body = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ArticleTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ArticleTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
             $this->tags = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ArticleTableMap::translateFieldName('PositiveVotes', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ArticleTableMap::translateFieldName('PositiveVotes', TableMap::TYPE_PHPNAME, $indexType)];
             $this->positive_votes = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ArticleTableMap::translateFieldName('NegativeVotes', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ArticleTableMap::translateFieldName('NegativeVotes', TableMap::TYPE_PHPNAME, $indexType)];
             $this->negative_votes = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ArticleTableMap::translateFieldName('ThemeId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ArticleTableMap::translateFieldName('ThemeId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->theme_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ArticleTableMap::translateFieldName('Draft', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ArticleTableMap::translateFieldName('Image', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->image = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : ArticleTableMap::translateFieldName('Draft', TableMap::TYPE_PHPNAME, $indexType)];
             $this->draft = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ArticleTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : ArticleTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : ArticleTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : ArticleTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : ArticleTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : ArticleTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
             $this->slug = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
@@ -865,7 +949,7 @@ abstract class Article implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 11; // 11 = ArticleTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 13; // 13 = ArticleTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Article'), 0, $e);
@@ -993,7 +1077,7 @@ abstract class Article implements ActiveRecordInterface
             $isInsert = $this->isNew();
             $ret = $this->preSave($con);
             // sluggable behavior
-            
+
             if ($this->isColumnModified(ArticleTableMap::COL_SLUG) && $this->getSlug()) {
                 $this->setSlug($this->makeSlugUnique($this->getSlug()));
             } else {
@@ -1002,7 +1086,7 @@ abstract class Article implements ActiveRecordInterface
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
                 // timestampable behavior
-                
+
                 if (!$this->isColumnModified(ArticleTableMap::COL_CREATED_AT)) {
                     $this->setCreatedAt(time());
                 }
@@ -1122,6 +1206,9 @@ abstract class Article implements ActiveRecordInterface
         if ($this->isColumnModified(ArticleTableMap::COL_TITLE)) {
             $modifiedColumns[':p' . $index++]  = 'title';
         }
+        if ($this->isColumnModified(ArticleTableMap::COL_BODYHTML)) {
+            $modifiedColumns[':p' . $index++]  = 'bodyHTML';
+        }
         if ($this->isColumnModified(ArticleTableMap::COL_BODY)) {
             $modifiedColumns[':p' . $index++]  = 'body';
         }
@@ -1136,6 +1223,9 @@ abstract class Article implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ArticleTableMap::COL_THEME_ID)) {
             $modifiedColumns[':p' . $index++]  = 'theme_id';
+        }
+        if ($this->isColumnModified(ArticleTableMap::COL_IMAGE)) {
+            $modifiedColumns[':p' . $index++]  = 'image';
         }
         if ($this->isColumnModified(ArticleTableMap::COL_DRAFT)) {
             $modifiedColumns[':p' . $index++]  = 'draft';
@@ -1160,37 +1250,43 @@ abstract class Article implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'id':                        
+                    case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'title':                        
+                    case 'title':
                         $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
                         break;
-                    case 'body':                        
+                    case 'bodyHTML':
+                        $stmt->bindValue($identifier, $this->bodyhtml, PDO::PARAM_STR);
+                        break;
+                    case 'body':
                         $stmt->bindValue($identifier, $this->body, PDO::PARAM_STR);
                         break;
-                    case 'tags':                        
+                    case 'tags':
                         $stmt->bindValue($identifier, $this->tags, PDO::PARAM_STR);
                         break;
-                    case 'positive_votes':                        
+                    case 'positive_votes':
                         $stmt->bindValue($identifier, $this->positive_votes, PDO::PARAM_INT);
                         break;
-                    case 'negative_votes':                        
+                    case 'negative_votes':
                         $stmt->bindValue($identifier, $this->negative_votes, PDO::PARAM_INT);
                         break;
-                    case 'theme_id':                        
+                    case 'theme_id':
                         $stmt->bindValue($identifier, $this->theme_id, PDO::PARAM_INT);
+                        break;
+                    case 'image':
+                        $stmt->bindValue($identifier, $this->image, PDO::PARAM_STR);
                         break;
                     case 'draft':
                         $stmt->bindValue($identifier, (int) $this->draft, PDO::PARAM_INT);
                         break;
-                    case 'created_at':                        
+                    case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
-                    case 'updated_at':                        
+                    case 'updated_at':
                         $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
-                    case 'slug':                        
+                    case 'slug':
                         $stmt->bindValue($identifier, $this->slug, PDO::PARAM_STR);
                         break;
                 }
@@ -1262,30 +1358,36 @@ abstract class Article implements ActiveRecordInterface
                 return $this->getTitle();
                 break;
             case 2:
-                return $this->getBody();
+                return $this->getBodyhtml();
                 break;
             case 3:
-                return $this->getTags();
+                return $this->getBody();
                 break;
             case 4:
-                return $this->getPositiveVotes();
+                return $this->getTags();
                 break;
             case 5:
-                return $this->getNegativeVotes();
+                return $this->getPositiveVotes();
                 break;
             case 6:
-                return $this->getThemeId();
+                return $this->getNegativeVotes();
                 break;
             case 7:
-                return $this->getDraft();
+                return $this->getThemeId();
                 break;
             case 8:
-                return $this->getCreatedAt();
+                return $this->getImage();
                 break;
             case 9:
-                return $this->getUpdatedAt();
+                return $this->getDraft();
                 break;
             case 10:
+                return $this->getCreatedAt();
+                break;
+            case 11:
+                return $this->getUpdatedAt();
+                break;
+            case 12:
                 return $this->getSlug();
                 break;
             default:
@@ -1320,24 +1422,40 @@ abstract class Article implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getTitle(),
-            $keys[2] => $this->getBody(),
-            $keys[3] => $this->getTags(),
-            $keys[4] => $this->getPositiveVotes(),
-            $keys[5] => $this->getNegativeVotes(),
-            $keys[6] => $this->getThemeId(),
-            $keys[7] => $this->getDraft(),
-            $keys[8] => $this->getCreatedAt(),
-            $keys[9] => $this->getUpdatedAt(),
-            $keys[10] => $this->getSlug(),
+            $keys[2] => $this->getBodyhtml(),
+            $keys[3] => $this->getBody(),
+            $keys[4] => $this->getTags(),
+            $keys[5] => $this->getPositiveVotes(),
+            $keys[6] => $this->getNegativeVotes(),
+            $keys[7] => $this->getThemeId(),
+            $keys[8] => $this->getImage(),
+            $keys[9] => $this->getDraft(),
+            $keys[10] => $this->getCreatedAt(),
+            $keys[11] => $this->getUpdatedAt(),
+            $keys[12] => $this->getSlug(),
         );
+
+        $utc = new \DateTimeZone('utc');
+        if ($result[$keys[10]] instanceof \DateTime) {
+            // When changing timezone we don't want to change existing instances
+            $dateTime = clone $result[$keys[10]];
+            $result[$keys[10]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+        }
+
+        if ($result[$keys[11]] instanceof \DateTime) {
+            // When changing timezone we don't want to change existing instances
+            $dateTime = clone $result[$keys[11]];
+            $result[$keys[11]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+        }
+
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
         }
-        
+
         if ($includeForeignObjects) {
             if (null !== $this->aTheme) {
-                
+
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
                         $key = 'theme';
@@ -1348,11 +1466,11 @@ abstract class Article implements ActiveRecordInterface
                     default:
                         $key = 'Theme';
                 }
-        
+
                 $result[$key] = $this->aTheme->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collViews) {
-                
+
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
                         $key = 'views';
@@ -1363,7 +1481,7 @@ abstract class Article implements ActiveRecordInterface
                     default:
                         $key = 'Views';
                 }
-        
+
                 $result[$key] = $this->collViews->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
@@ -1407,30 +1525,36 @@ abstract class Article implements ActiveRecordInterface
                 $this->setTitle($value);
                 break;
             case 2:
-                $this->setBody($value);
+                $this->setBodyhtml($value);
                 break;
             case 3:
-                $this->setTags($value);
+                $this->setBody($value);
                 break;
             case 4:
-                $this->setPositiveVotes($value);
+                $this->setTags($value);
                 break;
             case 5:
-                $this->setNegativeVotes($value);
+                $this->setPositiveVotes($value);
                 break;
             case 6:
-                $this->setThemeId($value);
+                $this->setNegativeVotes($value);
                 break;
             case 7:
-                $this->setDraft($value);
+                $this->setThemeId($value);
                 break;
             case 8:
-                $this->setCreatedAt($value);
+                $this->setImage($value);
                 break;
             case 9:
-                $this->setUpdatedAt($value);
+                $this->setDraft($value);
                 break;
             case 10:
+                $this->setCreatedAt($value);
+                break;
+            case 11:
+                $this->setUpdatedAt($value);
+                break;
+            case 12:
                 $this->setSlug($value);
                 break;
         } // switch()
@@ -1466,31 +1590,37 @@ abstract class Article implements ActiveRecordInterface
             $this->setTitle($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setBody($arr[$keys[2]]);
+            $this->setBodyhtml($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setTags($arr[$keys[3]]);
+            $this->setBody($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setPositiveVotes($arr[$keys[4]]);
+            $this->setTags($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setNegativeVotes($arr[$keys[5]]);
+            $this->setPositiveVotes($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setThemeId($arr[$keys[6]]);
+            $this->setNegativeVotes($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setDraft($arr[$keys[7]]);
+            $this->setThemeId($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setCreatedAt($arr[$keys[8]]);
+            $this->setImage($arr[$keys[8]]);
         }
         if (array_key_exists($keys[9], $arr)) {
-            $this->setUpdatedAt($arr[$keys[9]]);
+            $this->setDraft($arr[$keys[9]]);
         }
         if (array_key_exists($keys[10], $arr)) {
-            $this->setSlug($arr[$keys[10]]);
+            $this->setCreatedAt($arr[$keys[10]]);
+        }
+        if (array_key_exists($keys[11], $arr)) {
+            $this->setUpdatedAt($arr[$keys[11]]);
+        }
+        if (array_key_exists($keys[12], $arr)) {
+            $this->setSlug($arr[$keys[12]]);
         }
     }
 
@@ -1539,6 +1669,9 @@ abstract class Article implements ActiveRecordInterface
         if ($this->isColumnModified(ArticleTableMap::COL_TITLE)) {
             $criteria->add(ArticleTableMap::COL_TITLE, $this->title);
         }
+        if ($this->isColumnModified(ArticleTableMap::COL_BODYHTML)) {
+            $criteria->add(ArticleTableMap::COL_BODYHTML, $this->bodyhtml);
+        }
         if ($this->isColumnModified(ArticleTableMap::COL_BODY)) {
             $criteria->add(ArticleTableMap::COL_BODY, $this->body);
         }
@@ -1553,6 +1686,9 @@ abstract class Article implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ArticleTableMap::COL_THEME_ID)) {
             $criteria->add(ArticleTableMap::COL_THEME_ID, $this->theme_id);
+        }
+        if ($this->isColumnModified(ArticleTableMap::COL_IMAGE)) {
+            $criteria->add(ArticleTableMap::COL_IMAGE, $this->image);
         }
         if ($this->isColumnModified(ArticleTableMap::COL_DRAFT)) {
             $criteria->add(ArticleTableMap::COL_DRAFT, $this->draft);
@@ -1609,7 +1745,7 @@ abstract class Article implements ActiveRecordInterface
 
         return spl_object_hash($this);
     }
-        
+
     /**
      * Returns the primary key for this object (row).
      * @return int
@@ -1653,11 +1789,13 @@ abstract class Article implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setTitle($this->getTitle());
+        $copyObj->setBodyhtml($this->getBodyhtml());
         $copyObj->setBody($this->getBody());
         $copyObj->setTags($this->getTags());
         $copyObj->setPositiveVotes($this->getPositiveVotes());
         $copyObj->setNegativeVotes($this->getNegativeVotes());
         $copyObj->setThemeId($this->getThemeId());
+        $copyObj->setImage($this->getImage());
         $copyObj->setDraft($this->getDraft());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
@@ -1887,7 +2025,7 @@ abstract class Article implements ActiveRecordInterface
         /** @var ChildView[] $viewsToDelete */
         $viewsToDelete = $this->getViews(new Criteria(), $con)->diff($views);
 
-        
+
         $this->viewsScheduledForDeletion = $viewsToDelete;
 
         foreach ($viewsToDelete as $viewRemoved) {
@@ -2001,11 +2139,13 @@ abstract class Article implements ActiveRecordInterface
         }
         $this->id = null;
         $this->title = null;
+        $this->bodyhtml = null;
         $this->body = null;
         $this->tags = null;
         $this->positive_votes = null;
         $this->negative_votes = null;
         $this->theme_id = null;
+        $this->image = null;
         $this->draft = null;
         $this->created_at = null;
         $this->updated_at = null;
@@ -2051,7 +2191,7 @@ abstract class Article implements ActiveRecordInterface
     }
 
     // timestampable behavior
-    
+
     /**
      * Mark the current object so that the update date doesn't get updated during next save
      *
@@ -2060,12 +2200,12 @@ abstract class Article implements ActiveRecordInterface
     public function keepUpdateDateUnchanged()
     {
         $this->modifiedColumns[ArticleTableMap::COL_UPDATED_AT] = true;
-    
+
         return $this;
     }
 
     // sluggable behavior
-    
+
     /**
      * Create a unique slug based on the object
      *
@@ -2076,10 +2216,10 @@ abstract class Article implements ActiveRecordInterface
         $slug = $this->createRawSlug();
         $slug = $this->limitSlugSize($slug);
         $slug = $this->makeSlugUnique($slug);
-    
+
         return $slug;
     }
-    
+
     /**
      * Create the slug from the appropriate columns
      *
@@ -2089,7 +2229,7 @@ abstract class Article implements ActiveRecordInterface
     {
         return $this->cleanupSlugPart($this->__toString());
     }
-    
+
     /**
      * Cleanup a string to make a slug of it
      * Removes special characters, replaces blanks with a separator, and trim it
@@ -2104,31 +2244,31 @@ abstract class Article implements ActiveRecordInterface
         if (function_exists('iconv')) {
             $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
         }
-    
+
         // lowercase
         if (function_exists('mb_strtolower')) {
             $slug = mb_strtolower($slug);
         } else {
             $slug = strtolower($slug);
         }
-    
+
         // remove accents resulting from OSX's iconv
         $slug = str_replace(array('\'', '`', '^'), '', $slug);
-    
+
         // replace non letter or digits with separator
         $slug = preg_replace('/\W+/', $replacement, $slug);
-    
+
         // trim
         $slug = trim($slug, $replacement);
-    
+
         if (empty($slug)) {
             return 'n-a';
         }
-    
+
         return $slug;
     }
-    
-    
+
+
     /**
      * Make sure the slug is short enough to accommodate the column size
      *
@@ -2142,11 +2282,11 @@ abstract class Article implements ActiveRecordInterface
         if (strlen($slug) > (255 - $incrementReservedSpace)) {
             $slug = substr($slug, 0, 255 - $incrementReservedSpace);
         }
-    
+
         return $slug;
     }
-    
-    
+
+
     /**
      * Get the slug, ensuring its uniqueness
      *
@@ -2161,52 +2301,52 @@ abstract class Article implements ActiveRecordInterface
             $slug2 = $slug;
         } else {
             $slug2 = $slug . $separator;
-    
+
             $count = \ArticleQuery::create()
                 ->filterBySlug($this->getSlug())
                 ->filterByPrimaryKey($this->getPrimaryKey())
             ->count();
-    
+
             if (1 == $count) {
                 return $this->getSlug();
             }
         }
-    
+
         $adapter = \Propel\Runtime\Propel::getServiceContainer()->getAdapter('blog');
         $col = 'q.Slug';
         $compare = $alreadyExists ? $adapter->compareRegex($col, '?') : sprintf('%s = ?', $col);
-    
+
         $query = \ArticleQuery::create('q')
             ->where($compare, $alreadyExists ? '^' . $slug2 . '[0-9]+$' : $slug2)
             ->prune($this)
         ;
-    
+
         if (!$alreadyExists) {
             $count = $query->count();
             if ($count > 0) {
                 return $this->makeSlugUnique($slug, $separator, true);
             }
-    
+
             return $slug2;
         }
-    
+
         $adapter = \Propel\Runtime\Propel::getServiceContainer()->getAdapter('blog');
         // Already exists
         $object = $query
             ->addDescendingOrderByColumn($adapter->strLength('slug'))
             ->addDescendingOrderByColumn('slug')
         ->findOne();
-    
+
         // First duplicate slug
         if (null == $object) {
             return $slug2 . '1';
         }
-    
+
         $slugNum = substr($object->getSlug(), strlen($slug) + 1);
         if (0 == $slugNum[0]) {
             $slugNum[0] = 1;
         }
-    
+
         return $slug2 . ($slugNum + 1);
     }
 

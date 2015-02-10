@@ -38,6 +38,9 @@ if (USING_BBCODE) {
 // but quality client certificate authorisation
 // Defined via the CERT_AUTH constant.
 // Unfortunate that Cloudflare doesn't support two-way AUTH :(
+// Instead nginx passes the on or off parameter to PHP based on
+// the domain name. Obviously only certain domains have this turned to
+// on.
 function isAdmin()
 {
     if (CERT_AUTH) {
@@ -92,7 +95,6 @@ $view->parserOptions = array(
 $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
     //new TwigExtensionParsedown(),
-    new TwigExtensionCiconia(),
     new Twig_Extensions_Extension_Text(),
     new TwigExtensionHTMLTruncaterFilter(),
 );

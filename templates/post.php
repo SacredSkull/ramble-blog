@@ -31,7 +31,7 @@
 					{% endblock left_side %}
 					{% block content %}
 						{{ parent() }}
-						{{ post.getBody|markdown }}
+						{{ post.getBodyhtml|raw }}
 						<hr class="fin">
 						<div id='end-poll-container'>
 							<span id="end-poll-votes">

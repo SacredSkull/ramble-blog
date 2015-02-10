@@ -4,6 +4,10 @@
 		{
 			"follow_symlinks": true,
 			"path": "."
+		},
+		{
+			"follow_symlinks": true,
+			"path": "E:\\HND\\Year 2\\Computer Games Design and Development\\Spybots - The Nightfall Incident"
 		}
 	]
 }

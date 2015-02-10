@@ -38,7 +38,7 @@
                                     {% if admin %}<a class="pull-right" title="Edit Post" style="font-size: 32px;" href="/admin/{{post.getId}}"><span class="glyphicon glyphicon-edit"></span></a>{% endif %}
                                     {% set url = "/post/#{post.getSlug}" %}
                                     {% set url = '<p class="text-center post-cont-link"><a href="' ~ url ~ '"> <span class="glyphicon glyphicon-chevron-down"></span></a></p>'%}
-                                    {{post.getBody|markdown|truncateHTML(2000, " ...")}}
+                                    {{post.getBodyhtml|truncateHTML(2000, " ...")}}
                                     {{ url|raw }}
                                     <hr>
                                 </div>
