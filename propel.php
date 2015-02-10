@@ -13,9 +13,9 @@ return [
                     'dsn'        => 'mysql:host=localhost;dbname=blog',
                     'user'       => 'blog',
                     'password'   => 'sacredskullBlog',
-                    'attributes' => []
-                ]
-            ]
+                    'attributes' => [],
+                ],
+            ],
         ],
         'runtime' => [
             'defaultConnection' => 'blog',
@@ -24,16 +24,14 @@ return [
                 'defaultLogger' => [
                     'type' => 'stream',
                     //'path' => '/var/www/html/html/logs/propel.log',
-                    'path' => 'E:/WPNXM/www/blog/logs/propel.log',
-                    'level' => 100
-                ]
-            ]
+                    'path' => 'logs/propel.log',
+                    'level' => 100,
+                ],
+            ],
         ],
         'generator' => [
             'defaultConnection' => 'blog',
-            'connections' => ['blog']
-        ]
+            'connections' => ['blog'],
+        ],
     ]
 ];
-
-?>
