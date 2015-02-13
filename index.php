@@ -64,6 +64,8 @@ function jsFriendly($string)
     return htmlspecialchars($string, ENT_QUOTES);
 }
 
+xhprof_enable(XHPROF_FLAGS_NO_BUILTINS | XHPROF_FLAGS_CPU | XHPROF_FLAGS_MEMORY);
+
 $GLOBALS['execute_time'] = microtime(true);
 
 $logger = new Logger('defaultLogger');
@@ -434,3 +436,5 @@ $app->post('/upload/:post', function ($post) use ($app) {
 })->conditions(array('post' => '\d{1,10}'));
 
 $app->run();
+
+xhprof_disable();
