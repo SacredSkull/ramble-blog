@@ -22,11 +22,13 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildArticleQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildArticleQuery orderByTitle($order = Criteria::ASC) Order by the title column
+ * @method     ChildArticleQuery orderByBodyhtml($order = Criteria::ASC) Order by the bodyHTML column
  * @method     ChildArticleQuery orderByBody($order = Criteria::ASC) Order by the body column
  * @method     ChildArticleQuery orderByTags($order = Criteria::ASC) Order by the tags column
  * @method     ChildArticleQuery orderByPositiveVotes($order = Criteria::ASC) Order by the positive_votes column
  * @method     ChildArticleQuery orderByNegativeVotes($order = Criteria::ASC) Order by the negative_votes column
  * @method     ChildArticleQuery orderByThemeId($order = Criteria::ASC) Order by the theme_id column
+ * @method     ChildArticleQuery orderByImage($order = Criteria::ASC) Order by the image column
  * @method     ChildArticleQuery orderByDraft($order = Criteria::ASC) Order by the draft column
  * @method     ChildArticleQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildArticleQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
@@ -34,11 +36,13 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildArticleQuery groupById() Group by the id column
  * @method     ChildArticleQuery groupByTitle() Group by the title column
+ * @method     ChildArticleQuery groupByBodyhtml() Group by the bodyHTML column
  * @method     ChildArticleQuery groupByBody() Group by the body column
  * @method     ChildArticleQuery groupByTags() Group by the tags column
  * @method     ChildArticleQuery groupByPositiveVotes() Group by the positive_votes column
  * @method     ChildArticleQuery groupByNegativeVotes() Group by the negative_votes column
  * @method     ChildArticleQuery groupByThemeId() Group by the theme_id column
+ * @method     ChildArticleQuery groupByImage() Group by the image column
  * @method     ChildArticleQuery groupByDraft() Group by the draft column
  * @method     ChildArticleQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildArticleQuery groupByUpdatedAt() Group by the updated_at column
@@ -63,24 +67,45 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildArticle findOneById(int $id) Return the first ChildArticle filtered by the id column
  * @method     ChildArticle findOneByTitle(string $title) Return the first ChildArticle filtered by the title column
+ * @method     ChildArticle findOneByBodyhtml(string $bodyHTML) Return the first ChildArticle filtered by the bodyHTML column
  * @method     ChildArticle findOneByBody(string $body) Return the first ChildArticle filtered by the body column
  * @method     ChildArticle findOneByTags(string $tags) Return the first ChildArticle filtered by the tags column
  * @method     ChildArticle findOneByPositiveVotes(int $positive_votes) Return the first ChildArticle filtered by the positive_votes column
  * @method     ChildArticle findOneByNegativeVotes(int $negative_votes) Return the first ChildArticle filtered by the negative_votes column
  * @method     ChildArticle findOneByThemeId(int $theme_id) Return the first ChildArticle filtered by the theme_id column
+ * @method     ChildArticle findOneByImage(string $image) Return the first ChildArticle filtered by the image column
  * @method     ChildArticle findOneByDraft(boolean $draft) Return the first ChildArticle filtered by the draft column
  * @method     ChildArticle findOneByCreatedAt(string $created_at) Return the first ChildArticle filtered by the created_at column
  * @method     ChildArticle findOneByUpdatedAt(string $updated_at) Return the first ChildArticle filtered by the updated_at column
- * @method     ChildArticle findOneBySlug(string $slug) Return the first ChildArticle filtered by the slug column
+ * @method     ChildArticle findOneBySlug(string $slug) Return the first ChildArticle filtered by the slug column *
+
+ * @method     ChildArticle requirePk($key, ConnectionInterface $con = null) Return the ChildArticle by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOne(ConnectionInterface $con = null) Return the first ChildArticle matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ *
+ * @method     ChildArticle requireOneById(int $id) Return the first ChildArticle filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneByTitle(string $title) Return the first ChildArticle filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneByBodyhtml(string $bodyHTML) Return the first ChildArticle filtered by the bodyHTML column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneByBody(string $body) Return the first ChildArticle filtered by the body column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneByTags(string $tags) Return the first ChildArticle filtered by the tags column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneByPositiveVotes(int $positive_votes) Return the first ChildArticle filtered by the positive_votes column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneByNegativeVotes(int $negative_votes) Return the first ChildArticle filtered by the negative_votes column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneByThemeId(int $theme_id) Return the first ChildArticle filtered by the theme_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneByImage(string $image) Return the first ChildArticle filtered by the image column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneByDraft(boolean $draft) Return the first ChildArticle filtered by the draft column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneByCreatedAt(string $created_at) Return the first ChildArticle filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneByUpdatedAt(string $updated_at) Return the first ChildArticle filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneBySlug(string $slug) Return the first ChildArticle filtered by the slug column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildArticle[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildArticle objects based on current ModelCriteria
  * @method     ChildArticle[]|ObjectCollection findById(int $id) Return ChildArticle objects filtered by the id column
  * @method     ChildArticle[]|ObjectCollection findByTitle(string $title) Return ChildArticle objects filtered by the title column
+ * @method     ChildArticle[]|ObjectCollection findByBodyhtml(string $bodyHTML) Return ChildArticle objects filtered by the bodyHTML column
  * @method     ChildArticle[]|ObjectCollection findByBody(string $body) Return ChildArticle objects filtered by the body column
  * @method     ChildArticle[]|ObjectCollection findByTags(string $tags) Return ChildArticle objects filtered by the tags column
  * @method     ChildArticle[]|ObjectCollection findByPositiveVotes(int $positive_votes) Return ChildArticle objects filtered by the positive_votes column
  * @method     ChildArticle[]|ObjectCollection findByNegativeVotes(int $negative_votes) Return ChildArticle objects filtered by the negative_votes column
  * @method     ChildArticle[]|ObjectCollection findByThemeId(int $theme_id) Return ChildArticle objects filtered by the theme_id column
+ * @method     ChildArticle[]|ObjectCollection findByImage(string $image) Return ChildArticle objects filtered by the image column
  * @method     ChildArticle[]|ObjectCollection findByDraft(boolean $draft) Return ChildArticle objects filtered by the draft column
  * @method     ChildArticle[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildArticle objects filtered by the created_at column
  * @method     ChildArticle[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildArticle objects filtered by the updated_at column
@@ -94,7 +119,8 @@ abstract class ArticleQuery extends ModelCriteria
     // query_cache behavior
     protected $queryKey = '';
     protected static $cacheBackend;
-                
+                protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
+
     /**
      * Initializes internal state of \Base\ArticleQuery object.
      *
@@ -180,7 +206,7 @@ abstract class ArticleQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, title, body, tags, positive_votes, negative_votes, theme_id, draft, created_at, updated_at, slug FROM article WHERE id = :p0';
+        $sql = 'SELECT id, title, bodyHTML, body, tags, positive_votes, negative_votes, theme_id, image, draft, created_at, updated_at, slug FROM article WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);            
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -338,6 +364,35 @@ abstract class ArticleQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ArticleTableMap::COL_TITLE, $title, $comparison);
+    }
+
+    /**
+     * Filter the query on the bodyHTML column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByBodyhtml('fooValue');   // WHERE bodyHTML = 'fooValue'
+     * $query->filterByBodyhtml('%fooValue%'); // WHERE bodyHTML LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $bodyhtml The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildArticleQuery The current query, for fluid interface
+     */
+    public function filterByBodyhtml($bodyhtml = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($bodyhtml)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $bodyhtml)) {
+                $bodyhtml = str_replace('*', '%', $bodyhtml);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(ArticleTableMap::COL_BODYHTML, $bodyhtml, $comparison);
     }
 
     /**
@@ -521,6 +576,35 @@ abstract class ArticleQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ArticleTableMap::COL_THEME_ID, $themeId, $comparison);
+    }
+
+    /**
+     * Filter the query on the image column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByImage('fooValue');   // WHERE image = 'fooValue'
+     * $query->filterByImage('%fooValue%'); // WHERE image LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $image The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildArticleQuery The current query, for fluid interface
+     */
+    public function filterByImage($image = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($image)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $image)) {
+                $image = str_replace('*', '%', $image);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(ArticleTableMap::COL_IMAGE, $image, $comparison);
     }
 
     /**
@@ -745,7 +829,7 @@ abstract class ArticleQuery extends ModelCriteria
     /**
      * Filter the query by a related \View object
      *
-     * @param \View|ObjectCollection $view  the related object to use as filter
+     * @param \View|ObjectCollection $view the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildArticleQuery The current query, for fluid interface

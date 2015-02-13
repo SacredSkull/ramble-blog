@@ -7,9 +7,9 @@ return [
                 'blog' => [
                     'adapter'    => 'mysql',
                     //debugging
-                    'classname'  => 'Propel\Runtime\Connection\DebugPDO',
+                    //'classname'  => 'Propel\Runtime\Connection\DebugPDO',
                     //production
-                    //'classname'  => 'Propel\Runtime\Connection\ConnectionWrapper',
+                    'classname'  => 'Propel\Runtime\Connection\ConnectionWrapper',
                     'dsn'        => 'mysql:host=localhost;dbname=blog',
                     'user'       => 'blog',
                     'password'   => 'sacredskullBlog',

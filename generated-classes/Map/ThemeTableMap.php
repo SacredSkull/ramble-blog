@@ -147,7 +147,7 @@ class ThemeTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('name', 'Name', 'VARCHAR', true, 30, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', true, 60, null);
         $this->getColumn('name')->setPrimaryString(true);
         $this->addColumn('root', 'Root', 'VARCHAR', true, 128, null);
         $this->addColumn('colour', 'Colour', 'VARCHAR', false, 10, 'blue');
@@ -159,7 +159,13 @@ class ThemeTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Article', '\\Article', RelationMap::ONE_TO_MANY, array('id' => 'theme_id', ), 'CASCADE', null, 'Articles');
+        $this->addRelation('Article', '\\Article', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':theme_id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, 'Articles', false);
     } // buildRelations()
 
     /**

@@ -397,7 +397,7 @@ abstract class Theme implements ActiveRecordInterface
     /**
      * Set the value of [id] column.
      * 
-     * @param  int $v new value
+     * @param int $v new value
      * @return $this|\Theme The current object (for fluent API support)
      */
     public function setId($v)
@@ -417,7 +417,7 @@ abstract class Theme implements ActiveRecordInterface
     /**
      * Set the value of [name] column.
      * 
-     * @param  string $v new value
+     * @param string $v new value
      * @return $this|\Theme The current object (for fluent API support)
      */
     public function setName($v)
@@ -437,7 +437,7 @@ abstract class Theme implements ActiveRecordInterface
     /**
      * Set the value of [root] column.
      * 
-     * @param  string $v new value
+     * @param string $v new value
      * @return $this|\Theme The current object (for fluent API support)
      */
     public function setRoot($v)
@@ -457,7 +457,7 @@ abstract class Theme implements ActiveRecordInterface
     /**
      * Set the value of [colour] column.
      * 
-     * @param  string $v new value
+     * @param string $v new value
      * @return $this|\Theme The current object (for fluent API support)
      */
     public function setColour($v)
@@ -477,7 +477,7 @@ abstract class Theme implements ActiveRecordInterface
     /**
      * Set the value of [slug] column.
      * 
-     * @param  string $v new value
+     * @param string $v new value
      * @return $this|\Theme The current object (for fluent API support)
      */
     public function setSlug($v)

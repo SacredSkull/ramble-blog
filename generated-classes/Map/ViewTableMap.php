@@ -152,7 +152,13 @@ class ViewTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Article', '\\Article', RelationMap::MANY_TO_ONE, array('article_id' => 'id', ), 'CASCADE', null);
+        $this->addRelation('Article', '\\Article', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':article_id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, null, false);
     } // buildRelations()
 
     /**

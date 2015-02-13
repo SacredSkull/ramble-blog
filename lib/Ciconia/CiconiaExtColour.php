@@ -1,9 +1,11 @@
 <?php
 
+namespace SacredSkull\Blog;
+
 use Ciconia\Common\Text;
 use Ciconia\Extension\ExtensionInterface;
 
-class CiconiaExtColourTest implements ExtensionInterface
+class CiconiaExtColour implements ExtensionInterface
 {
     /**
      * {@inheritdoc}
@@ -29,6 +31,6 @@ class CiconiaExtColourTest implements ExtensionInterface
      */
     public function getName()
     {
-        return 'mention';
+        return 'Colours the text';
     }
 }

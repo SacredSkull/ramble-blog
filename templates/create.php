@@ -145,7 +145,8 @@
 								altText = "";
 							if(titleText.length === 0)
 								altText = "";
-							txtToAdd = "!["+ altText + "]( "+ uploadedFile.url +" \""+ titleText +"\")";
+							txtToAdd = "{img a:"+ altText +" t:"+ titleText +"}"+ uploadedFile.url +"{/img}";
+							alert(txtToAdd);
 							insertAtCaret(container, txtToAdd);
 
                         },

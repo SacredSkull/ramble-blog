@@ -385,7 +385,7 @@ abstract class View implements ActiveRecordInterface
     /**
      * Set the value of [id] column.
      * 
-     * @param  int $v new value
+     * @param int $v new value
      * @return $this|\View The current object (for fluent API support)
      */
     public function setId($v)
@@ -405,7 +405,7 @@ abstract class View implements ActiveRecordInterface
     /**
      * Set the value of [ip_address] column.
      * 
-     * @param  string $v new value
+     * @param string $v new value
      * @return $this|\View The current object (for fluent API support)
      */
     public function setIpAddress($v)
@@ -445,7 +445,7 @@ abstract class View implements ActiveRecordInterface
     /**
      * Set the value of [article_id] column.
      * 
-     * @param  int $v new value
+     * @param int $v new value
      * @return $this|\View The current object (for fluent API support)
      */
     public function setArticleId($v)
@@ -885,6 +885,14 @@ abstract class View implements ActiveRecordInterface
             $keys[2] => $this->getTime(),
             $keys[3] => $this->getArticleId(),
         );
+
+        $utc = new \DateTimeZone('utc');
+        if ($result[$keys[2]] instanceof \DateTime) {
+            // When changing timezone we don't want to change existing instances
+            $dateTime = clone $result[$keys[2]];
+            $result[$keys[2]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+        }
+        
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;

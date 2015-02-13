@@ -22,7 +22,7 @@
 	</table>
 	<table name="theme" phpName="Theme">
 		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
-		<column name="name" type="varchar" size="30" required="true" primaryString="true" />
+		<column name="name" type="varchar" size="60" required="true" primaryString="true" />
 		<column name="root" type="varchar" size="128" required="true" />
 		<column name="colour" type="varchar" size="10" required="false" defaultValue="blue" />
 		<behavior name="query_cache">

@@ -1,5 +1,9 @@
 <?php
 
+use Aws\S3\S3Client;
+use Monolog\Logger;
+use Monolog\Handler\LogglyHandler;
+
 define('DEBUG_SLIM', true);
 define('DEBUG', true);
 define('WIREFRAME', false);
@@ -23,12 +27,6 @@ if (DEBUG == true) {
 require './vendor/autoload.php';
 // Propel auto-conf
 require './generated-conf/config.php';
-// BBCode Twig Extension
-//require './lib/Twig_Extension_BBCode.php';
-// Markdown Twig Extension
-require './lib/Twig_Extension_Parsedown.php';
-require './lib/TwigExtensionCiconia.php';
-require './lib/Twig_Extension_Truncate_HTML.php';
 // Defined BBCodes, if set
 if (USING_BBCODE) {
     require './lib/bbcodes.php';
@@ -66,7 +64,11 @@ function jsFriendly($string)
     return htmlspecialchars($string, ENT_QUOTES);
 }
 
-use Aws\S3\S3Client;
+$GLOBALS['execute_time'] = microtime(true);
+
+$logger = new Logger('defaultLogger');
+$logger->pushHandler(new LogglyHandler('fee7ba7f-4b4e-48b2-b9b6-efa7862dbb86/tag/monolog', Logger::INFO));
+\Propel\Runtime\Propel::getServiceContainer()->setLogger('defaultLogger', $logger);
 
 //session_start();
 
@@ -95,8 +97,9 @@ $view->parserOptions = array(
 $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
     //new TwigExtensionParsedown(),
-    new Twig_Extensions_Extension_Text(),
-    new TwigExtensionHTMLTruncaterFilter(),
+    new \Twig_Extensions_Extension_Text(),
+    new \SacredSkull\Blog\TwigExtensionHTMLTruncaterFilter(),
+    new \SacredSkull\Blog\Twig_Extension_ExecutionTime(),
 );
 
 $sayings = explode("\n", file_get_contents('include/etc/skull-phrases.txt'));
@@ -108,12 +111,12 @@ $themes = ThemeQuery::create()
     ->setQueryKey('get_all_themes')
     ->find();
 
-$app->get('/test/', function () use ($app, $quote, $defaultTheme) {
+$app->get('/test/', function () use ($app, $quote, $defaultTheme, $logger) {
 
     $generator = Faker\Factory::create('en_UK');
 
-    for ($i = 1; $i < 100; $i++) {
-        if ($i == 99) {
+    for ($i = 1; $i < 20; $i++) {
+        if ($i == 19) {
             $theme = new Theme();
             $theme->setName('A real category!');
             $theme->setRoot('/');
@@ -123,7 +126,7 @@ $app->get('/test/', function () use ($app, $quote, $defaultTheme) {
             $post = new Article();
             $post->setDraft(false);
             $post->setTitle('An article that was actually typed!');
-            $post->setBody("#A post's header\n##Some subtext for the header.\n**Finally, a bit of *bold***");
+            $post->setBody("#A post's header\n##Some subtext for the header.\n**Finally, a bit of *bold***\n\n{img a:My namesake's avatar t:The not-so household logo of SacredSkull}test.jpg{/img}");
             $preparedFromWebFromArray = array('New Post', '#Excited');
             $tagArray = implode(';', $preparedFromWebFromArray);
             $post->setTags($tagArray);
@@ -147,16 +150,9 @@ $app->get('/test/', function () use ($app, $quote, $defaultTheme) {
         $post->setTheme($theme);
         $post->save();
     }
-    /*
-    $post = new Article();
-    $post->setTitle('');
-    $post->setBody('');
-    $preparedFromWebFromArray = array('New Post', '#Excited');
-    $tagArray = implode(',', $preparedFromWebFromArray);
-    $post->setTags($tagArray);
-    $post->setTheme($defaultTheme->findPK(1));
-    $post->save();
-    */
+
+    $logger->info("All test values inserted correctly!");
+
     $app->render('test.php', array(
         'admin' => isAdmin(),
         'debug' => DEBUG,
@@ -427,7 +423,7 @@ $app->post('/upload/:post', function ($post) use ($app) {
                     'category' => 'image',
                 ),
             ));
-            echo '{"url": "https://d3dcca3zf9ihpu.cloudfront.net/'.$remote_path.'"}';
+            echo '{"url": "'.$remote_path.'"}';
         } catch (S3Exception $e) {
             echo '{"error": "'.$e->getMessage().'"}';
         }

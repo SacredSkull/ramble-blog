@@ -13,11 +13,13 @@ CREATE TABLE `article`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(255) NOT NULL,
+    `bodyHTML` TEXT,
     `body` TEXT NOT NULL,
     `tags` VARCHAR(255) NOT NULL,
     `positive_votes` INTEGER DEFAULT 0,
     `negative_votes` INTEGER DEFAULT 0,
     `theme_id` INTEGER DEFAULT 0 NOT NULL,
+    `image` VARCHAR(255) DEFAULT 'default/post_img.png',
     `draft` TINYINT(1) DEFAULT 0,
     `created_at` DATETIME,
     `updated_at` DATETIME,
@@ -40,7 +42,7 @@ DROP TABLE IF EXISTS `theme`;
 CREATE TABLE `theme`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(30) NOT NULL,
+    `name` VARCHAR(60) NOT NULL,
     `root` VARCHAR(128) NOT NULL,
     `colour` VARCHAR(10) DEFAULT 'blue',
     `slug` VARCHAR(255),

@@ -10,7 +10,9 @@
  * @tutorial
  */
 
-class TwigExtensionParsedown extends Twig_Extension
+namespace SacredSkull\Blog;
+
+class Twig_Extension_Parsedown extends Twig_Extension
 {
     public function getFilters()
     {

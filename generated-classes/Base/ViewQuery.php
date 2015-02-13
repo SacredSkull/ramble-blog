@@ -46,7 +46,15 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildView findOneById(int $id) Return the first ChildView filtered by the id column
  * @method     ChildView findOneByIpAddress(string $ip_address) Return the first ChildView filtered by the ip_address column
  * @method     ChildView findOneByTime(string $time) Return the first ChildView filtered by the time column
- * @method     ChildView findOneByArticleId(int $article_id) Return the first ChildView filtered by the article_id column
+ * @method     ChildView findOneByArticleId(int $article_id) Return the first ChildView filtered by the article_id column *
+
+ * @method     ChildView requirePk($key, ConnectionInterface $con = null) Return the ChildView by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildView requireOne(ConnectionInterface $con = null) Return the first ChildView matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ *
+ * @method     ChildView requireOneById(int $id) Return the first ChildView filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildView requireOneByIpAddress(string $ip_address) Return the first ChildView filtered by the ip_address column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildView requireOneByTime(string $time) Return the first ChildView filtered by the time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildView requireOneByArticleId(int $article_id) Return the first ChildView filtered by the article_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildView[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildView objects based on current ModelCriteria
  * @method     ChildView[]|ObjectCollection findById(int $id) Return ChildView objects filtered by the id column
@@ -62,7 +70,8 @@ abstract class ViewQuery extends ModelCriteria
     // query_cache behavior
     protected $queryKey = '';
     protected static $cacheBackend;
-                
+                protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
+
     /**
      * Initializes internal state of \Base\ViewQuery object.
      *

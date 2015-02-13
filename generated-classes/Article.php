@@ -24,7 +24,8 @@ class Article extends BaseArticle
         $ciconia->addExtension(new Gfm\WhiteSpaceExtension());
         $ciconia->addExtension(new Gfm\TableExtension());
         $ciconia->addExtension(new Gfm\UrlAutoLinkExtension());
-        $ciconia->addExtension(new CiconiaExtColourTest());
+        $ciconia->addExtension(new \SacredSkull\Blog\CiconiaExtColour());
+        $ciconia->addExtension(new \SacredSkull\Blog\CiconiaExtCDNImage());
 
         $rendered = $ciconia->render($this->body);
         $this->setBodyhtml($rendered);

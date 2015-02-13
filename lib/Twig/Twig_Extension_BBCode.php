@@ -11,6 +11,8 @@
  * @tutorial
  */
 
+namespace SacredSkull\Blog;
+
 class Twig_Extension_BBCode extends Twig_Extension
 {
     public $bbcode_array;

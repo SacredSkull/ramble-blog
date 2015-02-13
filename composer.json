@@ -16,7 +16,6 @@
         "fzaninotto/faker": "1.*"
     },
     "autoload": {
-        "classmap": ["./generated-classes/"],
-        "psr-4": {"SacredSkull\\": "lib/"}
+        "classmap": ["./generated-classes/", "./lib/"]
     }
 }

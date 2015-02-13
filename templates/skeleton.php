@@ -97,17 +97,22 @@
 				<span id='footer-white'>&nbsp;</span>
 				<div class="container">
 					<br>
-					<div class="row">
-						<p class="pull-left">I thoroughly recommend creating a blog as your next coding project!</p>
-						<!--sse--><p class="pull-right">If you prefer, email me directly: clotters@gmail.com</p><!--/sse-->
+					<br>
+					<br>
+					<div class="col-md-6">
+						<div class="row">
+							<p><b>Made with </b><span class="glyphicon glyphicon-hand-down"></span></p>
+							<p><a href="http://www.slimframework.com/">The Slim Framework</a></p>
+							<p><a href="http://propelorm.org/">Propel2 ORM</a></p>
+							<p>...and lots of tea.</p>
+						</div>
 					</div>
-					<br>
-					<br>
-					<div class="row">
-						<p><b>Made with </b><span class="glyphicon glyphicon-hand-down"></span></p>
-						<p><a href="http://www.slimframework.com/">The Slim Framework</a></p>
-						<p><a href="http://propelorm.org/">Propel2 ORM</a></p>
-						<p>...and lots of tea.</p>
+					<div class="col-md-6">
+						<div class="row">
+							<p class="pull-right">{{ executeTime() }}</p>
+							<p class="pull-right">I thoroughly recommend creating a blog as your next coding project!</p>
+							<!--sse--><p class="pull-right">If you prefer, email me directly: clotters@gmail.com</p><!--/sse-->
+						</div>
 					</div>
 				</div>
 			</div>

@@ -49,7 +49,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildTheme findOneByName(string $name) Return the first ChildTheme filtered by the name column
  * @method     ChildTheme findOneByRoot(string $root) Return the first ChildTheme filtered by the root column
  * @method     ChildTheme findOneByColour(string $colour) Return the first ChildTheme filtered by the colour column
- * @method     ChildTheme findOneBySlug(string $slug) Return the first ChildTheme filtered by the slug column
+ * @method     ChildTheme findOneBySlug(string $slug) Return the first ChildTheme filtered by the slug column *
+
+ * @method     ChildTheme requirePk($key, ConnectionInterface $con = null) Return the ChildTheme by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildTheme requireOne(ConnectionInterface $con = null) Return the first ChildTheme matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ *
+ * @method     ChildTheme requireOneById(int $id) Return the first ChildTheme filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildTheme requireOneByName(string $name) Return the first ChildTheme filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildTheme requireOneByRoot(string $root) Return the first ChildTheme filtered by the root column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildTheme requireOneByColour(string $colour) Return the first ChildTheme filtered by the colour column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildTheme requireOneBySlug(string $slug) Return the first ChildTheme filtered by the slug column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildTheme[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildTheme objects based on current ModelCriteria
  * @method     ChildTheme[]|ObjectCollection findById(int $id) Return ChildTheme objects filtered by the id column
@@ -66,7 +75,8 @@ abstract class ThemeQuery extends ModelCriteria
     // query_cache behavior
     protected $queryKey = '';
     protected static $cacheBackend;
-                
+                protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
+
     /**
      * Initializes internal state of \Base\ThemeQuery object.
      *
@@ -402,7 +412,7 @@ abstract class ThemeQuery extends ModelCriteria
     /**
      * Filter the query by a related \Article object
      *
-     * @param \Article|ObjectCollection $article  the related object to use as filter
+     * @param \Article|ObjectCollection $article the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildThemeQuery The current query, for fluid interface

@@ -9,7 +9,9 @@
  * @tutorial
  */
 
-class TwigExtensionHTMLTruncaterFilter extends Twig_Extension
+namespace SacredSkull\Blog;
+
+class TwigExtensionHTMLTruncaterFilter extends \Twig_Extension
 {
     public function getFilters()
     {

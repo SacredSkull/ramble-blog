@@ -9,6 +9,8 @@
  * @tutorial
  */
 
+namespace SacredSkull\Blog;
+
 use Ciconia\Ciconia;
 use Ciconia\Extension\Gfm;
 
