@@ -127,9 +127,7 @@ $app->get('/test/', function () use ($app, $quote, $defaultTheme, $logger) {
             $post->setDraft(false);
             $post->setTitle('An article that was actually typed!');
             $post->setBody("#A post's header\n##Some subtext for the header.\n**Finally, a bit of *bold***\n\n{img a:My namesake's avatar t:The not-so household logo of SacredSkull}test.jpg{/img}");
-            $preparedFromWebFromArray = array('New Post', '#Excited');
             $tagArray = implode(';', $preparedFromWebFromArray);
-            $post->setTags($tagArray);
             $post->setTheme($theme);
             $post->save();
             break;
@@ -144,9 +142,6 @@ $app->get('/test/', function () use ($app, $quote, $defaultTheme, $logger) {
         $post->setDraft(false);
         $post->setTitle($generator->realText(25));
         $post->setBody($generator->realText(4000));
-        $preparedFromWebFromArray = array('New Post', '#Excited');
-        $tagArray = implode(';', $preparedFromWebFromArray);
-        $post->setTags($tagArray);
         $post->setTheme($theme);
         $post->save();
     }
