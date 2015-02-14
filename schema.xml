@@ -9,6 +9,7 @@
 		<column name="positive_votes" type="integer" required="false" defaultValue="0" />
 		<column name="negative_votes" type="integer" required="false" defaultValue="0" />
 		<column name="theme_id" type="integer" required="true" defaultValue="0" />
+		<column name="tag_id" type="integer" required="false" defaultValue="0" />
 		<column name="image" type="varchar" size="255" required="false" default="default/post_img.png" />
 		<column name="draft" type="boolean" required="false" defaultValue="false" />
 		<behavior name="timestampable"/>
@@ -18,6 +19,9 @@
 		<foreign-key foreignTable="theme" phpName="Theme" onDelete="CASCADE" refPhpName="Article">
 			<reference local="theme_id" foreign="id"/>
 		</foreign-key>
+				<foreign-key foreignTable="tag" phpName="Tag" onDelete="CASCADE" refPhpName="Article">
+			<reference local="tag_id" foreign="id"/>
+		</foreign-key>
 		<behavior name="sluggable" />
 	</table>
 	<table name="theme" phpName="Theme">
@@ -25,6 +29,14 @@
 		<column name="name" type="varchar" size="60" required="true" primaryString="true" />
 		<column name="root" type="varchar" size="128" required="true" />
 		<column name="colour" type="varchar" size="10" required="false" defaultValue="blue" />
+		<behavior name="query_cache">
+			<parameter name="backend" value="custom" />
+		</behavior>
+		<behavior name="sluggable" />
+	</table>
+	<table name="tag" phpName="Tag">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="name" type="varchar" size="60" required="true" primaryString="true" />
 		<behavior name="query_cache">
 			<parameter name="backend" value="custom" />
 		</behavior>
