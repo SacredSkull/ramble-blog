@@ -101,9 +101,10 @@
 					<br>
 					<div class="col-md-6">
 						<div class="row">
-							<p><b>Made with </b><span class="glyphicon glyphicon-hand-down"></span></p>
+							<p></span><b>Made with </b><span class="glyphicon glyphicon-hand-down"></span></p>
 							<p><a href="http://www.slimframework.com/">The Slim Framework</a></p>
 							<p><a href="http://propelorm.org/">Propel2 ORM</a></p>
+							<p><a href="http://hhvm.com/">HHVM</a></p>
 							<p>...and lots of tea.</p>
 						</div>
 					</div>

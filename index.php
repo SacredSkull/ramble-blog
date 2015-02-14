@@ -2,7 +2,7 @@
 
 use Aws\S3\S3Client;
 use Monolog\Logger;
-use Monolog\Handler\LogglyHandler;
+use Monolog\Handler\StreamHandler;
 
 define('DEBUG_SLIM', true);
 define('DEBUG', true);
@@ -67,7 +67,7 @@ function jsFriendly($string)
 $GLOBALS['execute_time'] = microtime(true);
 
 $logger = new Logger('defaultLogger');
-$logger->pushHandler(new LogglyHandler('fee7ba7f-4b4e-48b2-b9b6-efa7862dbb86/tag/monolog', Logger::INFO));
+$logger->pushHandler(new StreamHandler('./logs/propel.log'));
 \Propel\Runtime\Propel::getServiceContainer()->setLogger('defaultLogger', $logger);
 
 //session_start();
@@ -99,7 +99,7 @@ $view->parserExtensions = array(
     //new TwigExtensionParsedown(),
     new \Twig_Extensions_Extension_Text(),
     new \SacredSkull\Blog\TwigExtensionHTMLTruncaterFilter(),
-    new \SacredSkull\Blog\Twig_Extension_ExecutionTime(),
+    new \SacredSkull\Blog\TwigExtensionExecutionTime(),
 );
 
 $sayings = explode("\n", file_get_contents('include/etc/skull-phrases.txt'));

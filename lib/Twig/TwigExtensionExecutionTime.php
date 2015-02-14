@@ -12,7 +12,7 @@
 
 namespace SacredSkull\Blog;
 
-class Twig_Extension_ExecutionTime extends \Twig_Extension
+class TwigExtensionExecutionTime extends \Twig_Extension
 {
     public function getFunctions()
     {
@@ -31,7 +31,20 @@ class Twig_Extension_ExecutionTime extends \Twig_Extension
 
         $durationMS = (microtime(true) - $GLOBALS['execute_time']) * 1000;
 
-        return "Took <code>".number_format($durationMS, 3, '.', '')."ms</code> to load this page";
+        $app = "</code>s.";
+
+        $secs = $durationMS / 1000;
+        if ($secs < 0.5) {
+            $pre = " <code>";
+        } elseif ($secs < 1) {
+            $pre = "a decent <code>";
+        } elseif ($secs > 1 && $secs < 1.5) {
+            $pre = "a lengthy <code>";
+        } else {
+            $pre = "a very slow  <code>";
+        }
+
+        return "Generated in ".$pre.number_format($secs, 3, '.', '').$app;
     }
 
     public function getName()
