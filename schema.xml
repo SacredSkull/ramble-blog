@@ -5,11 +5,11 @@
 		<column name="title" type="varchar" size="255" required="true" primaryString="true" />
 		<column name="bodyHTML" type="longvarchar"/>
 		<column name="body" type="longvarchar" required="true"/>
-		<column name="tags" type="varchar" size="255" required="true"/>
+		<column name="tags" type="varchar" size="255" required="false"/>
 		<column name="positive_votes" type="integer" required="false" defaultValue="0" />
 		<column name="negative_votes" type="integer" required="false" defaultValue="0" />
 		<column name="theme_id" type="integer" required="true" defaultValue="0" />
-		<column name="tag_id" type="integer" required="false" defaultValue="0" />
+		<column name="tag_id" type="integer" required="false" />
 		<column name="image" type="varchar" size="255" required="false" default="default/post_img.png" />
 		<column name="draft" type="boolean" required="false" defaultValue="false" />
 		<behavior name="timestampable"/>

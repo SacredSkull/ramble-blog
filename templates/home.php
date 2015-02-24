@@ -26,7 +26,8 @@
                             <div class="row">
                                 <div id="whitespace">
                                     <h1 class="title"  id="theme_name"><a style="color: {{post.getTheme.getColour}};" href="/{{post.getTheme.getName}}/">{{post.getTheme.getName}} &#62;</a></h1>
-                                    <p class="title"><a class="title_link" href="/post/{{post.getSlug}}">{{post.getTitle|title}}</a></p>
+                                    {% set slug = post.getSlug|split('_') %}
+                                    <p class="title"><a class="title_link" href="/{{slug[0]|date('Y/m/d/')}}{{slug[1]}}">{{post.getTitle|title}}</a></p>
                                     <hr>
                                     <h4>{{post.getCreatedAt|date("d l, F Y G:i")}}</h4>
                                 </div>
@@ -50,11 +51,11 @@
                             <div class="row">
                                 <div class="text-center">
                                     <ul class="pagination">
-                                        <li {% if current_page == 1 %}class="disabled"{% endif %}><a href="/">&laquo;</a></li>
+                                        <li {% if current_page == 1 %}class="disabled"{% endif %}><a href="{{pagination_url|default('/page/')}}1">&laquo;</a></li>
                                     {% for page in page_list %}
-                                        <li {% if current_page == page %}class="active"{% endif %}><a href="/{{page}}">{{page}}</a></li>
+                                        <li {% if current_page == page %}class="active"{% endif %}><a href="{{pagination_url|default('/page/')}}{{page}}">{{page}}</a></li>
                                     {% endfor %}
-                                        <li {% if max_pages == current_page %}class="disabled"{% endif %}><a href="/{{max_pages}}">&raquo;</a></li>
+                                        <li {% if max_pages == current_page %}class="disabled"{% endif %}><a href="{{pagination_url|default('/page/')}}{{max_pages}}">&raquo;</a></li>
                                     </ul>
                                 </div>
                             </div>

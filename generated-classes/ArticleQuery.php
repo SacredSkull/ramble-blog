@@ -17,48 +17,55 @@ use Base\ArticleQuery as BaseArticleQuery;
 
 class ArticleQuery extends BaseArticleQuery
 {
-	public function cacheContains($key){
-		$key = str_replace(" ", "_", $key);
-		return $this->getCacheBackend()->get($key);
-	}
+    public function cacheContains($key)
+    {
+        $key = str_replace(" ", "_", $key);
 
-	public function cacheFetch($key)
-	{
-		$key = str_replace(" ", "_", $key);
-		return $this->getCacheBackend()->get($key);
-	}
+        return $this->getCacheBackend()->get($key);
+    }
 
-	public function cacheStore($key, $value, $lifetime = 172800)
-	{
-		$key = str_replace(" ", "_", $key);
-		return $this->getCacheBackend()->set($key, $value, $lifetime);
-	}
+    public function cacheFetch($key)
+    {
+        $key = str_replace(" ", "_", $key);
 
-	protected function getCacheBackend(){
-		if(USING_WINDOWS == false){
-			self::$cacheBackend = new Memcached();
-			$servers = self::$cacheBackend->getServerList();
-			if(is_array($servers)) {
-				foreach ($servers as $server){
-					if($server['host'] == 'localhost' and $server['port'] == '11211'){
-						return self::$cacheBackend;
-					}
-				}
-			}
-			self::$cacheBackend->addServer('localhost', 11211);
-			return self::$cacheBackend;
-		} else {
-			self::$cacheBackend = new Memcache();
-			$servers = self::$cacheBackend->getServerList();
-			if(is_array($servers)) {
-				foreach ($servers as $server){
-					if($server['host'] == 'localhost' and $server['port'] == '11211'){
-						return self::$cacheBackend;
-					}
-				}
-			}
-			self::$cacheBackend->addServer('localhost', 11211);
-			return self::$cacheBackend;
-		}
-	}
+        return $this->getCacheBackend()->get($key);
+    }
+
+    public function cacheStore($key, $value, $lifetime = 172800)
+    {
+        $key = str_replace(" ", "_", $key);
+
+        return $this->getCacheBackend()->set($key, $value, $lifetime);
+    }
+
+    protected function getCacheBackend()
+    {
+        if (USING_WINDOWS == false) {
+            self::$cacheBackend = new Memcached();
+            $servers = self::$cacheBackend->getServerList();
+            if (is_array($servers)) {
+                foreach ($servers as $server) {
+                    if ($server['host'] == 'localhost' and $server['port'] == '11211') {
+                        return self::$cacheBackend;
+                    }
+                }
+            }
+            self::$cacheBackend->addServer('localhost', 11211);
+
+            return self::$cacheBackend;
+        } else {
+            self::$cacheBackend = new Memcache();
+            $servers = self::$cacheBackend->getServerList();
+            if (is_array($servers)) {
+                foreach ($servers as $server) {
+                    if ($server['host'] == 'localhost' and $server['port'] == '11211') {
+                        return self::$cacheBackend;
+                    }
+                }
+            }
+            self::$cacheBackend->addServer('localhost', 11211);
+
+            return self::$cacheBackend;
+        }
+    }
 }
