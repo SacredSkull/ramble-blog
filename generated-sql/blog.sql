@@ -15,10 +15,11 @@ CREATE TABLE `article`
     `title` VARCHAR(255) NOT NULL,
     `bodyHTML` TEXT,
     `body` TEXT NOT NULL,
-    `tags` VARCHAR(255) NOT NULL,
+    `tags` VARCHAR(255),
     `positive_votes` INTEGER DEFAULT 0,
     `negative_votes` INTEGER DEFAULT 0,
     `theme_id` INTEGER DEFAULT 0 NOT NULL,
+    `tag_id` INTEGER,
     `image` VARCHAR(255) DEFAULT 'default/post_img.png',
     `draft` TINYINT(1) DEFAULT 0,
     `created_at` DATETIME,
@@ -27,9 +28,14 @@ CREATE TABLE `article`
     PRIMARY KEY (`id`),
     UNIQUE INDEX `article_slug` (`slug`(255)),
     INDEX `article_fi_e23503` (`theme_id`),
+    INDEX `article_fi_022a95` (`tag_id`),
     CONSTRAINT `article_fk_e23503`
         FOREIGN KEY (`theme_id`)
         REFERENCES `theme` (`id`)
+        ON DELETE CASCADE,
+    CONSTRAINT `article_fk_022a95`
+        FOREIGN KEY (`tag_id`)
+        REFERENCES `tag` (`id`)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -48,6 +54,21 @@ CREATE TABLE `theme`
     `slug` VARCHAR(255),
     PRIMARY KEY (`id`),
     UNIQUE INDEX `theme_slug` (`slug`(255))
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- tag
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `tag`;
+
+CREATE TABLE `tag`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(60) NOT NULL,
+    `slug` VARCHAR(255),
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `tag_slug` (`slug`(255))
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------

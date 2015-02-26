@@ -306,7 +306,10 @@ $adminHandler = function ($id = -1) use ($app, $defaultTheme) {
             ));
         }
     } elseif ($app->request->isPost()) {
-        echo "ASD!!!";
+        if ($id == -1) {
+            $app->response->setStatus(400);
+            $app->halt();
+        }
         $post = ArticleQuery::create()->findOneById($id);
         $allPostVars = $app->request->post();
         $post->setTitle($allPostVars['title']);
@@ -314,46 +317,78 @@ $adminHandler = function ($id = -1) use ($app, $defaultTheme) {
         $post->save();
         echo $post->getId();
         if (!$app->request->isAjax()) {
-            $app->redirect('/');
+            //$app->redirect('/');
         }
     }
 };
 
-$app->get('/test', $testHandler);
-$app->get('/test/', $testHandler);
+$app->get('/test(/)', $testHandler);
 
-// Update post by ID
-$app->post('/admin/:id', $homepageHandler)->conditions(array('id' => '\d{1,10}'));
-
-$app->get('/page/:page', $homepageHandler)->conditions(array(
+$app->get('/page/:page(/)', $homepageHandler)->conditions(array(
     'page' => '\d{1,4}',
 ));
 
-$app->get('/id/:idArticle', $postIDHandler)->conditions(array(
+$app->get('/id/:idArticle(/)', $postIDHandler)->conditions(array(
     'idArticle' => '\d{1,10}',
 ));
 
-$app->get('/:year/:month/:day/:slugArticle', $postSlugHandler)->conditions(array(
+$app->get('/:year/:month/:day/:slugArticle(/)', $postSlugHandler)->conditions(array(
     'year' => '(19|20)\d\d',
     'month' => '\d\d',
     'day' => '\d\d',
     'slugArticle' => '[a-zA-Z0-9_.-]+',
 ));
 
-$app->get('/category/:slugTheme', function ($slugTheme) use ($app, $quote) {
-    $theme = ThemeQuery::create()->findOneBySlug($slugTheme);
+$app->get('/category/:slugTheme(/)(:page)', function ($themeSlug, $page = 1) use ($app, $quote, $themes) {
+    $maxPerPage = 10;
+    $theme = ThemeQuery::create()->findOneBySlug($themeSlug);
+
+    // Paginate() is currently not compatible with setQueryKey, and only caches the first
+    // count query, which is useless because then it causes Twig to throw an exception
+    // because propel threw an exception. It was horrible to diagnose and you'd better take
+    // your own word for it!
+    //
+    // TL;DR - paginate() & setQueryKey() do not play well together currently!
     $themedPosts = ArticleQuery::create()
-        /*->setQueryKey('posts_of_particular_theme')*/
-        ->filterByTheme($theme);
-    var_dump($themedPosts);
+        //->setQueryKey('posts_of_particular_theme')
+        ->filterByTheme($theme)
+        ->paginate($page, $maxPerPage);
+
+    $maxPages = ceil($themedPosts->getNbResults() / $maxPerPage);
+    $pagelist = $themedPosts->getLinks(5);
+
+    if ($page == 1 && $app->request()->getPathInfo() != "/category/".$themeSlug) {
+        $app->redirect('/category/'.$themeSlug);
+    }
+
+    if ($page > $maxPages) {
+        $app->flash('denied', "I've failed you senpai.. I haven't got that many post pages!");
+        $app->redirect('/'.$themeSlug."/".$maxPages);
+    }
+
+    $app->render('home.php', array(
+        'admin' => isAdmin(),
+        'debug' => DEBUG,
+        'wireframe' => WIREFRAME,
+        'skull_greeting' => $quote,
+        'posts' => $themedPosts,
+        'current_page' => $page,
+        'page_list' => $pagelist,
+        'themes' => $themes,
+        'max_pages' => $maxPages,
+    ));
 });
 
 // Admin page
 $app->get('/admin(/:id)', $adminHandler);
 
+// Update post by ID
+$app->post('/admin/:id', $adminHandler);//->conditions(array('id' => '\d{1,10}'));
+
 // Admin page, edit an existing post.
 //$app->get('/admin/:id', $adminHandler)->conditions(array('id' => '\d{1,10}'));
 
+/*
 $app->get('/admin/:slugArticle', function ($slugArticle) use ($app) {
     $quote = "  EDITING SLUG ".$slugArticle."!  ";
     $post = ArticleQuery::create()->findOneBySlug($slugArticle);
@@ -364,6 +399,7 @@ $app->get('/admin/:slugArticle', function ($slugArticle) use ($app) {
         'mode' => 'edit',
     ));
 });
+*/
 
 $app->group('/api', function () use ($app) {
     $app->get('/post', function () use ($app) {
@@ -390,7 +426,7 @@ $app->group('/api', function () use ($app) {
 });
 
 $app->get('/upload/:post', function ($post) use ($app) {
-    isAdmin() ? $app->redirect('/admin/'.$post) : $app->redirect('/');
+    isAdmin() ? $app->redirect('/admin/'.$post) : $app->notFound();
 });
 
 $app->post('/upload/:post', function ($post) use ($app) {
@@ -443,10 +479,12 @@ $app->post('/upload/:post', function ($post) use ($app) {
     }
 })->conditions(array('post' => '\d{1,10}'));
 
-$app->get('/:year(/:month(/:day/(/:page)))', function ($year, $month = 1, $day = 1, $page = 1) use ($app, $quote, $themes) {
+$app->get('/:year(/)(:month(/)(:day(/)(:page(/))))', function ($year, $month = 1, $day = 1, $page = 1) use ($app, $quote, $themes) {
 
-    $date = strtotime($year."/".$month."/".$day);
-    echo $date;
+    $firstDate = strtotime($year."/".$month."/".$day." 00:00:00");
+    $secondDate = strtotime($year."/".$month."/".$day." 23:59:59");
+
+    $rawDate = date("d l, F Y G:i", $firstDate);
 
     $maxPerPage = 10;
 
@@ -454,14 +492,19 @@ $app->get('/:year(/:month(/:day/(/:page)))', function ($year, $month = 1, $day =
     $posts = ArticleQuery::create()
         //->setQueryKey('homepage')
         ->orderById('DESC')
-        ->filterByCreatedAt($date)
+        ->filterByCreatedAt(array('min' => $firstDate, 'max' => $secondDate))
         ->paginate($page, $maxPerPage);
 
     $maxPages = ceil($posts->getNbResults() / $maxPerPage);
     $pagelist = $posts->getLinks(5);
 
+    if (!$maxPages > 0) {
+        $app->flash('denied', "I haven't posted anything on $rawDate");
+        $app->redirect('/');
+    }
+
     if ($page > $maxPages) {
-        $app->flash('denied', "I'm afraid that is all I've posted on $date :(");
+        $quote = "No more pages!";
         //$app->redirect('/');
     }
 
@@ -477,7 +520,12 @@ $app->get('/:year(/:month(/:day/(/:page)))', function ($year, $month = 1, $day =
         'themes' => $themes,
         'max_pages' => $maxPages,
     ));
-})->conditions(array('post' => '\d{1,10}'));
+})->conditions(array(
+    'year' => '(19|20)\d\d',
+    'month' => '\d\d',
+    'day' => '\d\d',
+    'page' => '\d{1,10}',
+));
 
 $app->get('/', $homepageHandler);
 

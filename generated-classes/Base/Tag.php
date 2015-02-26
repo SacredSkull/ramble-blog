@@ -4,11 +4,11 @@ namespace Base;
 
 use \Article as ChildArticle;
 use \ArticleQuery as ChildArticleQuery;
-use \Theme as ChildTheme;
-use \ThemeQuery as ChildThemeQuery;
+use \Tag as ChildTag;
+use \TagQuery as ChildTagQuery;
 use \Exception;
 use \PDO;
-use Map\ThemeTableMap;
+use Map\TagTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -23,18 +23,18 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 
 /**
- * Base class that represents a row from the 'theme' table.
+ * Base class that represents a row from the 'tag' table.
  *
  * 
  *
 * @package    propel.generator..Base
 */
-abstract class Theme implements ActiveRecordInterface 
+abstract class Tag implements ActiveRecordInterface 
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Map\\ThemeTableMap';
+    const TABLE_MAP = '\\Map\\TagTableMap';
 
 
     /**
@@ -76,19 +76,6 @@ abstract class Theme implements ActiveRecordInterface
     protected $name;
 
     /**
-     * The value for the root field.
-     * @var        string
-     */
-    protected $root;
-
-    /**
-     * The value for the colour field.
-     * Note: this column has a database default value of: 'blue'
-     * @var        string
-     */
-    protected $colour;
-
-    /**
      * The value for the slug field.
      * @var        string
      */
@@ -115,23 +102,10 @@ abstract class Theme implements ActiveRecordInterface
     protected $articlesScheduledForDeletion = null;
 
     /**
-     * Applies default values to this object.
-     * This method should be called from the object's constructor (or
-     * equivalent initialization method).
-     * @see __construct()
-     */
-    public function applyDefaultValues()
-    {
-        $this->colour = 'blue';
-    }
-
-    /**
-     * Initializes internal state of Base\Theme object.
-     * @see applyDefaults()
+     * Initializes internal state of Base\Tag object.
      */
     public function __construct()
     {
-        $this->applyDefaultValues();
     }
 
     /**
@@ -223,9 +197,9 @@ abstract class Theme implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Theme</code> instance.  If
-     * <code>obj</code> is an instance of <code>Theme</code>, delegates to
-     * <code>equals(Theme)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Tag</code> instance.  If
+     * <code>obj</code> is an instance of <code>Tag</code>, delegates to
+     * <code>equals(Tag)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -291,7 +265,7 @@ abstract class Theme implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|Theme The current object, for fluid interface
+     * @return $this|Tag The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -365,26 +339,6 @@ abstract class Theme implements ActiveRecordInterface
     }
 
     /**
-     * Get the [root] column value.
-     * 
-     * @return string
-     */
-    public function getRoot()
-    {
-        return $this->root;
-    }
-
-    /**
-     * Get the [colour] column value.
-     * 
-     * @return string
-     */
-    public function getColour()
-    {
-        return $this->colour;
-    }
-
-    /**
      * Get the [slug] column value.
      * 
      * @return string
@@ -398,7 +352,7 @@ abstract class Theme implements ActiveRecordInterface
      * Set the value of [id] column.
      * 
      * @param int $v new value
-     * @return $this|\Theme The current object (for fluent API support)
+     * @return $this|\Tag The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -408,7 +362,7 @@ abstract class Theme implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[ThemeTableMap::COL_ID] = true;
+            $this->modifiedColumns[TagTableMap::COL_ID] = true;
         }
 
         return $this;
@@ -418,7 +372,7 @@ abstract class Theme implements ActiveRecordInterface
      * Set the value of [name] column.
      * 
      * @param string $v new value
-     * @return $this|\Theme The current object (for fluent API support)
+     * @return $this|\Tag The current object (for fluent API support)
      */
     public function setName($v)
     {
@@ -428,57 +382,17 @@ abstract class Theme implements ActiveRecordInterface
 
         if ($this->name !== $v) {
             $this->name = $v;
-            $this->modifiedColumns[ThemeTableMap::COL_NAME] = true;
+            $this->modifiedColumns[TagTableMap::COL_NAME] = true;
         }
 
         return $this;
     } // setName()
 
     /**
-     * Set the value of [root] column.
-     * 
-     * @param string $v new value
-     * @return $this|\Theme The current object (for fluent API support)
-     */
-    public function setRoot($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->root !== $v) {
-            $this->root = $v;
-            $this->modifiedColumns[ThemeTableMap::COL_ROOT] = true;
-        }
-
-        return $this;
-    } // setRoot()
-
-    /**
-     * Set the value of [colour] column.
-     * 
-     * @param string $v new value
-     * @return $this|\Theme The current object (for fluent API support)
-     */
-    public function setColour($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->colour !== $v) {
-            $this->colour = $v;
-            $this->modifiedColumns[ThemeTableMap::COL_COLOUR] = true;
-        }
-
-        return $this;
-    } // setColour()
-
-    /**
      * Set the value of [slug] column.
      * 
      * @param string $v new value
-     * @return $this|\Theme The current object (for fluent API support)
+     * @return $this|\Tag The current object (for fluent API support)
      */
     public function setSlug($v)
     {
@@ -488,7 +402,7 @@ abstract class Theme implements ActiveRecordInterface
 
         if ($this->slug !== $v) {
             $this->slug = $v;
-            $this->modifiedColumns[ThemeTableMap::COL_SLUG] = true;
+            $this->modifiedColumns[TagTableMap::COL_SLUG] = true;
         }
 
         return $this;
@@ -504,10 +418,6 @@ abstract class Theme implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->colour !== 'blue') {
-                return false;
-            }
-
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -534,19 +444,13 @@ abstract class Theme implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ThemeTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : TagTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ThemeTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : TagTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
             $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ThemeTableMap::translateFieldName('Root', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->root = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ThemeTableMap::translateFieldName('Colour', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->colour = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ThemeTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : TagTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
             $this->slug = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
@@ -556,10 +460,10 @@ abstract class Theme implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = ThemeTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 3; // 3 = TagTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Theme'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Tag'), 0, $e);
         }
     }
 
@@ -601,13 +505,13 @@ abstract class Theme implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(ThemeTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(TagTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildThemeQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildTagQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -628,8 +532,8 @@ abstract class Theme implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Theme::setDeleted()
-     * @see Theme::isDeleted()
+     * @see Tag::setDeleted()
+     * @see Tag::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -638,11 +542,11 @@ abstract class Theme implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ThemeTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(TagTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildThemeQuery::create()
+            $deleteQuery = ChildTagQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -673,7 +577,7 @@ abstract class Theme implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ThemeTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(TagTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -681,7 +585,7 @@ abstract class Theme implements ActiveRecordInterface
             $ret = $this->preSave($con);
             // sluggable behavior
             
-            if ($this->isColumnModified(ThemeTableMap::COL_SLUG) && $this->getSlug()) {
+            if ($this->isColumnModified(TagTableMap::COL_SLUG) && $this->getSlug()) {
                 $this->setSlug($this->makeSlugUnique($this->getSlug()));
             } else {
                 $this->setSlug($this->createSlug());
@@ -699,7 +603,7 @@ abstract class Theme implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ThemeTableMap::addInstanceToPool($this);
+                TagTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -773,30 +677,24 @@ abstract class Theme implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[ThemeTableMap::COL_ID] = true;
+        $this->modifiedColumns[TagTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ThemeTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . TagTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ThemeTableMap::COL_ID)) {
+        if ($this->isColumnModified(TagTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(ThemeTableMap::COL_NAME)) {
+        if ($this->isColumnModified(TagTableMap::COL_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'name';
         }
-        if ($this->isColumnModified(ThemeTableMap::COL_ROOT)) {
-            $modifiedColumns[':p' . $index++]  = 'root';
-        }
-        if ($this->isColumnModified(ThemeTableMap::COL_COLOUR)) {
-            $modifiedColumns[':p' . $index++]  = 'colour';
-        }
-        if ($this->isColumnModified(ThemeTableMap::COL_SLUG)) {
+        if ($this->isColumnModified(TagTableMap::COL_SLUG)) {
             $modifiedColumns[':p' . $index++]  = 'slug';
         }
 
         $sql = sprintf(
-            'INSERT INTO theme (%s) VALUES (%s)',
+            'INSERT INTO tag (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -810,12 +708,6 @@ abstract class Theme implements ActiveRecordInterface
                         break;
                     case 'name':                        
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
-                        break;
-                    case 'root':                        
-                        $stmt->bindValue($identifier, $this->root, PDO::PARAM_STR);
-                        break;
-                    case 'colour':                        
-                        $stmt->bindValue($identifier, $this->colour, PDO::PARAM_STR);
                         break;
                     case 'slug':                        
                         $stmt->bindValue($identifier, $this->slug, PDO::PARAM_STR);
@@ -866,7 +758,7 @@ abstract class Theme implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ThemeTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = TagTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -889,12 +781,6 @@ abstract class Theme implements ActiveRecordInterface
                 return $this->getName();
                 break;
             case 2:
-                return $this->getRoot();
-                break;
-            case 3:
-                return $this->getColour();
-                break;
-            case 4:
                 return $this->getSlug();
                 break;
             default:
@@ -921,17 +807,15 @@ abstract class Theme implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['Theme'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Tag'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Theme'][$this->hashCode()] = true;
-        $keys = ThemeTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Tag'][$this->hashCode()] = true;
+        $keys = TagTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
-            $keys[2] => $this->getRoot(),
-            $keys[3] => $this->getColour(),
-            $keys[4] => $this->getSlug(),
+            $keys[2] => $this->getSlug(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -968,11 +852,11 @@ abstract class Theme implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\Theme
+     * @return $this|\Tag
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ThemeTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = TagTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -983,7 +867,7 @@ abstract class Theme implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\Theme
+     * @return $this|\Tag
      */
     public function setByPosition($pos, $value)
     {
@@ -995,12 +879,6 @@ abstract class Theme implements ActiveRecordInterface
                 $this->setName($value);
                 break;
             case 2:
-                $this->setRoot($value);
-                break;
-            case 3:
-                $this->setColour($value);
-                break;
-            case 4:
                 $this->setSlug($value);
                 break;
         } // switch()
@@ -1027,7 +905,7 @@ abstract class Theme implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = ThemeTableMap::getFieldNames($keyType);
+        $keys = TagTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
@@ -1036,13 +914,7 @@ abstract class Theme implements ActiveRecordInterface
             $this->setName($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setRoot($arr[$keys[2]]);
-        }
-        if (array_key_exists($keys[3], $arr)) {
-            $this->setColour($arr[$keys[3]]);
-        }
-        if (array_key_exists($keys[4], $arr)) {
-            $this->setSlug($arr[$keys[4]]);
+            $this->setSlug($arr[$keys[2]]);
         }
     }
 
@@ -1063,7 +935,7 @@ abstract class Theme implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\Theme The current object, for fluid interface
+     * @return $this|\Tag The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1083,22 +955,16 @@ abstract class Theme implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ThemeTableMap::DATABASE_NAME);
+        $criteria = new Criteria(TagTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(ThemeTableMap::COL_ID)) {
-            $criteria->add(ThemeTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(TagTableMap::COL_ID)) {
+            $criteria->add(TagTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(ThemeTableMap::COL_NAME)) {
-            $criteria->add(ThemeTableMap::COL_NAME, $this->name);
+        if ($this->isColumnModified(TagTableMap::COL_NAME)) {
+            $criteria->add(TagTableMap::COL_NAME, $this->name);
         }
-        if ($this->isColumnModified(ThemeTableMap::COL_ROOT)) {
-            $criteria->add(ThemeTableMap::COL_ROOT, $this->root);
-        }
-        if ($this->isColumnModified(ThemeTableMap::COL_COLOUR)) {
-            $criteria->add(ThemeTableMap::COL_COLOUR, $this->colour);
-        }
-        if ($this->isColumnModified(ThemeTableMap::COL_SLUG)) {
-            $criteria->add(ThemeTableMap::COL_SLUG, $this->slug);
+        if ($this->isColumnModified(TagTableMap::COL_SLUG)) {
+            $criteria->add(TagTableMap::COL_SLUG, $this->slug);
         }
 
         return $criteria;
@@ -1116,8 +982,8 @@ abstract class Theme implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildThemeQuery::create();
-        $criteria->add(ThemeTableMap::COL_ID, $this->id);
+        $criteria = ChildTagQuery::create();
+        $criteria->add(TagTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1179,7 +1045,7 @@ abstract class Theme implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Theme (or compatible) type.
+     * @param      object $copyObj An object of \Tag (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -1187,8 +1053,6 @@ abstract class Theme implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setName($this->getName());
-        $copyObj->setRoot($this->getRoot());
-        $copyObj->setColour($this->getColour());
         $copyObj->setSlug($this->getSlug());
 
         if ($deepCopy) {
@@ -1219,7 +1083,7 @@ abstract class Theme implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Theme Clone of current object.
+     * @return \Tag Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1297,7 +1161,7 @@ abstract class Theme implements ActiveRecordInterface
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildTheme is new, it will return
+     * If this ChildTag is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
@@ -1314,7 +1178,7 @@ abstract class Theme implements ActiveRecordInterface
                 $this->initArticles();
             } else {
                 $collArticles = ChildArticleQuery::create(null, $criteria)
-                    ->filterByTheme($this)
+                    ->filterByTag($this)
                     ->find($con);
 
                 if (null !== $criteria) {
@@ -1357,7 +1221,7 @@ abstract class Theme implements ActiveRecordInterface
      *
      * @param      Collection $articles A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildTheme The current object (for fluent API support)
+     * @return $this|ChildTag The current object (for fluent API support)
      */
     public function setArticles(Collection $articles, ConnectionInterface $con = null)
     {
@@ -1368,7 +1232,7 @@ abstract class Theme implements ActiveRecordInterface
         $this->articlesScheduledForDeletion = $articlesToDelete;
 
         foreach ($articlesToDelete as $articleRemoved) {
-            $articleRemoved->setTheme(null);
+            $articleRemoved->setTag(null);
         }
 
         $this->collArticles = null;
@@ -1409,7 +1273,7 @@ abstract class Theme implements ActiveRecordInterface
             }
 
             return $query
-                ->filterByTheme($this)
+                ->filterByTag($this)
                 ->count($con);
         }
 
@@ -1421,7 +1285,7 @@ abstract class Theme implements ActiveRecordInterface
      * through the ChildArticle foreign key attribute.
      *
      * @param  ChildArticle $l ChildArticle
-     * @return $this|\Theme The current object (for fluent API support)
+     * @return $this|\Tag The current object (for fluent API support)
      */
     public function addArticle(ChildArticle $l)
     {
@@ -1443,12 +1307,12 @@ abstract class Theme implements ActiveRecordInterface
     protected function doAddArticle(ChildArticle $article)
     {
         $this->collArticles[]= $article;
-        $article->setTheme($this);
+        $article->setTag($this);
     }
 
     /**
      * @param  ChildArticle $article The ChildArticle object to remove.
-     * @return $this|ChildTheme The current object (for fluent API support)
+     * @return $this|ChildTag The current object (for fluent API support)
      */
     public function removeArticle(ChildArticle $article)
     {
@@ -1459,8 +1323,8 @@ abstract class Theme implements ActiveRecordInterface
                 $this->articlesScheduledForDeletion = clone $this->collArticles;
                 $this->articlesScheduledForDeletion->clear();
             }
-            $this->articlesScheduledForDeletion[]= clone $article;
-            $article->setTheme(null);
+            $this->articlesScheduledForDeletion[]= $article;
+            $article->setTag(null);
         }
 
         return $this;
@@ -1470,23 +1334,23 @@ abstract class Theme implements ActiveRecordInterface
     /**
      * If this collection has already been initialized with
      * an identical criteria, it returns the collection.
-     * Otherwise if this Theme is new, it will return
-     * an empty collection; or if this Theme has previously
+     * Otherwise if this Tag is new, it will return
+     * an empty collection; or if this Tag has previously
      * been saved, it will retrieve related Articles from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
-     * actually need in Theme.
+     * actually need in Tag.
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return ObjectCollection|ChildArticle[] List of ChildArticle objects
      */
-    public function getArticlesJoinTag(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getArticlesJoinTheme(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
         $query = ChildArticleQuery::create(null, $criteria);
-        $query->joinWith('Tag', $joinBehavior);
+        $query->joinWith('Theme', $joinBehavior);
 
         return $this->getArticles($query, $con);
     }
@@ -1500,12 +1364,9 @@ abstract class Theme implements ActiveRecordInterface
     {
         $this->id = null;
         $this->name = null;
-        $this->root = null;
-        $this->colour = null;
         $this->slug = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
-        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -1640,7 +1501,7 @@ abstract class Theme implements ActiveRecordInterface
         } else {
             $slug2 = $slug . $separator;
     
-            $count = \ThemeQuery::create()
+            $count = \TagQuery::create()
                 ->filterBySlug($this->getSlug())
                 ->filterByPrimaryKey($this->getPrimaryKey())
             ->count();
@@ -1654,7 +1515,7 @@ abstract class Theme implements ActiveRecordInterface
         $col = 'q.Slug';
         $compare = $alreadyExists ? $adapter->compareRegex($col, '?') : sprintf('%s = ?', $col);
     
-        $query = \ThemeQuery::create('q')
+        $query = \TagQuery::create('q')
             ->where($compare, $alreadyExists ? '^' . $slug2 . '[0-9]+$' : $slug2)
             ->prune($this)
         ;

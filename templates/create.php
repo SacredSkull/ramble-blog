@@ -14,7 +14,7 @@
 		<textarea id="postedit" style="display: none;">{{post.getBody}}</textarea>
 		<form class="form-inline" role="form" id="form_post" action="/admin/{{post.getId}}" method="POST">
 			{%if mode == "edit"%}
-			<input type="hidden" name="_METHOD" value="PUT"/>
+			{#<input type="hidden" name="_METHOD" value="PUT"/>#}
 			{% endif %}
 			<div class="input-group">
 				<span class="input-group-addon">Title</span>
@@ -197,7 +197,7 @@
 				$('#save').css('color', '#00C600');
 				if($.isNumeric(data)){
 					console.log(data + " seems to be numeric!");
-					window.location.href = "/post/" + data;
+					window.location.href = "/id/" + data;
 				} else {
 					console.log('Not a number!');
 				}

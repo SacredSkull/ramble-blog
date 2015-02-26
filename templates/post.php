@@ -1,4 +1,5 @@
 {% extends 'skeleton.php' %}
+					{% block page_title %}{{post.getTitle|title}} | {% endblock page_title %}
 					{% block additional_css %}
 
 					{% endblock additional_css%}

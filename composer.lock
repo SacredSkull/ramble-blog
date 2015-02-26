@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "2.7.17",
+            "version": "2.7.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "eddf89846ed0f15e8e2b8cbe6d08125eaa20ad80"
+                "reference": "2c9d93fbe680f64a84f5877209904f414d5cf92f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/eddf89846ed0f15e8e2b8cbe6d08125eaa20ad80",
-                "reference": "eddf89846ed0f15e8e2b8cbe6d08125eaa20ad80",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/2c9d93fbe680f64a84f5877209904f414d5cf92f",
+                "reference": "2c9d93fbe680f64a84f5877209904f414d5cf92f",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2015-01-27 20:14:01"
+            "time": "2015-02-24 00:04:06"
         },
         {
             "name": "erusev/parsedown",
@@ -337,12 +337,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/propelorm/Propel2.git",
-                "reference": "34424073615e7a9f2f21fd45914ab06a7abda27c"
+                "reference": "56cecb5d1cf514e084b4d8aeb42047dffc279433"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/propelorm/Propel2/zipball/34424073615e7a9f2f21fd45914ab06a7abda27c",
-                "reference": "34424073615e7a9f2f21fd45914ab06a7abda27c",
+                "url": "https://api.github.com/repos/propelorm/Propel2/zipball/56cecb5d1cf514e084b4d8aeb42047dffc279433",
+                "reference": "56cecb5d1cf514e084b4d8aeb42047dffc279433",
                 "shasum": ""
             },
             "require": {
@@ -394,7 +394,7 @@
                 "orm",
                 "persistence"
             ],
-            "time": "2015-02-10 11:06:12"
+            "time": "2015-02-16 21:48:58"
         },
         {
             "name": "psr/log",

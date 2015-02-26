@@ -2,3 +2,5 @@ vendor/
 cache/
 sftp-config.json
 images/uploads/
+composer.lock
+blog.sublime-workspace

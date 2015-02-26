@@ -2,8 +2,8 @@
 
 namespace Map;
 
-use \Article;
-use \ArticleQuery;
+use \Tag;
+use \TagQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'article' table.
+ * This class defines the structure of the 'tag' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class ArticleTableMap extends TableMap
+class TagTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class ArticleTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.Map.ArticleTableMap';
+    const CLASS_NAME = '.Map.TagTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class ArticleTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'article';
+    const TABLE_NAME = 'tag';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Article';
+    const OM_CLASS = '\\Tag';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Article';
+    const CLASS_DEFAULT = 'Tag';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 14;
+    const NUM_COLUMNS = 3;
 
     /**
      * The number of lazy-loaded columns
@@ -69,77 +69,22 @@ class ArticleTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 14;
+    const NUM_HYDRATE_COLUMNS = 3;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'article.id';
+    const COL_ID = 'tag.id';
 
     /**
-     * the column name for the title field
+     * the column name for the name field
      */
-    const COL_TITLE = 'article.title';
-
-    /**
-     * the column name for the bodyHTML field
-     */
-    const COL_BODYHTML = 'article.bodyHTML';
-
-    /**
-     * the column name for the body field
-     */
-    const COL_BODY = 'article.body';
-
-    /**
-     * the column name for the tags field
-     */
-    const COL_TAGS = 'article.tags';
-
-    /**
-     * the column name for the positive_votes field
-     */
-    const COL_POSITIVE_VOTES = 'article.positive_votes';
-
-    /**
-     * the column name for the negative_votes field
-     */
-    const COL_NEGATIVE_VOTES = 'article.negative_votes';
-
-    /**
-     * the column name for the theme_id field
-     */
-    const COL_THEME_ID = 'article.theme_id';
-
-    /**
-     * the column name for the tag_id field
-     */
-    const COL_TAG_ID = 'article.tag_id';
-
-    /**
-     * the column name for the image field
-     */
-    const COL_IMAGE = 'article.image';
-
-    /**
-     * the column name for the draft field
-     */
-    const COL_DRAFT = 'article.draft';
-
-    /**
-     * the column name for the created_at field
-     */
-    const COL_CREATED_AT = 'article.created_at';
-
-    /**
-     * the column name for the updated_at field
-     */
-    const COL_UPDATED_AT = 'article.updated_at';
+    const COL_NAME = 'tag.name';
 
     /**
      * the column name for the slug field
      */
-    const COL_SLUG = 'article.slug';
+    const COL_SLUG = 'tag.slug';
 
     /**
      * The default string format for model objects of the related table
@@ -153,11 +98,11 @@ class ArticleTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Title', 'Bodyhtml', 'Body', 'Tags', 'PositiveVotes', 'NegativeVotes', 'ThemeId', 'TagId', 'Image', 'Draft', 'CreatedAt', 'UpdatedAt', 'Slug', ),
-        self::TYPE_CAMELNAME     => array('id', 'title', 'bodyhtml', 'body', 'tags', 'positiveVotes', 'negativeVotes', 'themeId', 'tagId', 'image', 'draft', 'createdAt', 'updatedAt', 'slug', ),
-        self::TYPE_COLNAME       => array(ArticleTableMap::COL_ID, ArticleTableMap::COL_TITLE, ArticleTableMap::COL_BODYHTML, ArticleTableMap::COL_BODY, ArticleTableMap::COL_TAGS, ArticleTableMap::COL_POSITIVE_VOTES, ArticleTableMap::COL_NEGATIVE_VOTES, ArticleTableMap::COL_THEME_ID, ArticleTableMap::COL_TAG_ID, ArticleTableMap::COL_IMAGE, ArticleTableMap::COL_DRAFT, ArticleTableMap::COL_CREATED_AT, ArticleTableMap::COL_UPDATED_AT, ArticleTableMap::COL_SLUG, ),
-        self::TYPE_FIELDNAME     => array('id', 'title', 'bodyHTML', 'body', 'tags', 'positive_votes', 'negative_votes', 'theme_id', 'tag_id', 'image', 'draft', 'created_at', 'updated_at', 'slug', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Slug', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'slug', ),
+        self::TYPE_COLNAME       => array(TagTableMap::COL_ID, TagTableMap::COL_NAME, TagTableMap::COL_SLUG, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'slug', ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -167,11 +112,11 @@ class ArticleTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Title' => 1, 'Bodyhtml' => 2, 'Body' => 3, 'Tags' => 4, 'PositiveVotes' => 5, 'NegativeVotes' => 6, 'ThemeId' => 7, 'TagId' => 8, 'Image' => 9, 'Draft' => 10, 'CreatedAt' => 11, 'UpdatedAt' => 12, 'Slug' => 13, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'title' => 1, 'bodyhtml' => 2, 'body' => 3, 'tags' => 4, 'positiveVotes' => 5, 'negativeVotes' => 6, 'themeId' => 7, 'tagId' => 8, 'image' => 9, 'draft' => 10, 'createdAt' => 11, 'updatedAt' => 12, 'slug' => 13, ),
-        self::TYPE_COLNAME       => array(ArticleTableMap::COL_ID => 0, ArticleTableMap::COL_TITLE => 1, ArticleTableMap::COL_BODYHTML => 2, ArticleTableMap::COL_BODY => 3, ArticleTableMap::COL_TAGS => 4, ArticleTableMap::COL_POSITIVE_VOTES => 5, ArticleTableMap::COL_NEGATIVE_VOTES => 6, ArticleTableMap::COL_THEME_ID => 7, ArticleTableMap::COL_TAG_ID => 8, ArticleTableMap::COL_IMAGE => 9, ArticleTableMap::COL_DRAFT => 10, ArticleTableMap::COL_CREATED_AT => 11, ArticleTableMap::COL_UPDATED_AT => 12, ArticleTableMap::COL_SLUG => 13, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'title' => 1, 'bodyHTML' => 2, 'body' => 3, 'tags' => 4, 'positive_votes' => 5, 'negative_votes' => 6, 'theme_id' => 7, 'tag_id' => 8, 'image' => 9, 'draft' => 10, 'created_at' => 11, 'updated_at' => 12, 'slug' => 13, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Slug' => 2, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'slug' => 2, ),
+        self::TYPE_COLNAME       => array(TagTableMap::COL_ID => 0, TagTableMap::COL_NAME => 1, TagTableMap::COL_SLUG => 2, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'slug' => 2, ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -184,27 +129,16 @@ class ArticleTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('article');
-        $this->setPhpName('Article');
+        $this->setName('tag');
+        $this->setPhpName('Tag');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Article');
+        $this->setClassName('\\Tag');
         $this->setPackage('');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('title', 'Title', 'VARCHAR', true, 255, null);
-        $this->getColumn('title')->setPrimaryString(true);
-        $this->addColumn('bodyHTML', 'Bodyhtml', 'LONGVARCHAR', false, null, null);
-        $this->addColumn('body', 'Body', 'LONGVARCHAR', true, null, null);
-        $this->addColumn('tags', 'Tags', 'VARCHAR', false, 255, null);
-        $this->addColumn('positive_votes', 'PositiveVotes', 'INTEGER', false, null, 0);
-        $this->addColumn('negative_votes', 'NegativeVotes', 'INTEGER', false, null, 0);
-        $this->addForeignKey('theme_id', 'ThemeId', 'INTEGER', 'theme', 'id', true, null, 0);
-        $this->addForeignKey('tag_id', 'TagId', 'INTEGER', 'tag', 'id', false, null, null);
-        $this->addColumn('image', 'Image', 'VARCHAR', false, 255, 'default/post_img.png');
-        $this->addColumn('draft', 'Draft', 'BOOLEAN', false, 1, false);
-        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', true, 60, null);
+        $this->getColumn('name')->setPrimaryString(true);
         $this->addColumn('slug', 'Slug', 'VARCHAR', false, 255, null);
     } // initialize()
 
@@ -213,27 +147,13 @@ class ArticleTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Theme', '\\Theme', RelationMap::MANY_TO_ONE, array (
-  0 =>
-  array (
-    0 => ':theme_id',
-    1 => ':id',
-  ),
-), 'CASCADE', null, null, false);
-        $this->addRelation('Tag', '\\Tag', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('Article', '\\Article', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':tag_id',
     1 => ':id',
   ),
-), 'CASCADE', null, null, false);
-        $this->addRelation('View', '\\View', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':article_id',
-    1 => ':id',
-  ),
-), 'CASCADE', null, 'Views', false);
+), 'CASCADE', null, 'Articles', false);
     } // buildRelations()
 
     /**
@@ -245,19 +165,18 @@ class ArticleTableMap extends TableMap
     public function getBehaviors()
     {
         return array(
-            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
             'query_cache' => array('backend' => 'custom', 'lifetime' => '3600', ),
             'sluggable' => array('slug_column' => 'slug', 'slug_pattern' => '', 'replace_pattern' => '/\W+/', 'replacement' => '-', 'separator' => '-', 'permanent' => 'false', 'scope_column' => '', ),
         );
     } // getBehaviors()
     /**
-     * Method to invalidate the instance pool of all tables related to article     * by a foreign key with ON DELETE CASCADE
+     * Method to invalidate the instance pool of all tables related to tag     * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
     {
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ViewTableMap::clearInstancePool();
+        ArticleTableMap::clearInstancePool();
     }
 
     /**
@@ -317,7 +236,7 @@ class ArticleTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? ArticleTableMap::CLASS_DEFAULT : ArticleTableMap::OM_CLASS;
+        return $withPrefix ? TagTableMap::CLASS_DEFAULT : TagTableMap::OM_CLASS;
     }
 
     /**
@@ -331,22 +250,22 @@ class ArticleTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (Article object, last column rank)
+     * @return array           (Tag object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = ArticleTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = ArticleTableMap::getInstanceFromPool($key))) {
+        $key = TagTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = TagTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + ArticleTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + TagTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = ArticleTableMap::OM_CLASS;
-            /** @var Article $obj */
+            $cls = TagTableMap::OM_CLASS;
+            /** @var Tag $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            ArticleTableMap::addInstanceToPool($obj, $key);
+            TagTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -369,18 +288,18 @@ class ArticleTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = ArticleTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = ArticleTableMap::getInstanceFromPool($key))) {
+            $key = TagTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = TagTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Article $obj */
+                /** @var Tag $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                ArticleTableMap::addInstanceToPool($obj, $key);
+                TagTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -401,34 +320,12 @@ class ArticleTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ArticleTableMap::COL_ID);
-            $criteria->addSelectColumn(ArticleTableMap::COL_TITLE);
-            $criteria->addSelectColumn(ArticleTableMap::COL_BODYHTML);
-            $criteria->addSelectColumn(ArticleTableMap::COL_BODY);
-            $criteria->addSelectColumn(ArticleTableMap::COL_TAGS);
-            $criteria->addSelectColumn(ArticleTableMap::COL_POSITIVE_VOTES);
-            $criteria->addSelectColumn(ArticleTableMap::COL_NEGATIVE_VOTES);
-            $criteria->addSelectColumn(ArticleTableMap::COL_THEME_ID);
-            $criteria->addSelectColumn(ArticleTableMap::COL_TAG_ID);
-            $criteria->addSelectColumn(ArticleTableMap::COL_IMAGE);
-            $criteria->addSelectColumn(ArticleTableMap::COL_DRAFT);
-            $criteria->addSelectColumn(ArticleTableMap::COL_CREATED_AT);
-            $criteria->addSelectColumn(ArticleTableMap::COL_UPDATED_AT);
-            $criteria->addSelectColumn(ArticleTableMap::COL_SLUG);
+            $criteria->addSelectColumn(TagTableMap::COL_ID);
+            $criteria->addSelectColumn(TagTableMap::COL_NAME);
+            $criteria->addSelectColumn(TagTableMap::COL_SLUG);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.title');
-            $criteria->addSelectColumn($alias . '.bodyHTML');
-            $criteria->addSelectColumn($alias . '.body');
-            $criteria->addSelectColumn($alias . '.tags');
-            $criteria->addSelectColumn($alias . '.positive_votes');
-            $criteria->addSelectColumn($alias . '.negative_votes');
-            $criteria->addSelectColumn($alias . '.theme_id');
-            $criteria->addSelectColumn($alias . '.tag_id');
-            $criteria->addSelectColumn($alias . '.image');
-            $criteria->addSelectColumn($alias . '.draft');
-            $criteria->addSelectColumn($alias . '.created_at');
-            $criteria->addSelectColumn($alias . '.updated_at');
+            $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.slug');
         }
     }
@@ -442,7 +339,7 @@ class ArticleTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(ArticleTableMap::DATABASE_NAME)->getTable(ArticleTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(TagTableMap::DATABASE_NAME)->getTable(TagTableMap::TABLE_NAME);
     }
 
     /**
@@ -450,16 +347,16 @@ class ArticleTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ArticleTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(ArticleTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new ArticleTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(TagTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(TagTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new TagTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a Article or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Tag or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Article object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Tag object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -470,27 +367,27 @@ class ArticleTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ArticleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(TagTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Article) { // it's a model object
+        } elseif ($values instanceof \Tag) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(ArticleTableMap::DATABASE_NAME);
-            $criteria->add(ArticleTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(TagTableMap::DATABASE_NAME);
+            $criteria->add(TagTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = ArticleQuery::create()->mergeWith($criteria);
+        $query = TagQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            ArticleTableMap::clearInstancePool();
+            TagTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                ArticleTableMap::removeInstanceFromPool($singleval);
+                TagTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -498,20 +395,20 @@ class ArticleTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the article table.
+     * Deletes all rows from the tag table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return ArticleQuery::create()->doDeleteAll($con);
+        return TagQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Article or Criteria object.
+     * Performs an INSERT on the database, given a Tag or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Article object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Tag object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -520,22 +417,22 @@ class ArticleTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ArticleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(TagTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Article object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Tag object
         }
 
-        if ($criteria->containsKey(ArticleTableMap::COL_ID) && $criteria->keyContainsValue(ArticleTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ArticleTableMap::COL_ID.')');
+        if ($criteria->containsKey(TagTableMap::COL_ID) && $criteria->keyContainsValue(TagTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.TagTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = ArticleQuery::create()->mergeWith($criteria);
+        $query = TagQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -544,7 +441,7 @@ class ArticleTableMap extends TableMap
         });
     }
 
-} // ArticleTableMap
+} // TagTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-ArticleTableMap::buildTableMap();
+TagTableMap::buildTableMap();

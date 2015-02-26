@@ -18,27 +18,18 @@ class Article extends BaseArticle
     public function createSlug()
     {
         $storedDate = $this->getCreatedAt();
-        if ($storedDate == null || strlen($storedDate < 1) || $storedDate == "n-a") {
-            // create the slug based on the `slug_pattern` and the object properties
-            $slug = $this->createRawSlug();
-            // truncate the slug to accommodate the size of the slug column
-            $slug = $this->limitSlugSize($slug);
-            // add an incremental index to make sure the slug is unique
-            $slug = $this->makeSlugUnique($slug);
 
-            $slug = date('Y-m-d_').$slug;
-        } else {
-            $createdAt = new DateTime($storedDate);
+        $createdAt = $this->getCreatedAt();
 
-            // create the slug based on the `slug_pattern` and the object properties
-            $slug = $this->createRawSlug();
-            // truncate the slug to accommodate the size of the slug column
-            $slug = $this->limitSlugSize($slug);
-            // add an incremental index to make sure the slug is unique
-            $slug = $this->makeSlugUnique($slug);
+        // create the slug based on the `slug_pattern` and the object properties
+        $slug = $this->createRawSlug();
+        // truncate the slug to accommodate the size of the slug column
+        $slug = $this->limitSlugSize($slug);
 
-            $slug = $createdAt->format('Y-m-d_').$slug;
-        }
+        $slug = $createdAt->format('Y-m-d_').$slug;
+
+        // add an incremental index to make sure the slug is unique
+        $slug = $this->makeSlugUnique($slug);
 
         return $slug;
     }

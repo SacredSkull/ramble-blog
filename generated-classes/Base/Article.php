@@ -4,6 +4,8 @@ namespace Base;
 
 use \Article as ChildArticle;
 use \ArticleQuery as ChildArticleQuery;
+use \Tag as ChildTag;
+use \TagQuery as ChildTagQuery;
 use \Theme as ChildTheme;
 use \ThemeQuery as ChildThemeQuery;
 use \View as ChildView;
@@ -119,6 +121,12 @@ abstract class Article implements ActiveRecordInterface
     protected $theme_id;
 
     /**
+     * The value for the tag_id field.
+     * @var        int
+     */
+    protected $tag_id;
+
+    /**
      * The value for the image field.
      * Note: this column has a database default value of: 'default/post_img.png'
      * @var        string
@@ -154,6 +162,11 @@ abstract class Article implements ActiveRecordInterface
      * @var        ChildTheme
      */
     protected $aTheme;
+
+    /**
+     * @var        ChildTag
+     */
+    protected $aTag;
 
     /**
      * @var        ObjectCollection|ChildView[] Collection to store aggregation of ChildView objects.
@@ -490,6 +503,16 @@ abstract class Article implements ActiveRecordInterface
     }
 
     /**
+     * Get the [tag_id] column value.
+     * 
+     * @return int
+     */
+    public function getTagId()
+    {
+        return $this->tag_id;
+    }
+
+    /**
      * Get the [image] column value.
      * 
      * @return string
@@ -734,6 +757,30 @@ abstract class Article implements ActiveRecordInterface
     } // setThemeId()
 
     /**
+     * Set the value of [tag_id] column.
+     * 
+     * @param int $v new value
+     * @return $this|\Article The current object (for fluent API support)
+     */
+    public function setTagId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->tag_id !== $v) {
+            $this->tag_id = $v;
+            $this->modifiedColumns[ArticleTableMap::COL_TAG_ID] = true;
+        }
+
+        if ($this->aTag !== null && $this->aTag->getId() !== $v) {
+            $this->aTag = null;
+        }
+
+        return $this;
+    } // setTagId()
+
+    /**
      * Set the value of [image] column.
      * 
      * @param string $v new value
@@ -921,25 +968,28 @@ abstract class Article implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ArticleTableMap::translateFieldName('ThemeId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->theme_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ArticleTableMap::translateFieldName('Image', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ArticleTableMap::translateFieldName('TagId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->tag_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : ArticleTableMap::translateFieldName('Image', TableMap::TYPE_PHPNAME, $indexType)];
             $this->image = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : ArticleTableMap::translateFieldName('Draft', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : ArticleTableMap::translateFieldName('Draft', TableMap::TYPE_PHPNAME, $indexType)];
             $this->draft = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : ArticleTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : ArticleTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : ArticleTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : ArticleTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : ArticleTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 13 + $startcol : ArticleTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
             $this->slug = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
@@ -949,7 +999,7 @@ abstract class Article implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 13; // 13 = ArticleTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 14; // 14 = ArticleTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Article'), 0, $e);
@@ -973,6 +1023,9 @@ abstract class Article implements ActiveRecordInterface
     {
         if ($this->aTheme !== null && $this->theme_id !== $this->aTheme->getId()) {
             $this->aTheme = null;
+        }
+        if ($this->aTag !== null && $this->tag_id !== $this->aTag->getId()) {
+            $this->aTag = null;
         }
     } // ensureConsistency
 
@@ -1014,6 +1067,7 @@ abstract class Article implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aTheme = null;
+            $this->aTag = null;
             $this->collViews = null;
 
         } // if (deep)
@@ -1146,6 +1200,13 @@ abstract class Article implements ActiveRecordInterface
                 $this->setTheme($this->aTheme);
             }
 
+            if ($this->aTag !== null) {
+                if ($this->aTag->isModified() || $this->aTag->isNew()) {
+                    $affectedRows += $this->aTag->save($con);
+                }
+                $this->setTag($this->aTag);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -1224,6 +1285,9 @@ abstract class Article implements ActiveRecordInterface
         if ($this->isColumnModified(ArticleTableMap::COL_THEME_ID)) {
             $modifiedColumns[':p' . $index++]  = 'theme_id';
         }
+        if ($this->isColumnModified(ArticleTableMap::COL_TAG_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'tag_id';
+        }
         if ($this->isColumnModified(ArticleTableMap::COL_IMAGE)) {
             $modifiedColumns[':p' . $index++]  = 'image';
         }
@@ -1273,6 +1337,9 @@ abstract class Article implements ActiveRecordInterface
                         break;
                     case 'theme_id':                        
                         $stmt->bindValue($identifier, $this->theme_id, PDO::PARAM_INT);
+                        break;
+                    case 'tag_id':                        
+                        $stmt->bindValue($identifier, $this->tag_id, PDO::PARAM_INT);
                         break;
                     case 'image':                        
                         $stmt->bindValue($identifier, $this->image, PDO::PARAM_STR);
@@ -1376,18 +1443,21 @@ abstract class Article implements ActiveRecordInterface
                 return $this->getThemeId();
                 break;
             case 8:
-                return $this->getImage();
+                return $this->getTagId();
                 break;
             case 9:
-                return $this->getDraft();
+                return $this->getImage();
                 break;
             case 10:
-                return $this->getCreatedAt();
+                return $this->getDraft();
                 break;
             case 11:
-                return $this->getUpdatedAt();
+                return $this->getCreatedAt();
                 break;
             case 12:
+                return $this->getUpdatedAt();
+                break;
+            case 13:
                 return $this->getSlug();
                 break;
             default:
@@ -1428,24 +1498,25 @@ abstract class Article implements ActiveRecordInterface
             $keys[5] => $this->getPositiveVotes(),
             $keys[6] => $this->getNegativeVotes(),
             $keys[7] => $this->getThemeId(),
-            $keys[8] => $this->getImage(),
-            $keys[9] => $this->getDraft(),
-            $keys[10] => $this->getCreatedAt(),
-            $keys[11] => $this->getUpdatedAt(),
-            $keys[12] => $this->getSlug(),
+            $keys[8] => $this->getTagId(),
+            $keys[9] => $this->getImage(),
+            $keys[10] => $this->getDraft(),
+            $keys[11] => $this->getCreatedAt(),
+            $keys[12] => $this->getUpdatedAt(),
+            $keys[13] => $this->getSlug(),
         );
 
         $utc = new \DateTimeZone('utc');
-        if ($result[$keys[10]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[10]];
-            $result[$keys[10]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
-        }
-        
         if ($result[$keys[11]] instanceof \DateTime) {
             // When changing timezone we don't want to change existing instances
             $dateTime = clone $result[$keys[11]];
             $result[$keys[11]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+        }
+        
+        if ($result[$keys[12]] instanceof \DateTime) {
+            // When changing timezone we don't want to change existing instances
+            $dateTime = clone $result[$keys[12]];
+            $result[$keys[12]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
         }
         
         $virtualColumns = $this->virtualColumns;
@@ -1468,6 +1539,21 @@ abstract class Article implements ActiveRecordInterface
                 }
         
                 $result[$key] = $this->aTheme->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aTag) {
+                
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'tag';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'tag';
+                        break;
+                    default:
+                        $key = 'Tag';
+                }
+        
+                $result[$key] = $this->aTag->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collViews) {
                 
@@ -1543,18 +1629,21 @@ abstract class Article implements ActiveRecordInterface
                 $this->setThemeId($value);
                 break;
             case 8:
-                $this->setImage($value);
+                $this->setTagId($value);
                 break;
             case 9:
-                $this->setDraft($value);
+                $this->setImage($value);
                 break;
             case 10:
-                $this->setCreatedAt($value);
+                $this->setDraft($value);
                 break;
             case 11:
-                $this->setUpdatedAt($value);
+                $this->setCreatedAt($value);
                 break;
             case 12:
+                $this->setUpdatedAt($value);
+                break;
+            case 13:
                 $this->setSlug($value);
                 break;
         } // switch()
@@ -1608,19 +1697,22 @@ abstract class Article implements ActiveRecordInterface
             $this->setThemeId($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setImage($arr[$keys[8]]);
+            $this->setTagId($arr[$keys[8]]);
         }
         if (array_key_exists($keys[9], $arr)) {
-            $this->setDraft($arr[$keys[9]]);
+            $this->setImage($arr[$keys[9]]);
         }
         if (array_key_exists($keys[10], $arr)) {
-            $this->setCreatedAt($arr[$keys[10]]);
+            $this->setDraft($arr[$keys[10]]);
         }
         if (array_key_exists($keys[11], $arr)) {
-            $this->setUpdatedAt($arr[$keys[11]]);
+            $this->setCreatedAt($arr[$keys[11]]);
         }
         if (array_key_exists($keys[12], $arr)) {
-            $this->setSlug($arr[$keys[12]]);
+            $this->setUpdatedAt($arr[$keys[12]]);
+        }
+        if (array_key_exists($keys[13], $arr)) {
+            $this->setSlug($arr[$keys[13]]);
         }
     }
 
@@ -1686,6 +1778,9 @@ abstract class Article implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ArticleTableMap::COL_THEME_ID)) {
             $criteria->add(ArticleTableMap::COL_THEME_ID, $this->theme_id);
+        }
+        if ($this->isColumnModified(ArticleTableMap::COL_TAG_ID)) {
+            $criteria->add(ArticleTableMap::COL_TAG_ID, $this->tag_id);
         }
         if ($this->isColumnModified(ArticleTableMap::COL_IMAGE)) {
             $criteria->add(ArticleTableMap::COL_IMAGE, $this->image);
@@ -1795,6 +1890,7 @@ abstract class Article implements ActiveRecordInterface
         $copyObj->setPositiveVotes($this->getPositiveVotes());
         $copyObj->setNegativeVotes($this->getNegativeVotes());
         $copyObj->setThemeId($this->getThemeId());
+        $copyObj->setTagId($this->getTagId());
         $copyObj->setImage($this->getImage());
         $copyObj->setDraft($this->getDraft());
         $copyObj->setCreatedAt($this->getCreatedAt());
@@ -1891,6 +1987,57 @@ abstract class Article implements ActiveRecordInterface
         }
 
         return $this->aTheme;
+    }
+
+    /**
+     * Declares an association between this object and a ChildTag object.
+     *
+     * @param  ChildTag $v
+     * @return $this|\Article The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setTag(ChildTag $v = null)
+    {
+        if ($v === null) {
+            $this->setTagId(NULL);
+        } else {
+            $this->setTagId($v->getId());
+        }
+
+        $this->aTag = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildTag object, it will not be re-added.
+        if ($v !== null) {
+            $v->addArticle($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildTag object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildTag The associated ChildTag object.
+     * @throws PropelException
+     */
+    public function getTag(ConnectionInterface $con = null)
+    {
+        if ($this->aTag === null && ($this->tag_id !== null)) {
+            $this->aTag = ChildTagQuery::create()->findPk($this->tag_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aTag->addArticles($this);
+             */
+        }
+
+        return $this->aTag;
     }
 
 
@@ -2137,6 +2284,9 @@ abstract class Article implements ActiveRecordInterface
         if (null !== $this->aTheme) {
             $this->aTheme->removeArticle($this);
         }
+        if (null !== $this->aTag) {
+            $this->aTag->removeArticle($this);
+        }
         $this->id = null;
         $this->title = null;
         $this->bodyhtml = null;
@@ -2145,6 +2295,7 @@ abstract class Article implements ActiveRecordInterface
         $this->positive_votes = null;
         $this->negative_votes = null;
         $this->theme_id = null;
+        $this->tag_id = null;
         $this->image = null;
         $this->draft = null;
         $this->created_at = null;
@@ -2178,6 +2329,7 @@ abstract class Article implements ActiveRecordInterface
 
         $this->collViews = null;
         $this->aTheme = null;
+        $this->aTag = null;
     }
 
     /**
