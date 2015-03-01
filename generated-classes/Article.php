@@ -17,9 +17,10 @@ class Article extends BaseArticle
 {
     public function createSlug()
     {
-        $storedDate = $this->getCreatedAt();
-
         $createdAt = $this->getCreatedAt();
+        if (empty($createdAt)) {
+            $createdAt = new DateTime(date('Y-m-d'));
+        }
 
         // create the slug based on the `slug_pattern` and the object properties
         $slug = $this->createRawSlug();

@@ -9,5 +9,19 @@
 			"follow_symlinks": true,
 			"path": "E:\\HND\\Year 2\\Computer Games Design and Development\\Spybots - The Nightfall Incident"
 		}
-	]
+	],
+	"settings": {
+        "todoreview": {
+            "exclude_folders": [
+                "*.git*",
+                "*vendor*",
+            ],
+            "exclude_files": [
+                "*bootstrap.css.map",
+                "*epiceditor.js"
+            ],
+            "render_include_folder": true,
+			"render_folder_depth": 3
+        }
+    }
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html lang='en'>
 	<head>
 			<meta charset="UTF-8" />
 		{% block head %}
@@ -112,7 +112,7 @@
 						<div class="row">
 							<p class="pull-right">{{ executeTime() }}</p>
 							<p class="pull-right">I thoroughly recommend creating a blog as your next coding project!</p>
-							<!--sse--><p class="pull-right">If you prefer, email me directly: clotters@gmail.com</p><!--/sse-->
+							<!--sse--><p class="pull-right">If you prefer, email me directly: <rel>clotters@gmail.com</rel></p><!--/sse-->
 						</div>
 					</div>
 				</div>

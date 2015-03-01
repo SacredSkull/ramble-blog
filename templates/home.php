@@ -25,9 +25,9 @@
                             {% for post in posts %}
                             <div class="row">
                                 <div id="whitespace">
-                                    <h1 class="title"  id="theme_name"><a style="color: {{post.getTheme.getColour}};" href="/{{post.getTheme.getName}}/">{{post.getTheme.getName}} &#62;</a></h1>
+                                    <h2 class="title"  id="theme_name"><a style="color: {{post.getTheme.getColour}};" href="/{{post.getTheme.getName}}/">{{post.getTheme.getName}} &#62;</a></h2>
                                     {% set slug = post.getSlug|split('_') %}
-                                    <p class="title"><a class="title_link" href="/{{slug[0]|date('Y/m/d/')}}{{slug[1]}}">{{post.getTitle|title}}</a></p>
+                                    <h1 class="title"><a class="title_link" href="/{{slug[0]|date('Y/m/d/')}}{{slug[1]}}">{{post.getTitle|title}}</a></h1>
                                     <hr>
                                     <h4>{{post.getCreatedAt|date("d l, F Y G:i")}}</h4>
                                 </div>
