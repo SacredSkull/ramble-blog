@@ -24,19 +24,32 @@
 		</foreign-key>
 		<behavior name="sluggable" />
 	</table>
-	<table name="theme" phpName="Theme">
+	<table name="tag" phpName="Tag">
 		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
 		<column name="name" type="varchar" size="60" required="true" primaryString="true" />
-		<column name="root" type="varchar" size="128" required="true" />
-		<column name="colour" type="varchar" size="10" required="false" defaultValue="blue" />
 		<behavior name="query_cache">
 			<parameter name="backend" value="custom" />
 		</behavior>
 		<behavior name="sluggable" />
 	</table>
-	<table name="tag" phpName="Tag">
+	<table name="article_tag" phpName="ArticleTag" isCrossRef="true">
+		<column name="article_id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="tag_id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<foreign-key foreignTable="article">
+			<reference local="article_id" foreign="id"/>
+		</foreign-key>
+		<foreign-key foreignTable="tag">
+			<reference local="tag_id" foreign="id"/>
+		</foreign-key>
+		<behavior name="query_cache">
+			<parameter name="backend" value="custom" />
+		</behavior>
+	</table>
+	<table name="theme" phpName="Theme">
 		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
 		<column name="name" type="varchar" size="60" required="true" primaryString="true" />
+		<column name="root" type="varchar" size="128" required="true" />
+		<column name="colour" type="varchar" size="10" required="false" defaultValue="blue" />
 		<behavior name="query_cache">
 			<parameter name="backend" value="custom" />
 		</behavior>
