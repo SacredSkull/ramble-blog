@@ -3,8 +3,13 @@
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-define('DEBUG_SLIM', true);
-define('DEBUG', true);
+if ($_SERVER['HTTP_HOST'] !== "sacredskull.net") {
+    define('DEBUG_SLIM', true);
+    define('DEBUG', true);
+} else {
+    define('DEBUG_SLIM', false);
+    define('DEBUG', false);
+}
 define('WIREFRAME', false);
 define('CERT_AUTH', true);
 define('SITE_ROOT', realpath(dirname(__FILE__)));
@@ -12,7 +17,6 @@ define('USING_PARSEDOWN', false);
 if (defined('USING_WINDOWS')) {
     define('USING_WINDOWS', (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'));
 }
-define('USING_BBCODE', false);
 
 if (DEBUG == true) {
     ini_set('display_errors', 'On');
@@ -27,9 +31,6 @@ require './vendor/autoload.php';
 // Propel auto-conf
 require './generated-conf/config.php';
 // Defined BBCodes, if set
-if (USING_BBCODE) {
-    require './lib/bbcodes.php';
-}
 
 // Either use cheap network access control list or expensive
 // but quality client certificate authorisation
@@ -63,6 +64,7 @@ function jsFriendly($string)
     return htmlspecialchars($string, ENT_QUOTES);
 }
 
+// Generation time.
 $GLOBALS['execute_time'] = microtime(true);
 
 $logger = new Logger('defaultLogger');
@@ -96,7 +98,6 @@ $view->parserOptions = array(
 
 $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
-    //new TwigExtensionParsedown(),
     new \Twig_Extensions_Extension_Text(),
     new \SacredSkull\Blog\TwigExtensionHTMLTruncaterFilter(),
     new \SacredSkull\Blog\TwigExtensionExecutionTime(),
@@ -113,18 +114,19 @@ $themes = ThemeQuery::create()
 
 preg_match("/\/(?:19|20)\d\d|\/\w*/", $app->request()->getPathInfo(), $path);
 
-if ($path[0] == "/" || empty($path[0])) {
-    require './routes/base.php';
-} elseif ($path[0] == "/admin") {
+require './routes/base.php';
+
+if ($path[0] == "/admin") {
     require './routes/admin.php';
 } elseif ($path[0] == "/api") {
     require './routes/base.php';
 } elseif ($path[0] == "/test" && DEBUG) {
     require './routes/test.php';
 } else {
-    require './routes/base.php';
     require './routes/post.php';
     require './routes/search.php';
 }
+
+// TODO: Rename themes to categories. Theme conflicts with tagging, and category is much more understandable.
 
 $app->run();
