@@ -18,7 +18,7 @@ use Propel\Runtime\Exception\PropelException;
 /**
  * Base class that represents a query for the 'tag' table.
  *
- * 
+ *
  *
  * @method     ChildTagQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildTagQuery orderByName($order = Criteria::ASC) Order by the name column
@@ -36,7 +36,11 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildTagQuery rightJoinArticle($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Article relation
  * @method     ChildTagQuery innerJoinArticle($relationAlias = null) Adds a INNER JOIN clause to the query using the Article relation
  *
- * @method     \ArticleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildTagQuery leftJoinArticleTag($relationAlias = null) Adds a LEFT JOIN clause to the query using the ArticleTag relation
+ * @method     ChildTagQuery rightJoinArticleTag($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ArticleTag relation
+ * @method     ChildTagQuery innerJoinArticleTag($relationAlias = null) Adds a INNER JOIN clause to the query using the ArticleTag relation
+ *
+ * @method     \ArticleQuery|\ArticleTagQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildTag findOne(ConnectionInterface $con = null) Return the first ChildTag matching the query
  * @method     ChildTag findOneOrCreate(ConnectionInterface $con = null) Return the first ChildTag matching the query, or a new ChildTag object populated from the query conditions when no match is found
@@ -61,7 +65,7 @@ use Propel\Runtime\Exception\PropelException;
  */
 abstract class TagQuery extends ModelCriteria
 {
-    
+
     // query_cache behavior
     protected $queryKey = '';
     protected static $cacheBackend;
@@ -154,7 +158,7 @@ abstract class TagQuery extends ModelCriteria
     {
         $sql = 'SELECT id, name, slug FROM tag WHERE id = :p0';
         try {
-            $stmt = $con->prepare($sql);            
+            $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
             $stmt->execute();
         } catch (Exception $e) {
@@ -415,6 +419,96 @@ abstract class TagQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related \ArticleTag object
+     *
+     * @param \ArticleTag|ObjectCollection $articleTag the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildTagQuery The current query, for fluid interface
+     */
+    public function filterByArticleTag($articleTag, $comparison = null)
+    {
+        if ($articleTag instanceof \ArticleTag) {
+            return $this
+                ->addUsingAlias(TagTableMap::COL_ID, $articleTag->getTagId(), $comparison);
+        } elseif ($articleTag instanceof ObjectCollection) {
+            return $this
+                ->useArticleTagQuery()
+                ->filterByPrimaryKeys($articleTag->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByArticleTag() only accepts arguments of type \ArticleTag or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ArticleTag relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildTagQuery The current query, for fluid interface
+     */
+    public function joinArticleTag($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ArticleTag');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ArticleTag');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ArticleTag relation ArticleTag object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \ArticleTagQuery A secondary query class using the current class as primary query
+     */
+    public function useArticleTagQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinArticleTag($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ArticleTag', '\ArticleTagQuery');
+    }
+
+    /**
+     * Filter the query by a related Article object
+     * using the article_tag table as cross reference
+     *
+     * @param Article $article the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildTagQuery The current query, for fluid interface
+     */
+    public function filterByArticle($article, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useArticleTagQuery()
+            ->filterByArticle($article, $comparison)
+            ->endUse();
+    }
+
+    /**
      * Exclude object from result
      *
      * @param   ChildTag $tag Object to remove from the list of results
@@ -481,9 +575,9 @@ abstract class TagQuery extends ModelCriteria
         // for more than one table or we could emulating ON DELETE CASCADE, etc.
         return $con->transaction(function () use ($con, $criteria) {
             $affectedRows = 0; // initialize var to track total num of affected rows
-            
+
             TagTableMap::removeInstanceFromPool($criteria);
-        
+
             $affectedRows += ModelCriteria::delete($con);
             TagTableMap::clearRelatedInstancePool();
 
@@ -492,34 +586,34 @@ abstract class TagQuery extends ModelCriteria
     }
 
     // query_cache behavior
-    
+
     public function setQueryKey($key)
     {
         $this->queryKey = $key;
-    
+
         return $this;
     }
-    
+
     public function getQueryKey()
     {
         return $this->queryKey;
     }
-    
+
     public function cacheContains($key)
     {
         throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-    
+
     public function cacheFetch($key)
     {
         throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-    
+
     public function cacheStore($key, $value, $lifetime = 3600)
     {
         throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-    
+
     public function doSelect(ConnectionInterface $con = null)
     {
         // check that the columns of the main class are already added (if this is the primary ModelCriteria)
@@ -527,10 +621,10 @@ abstract class TagQuery extends ModelCriteria
             $this->addSelfSelectColumns();
         }
         $this->configureSelectColumns();
-    
+
         $dbMap = Propel::getServiceContainer()->getDatabaseMap(TagTableMap::DATABASE_NAME);
         $db = Propel::getServiceContainer()->getAdapter(TagTableMap::DATABASE_NAME);
-    
+
         $key = $this->getQueryKey();
         if ($key && $this->cacheContains($key)) {
             $params = $this->getParams();
@@ -542,7 +636,7 @@ abstract class TagQuery extends ModelCriteria
                 $this->cacheStore($key, $sql);
             }
         }
-    
+
         try {
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);
@@ -551,15 +645,15 @@ abstract class TagQuery extends ModelCriteria
                 Propel::log($e->getMessage(), Propel::LOG_ERR);
                 throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), 0, $e);
             }
-    
+
         return $con->getDataFetcher($stmt);
     }
-    
+
     public function doCount(ConnectionInterface $con = null)
     {
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
         $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
-    
+
         $key = $this->getQueryKey();
         if ($key && $this->cacheContains($key)) {
             $params = $this->getParams();
@@ -569,15 +663,15 @@ abstract class TagQuery extends ModelCriteria
             if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
                 $this->addSelfSelectColumns();
             }
-    
+
             $this->configureSelectColumns();
-    
+
             $needsComplexCount = $this->getGroupByColumns()
                 || $this->getOffset()
                 || $this->getLimit()
                 || $this->getHaving()
                 || in_array(Criteria::DISTINCT, $this->getSelectModifiers());
-    
+
             $params = array();
             if ($needsComplexCount) {
                 if ($this->needsSelectAliases()) {
@@ -593,12 +687,12 @@ abstract class TagQuery extends ModelCriteria
                 $this->clearSelectColumns()->addSelectColumn('COUNT(*)');
                 $sql = $this->createSelectSql($params);
             }
-    
+
             if ($key) {
                 $this->cacheStore($key, $sql);
             }
         }
-    
+
         try {
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);
@@ -607,7 +701,7 @@ abstract class TagQuery extends ModelCriteria
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
         }
-    
+
         return $con->getDataFetcher($stmt);
     }
 

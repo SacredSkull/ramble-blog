@@ -2,11 +2,11 @@
 
 namespace Base;
 
-use \View as ChildView;
-use \ViewQuery as ChildViewQuery;
+use \ArticleTag as ChildArticleTag;
+use \ArticleTagQuery as ChildArticleTagQuery;
 use \Exception;
 use \PDO;
-use Map\ViewTableMap;
+use Map\ArticleTagTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -16,55 +16,49 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Base class that represents a query for the 'view' table.
+ * Base class that represents a query for the 'article_tag' table.
  *
  *
  *
- * @method     ChildViewQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildViewQuery orderByIpAddress($order = Criteria::ASC) Order by the ip_address column
- * @method     ChildViewQuery orderByTime($order = Criteria::ASC) Order by the time column
- * @method     ChildViewQuery orderByArticleId($order = Criteria::ASC) Order by the article_id column
+ * @method     ChildArticleTagQuery orderByArticleId($order = Criteria::ASC) Order by the article_id column
+ * @method     ChildArticleTagQuery orderByTagId($order = Criteria::ASC) Order by the tag_id column
  *
- * @method     ChildViewQuery groupById() Group by the id column
- * @method     ChildViewQuery groupByIpAddress() Group by the ip_address column
- * @method     ChildViewQuery groupByTime() Group by the time column
- * @method     ChildViewQuery groupByArticleId() Group by the article_id column
+ * @method     ChildArticleTagQuery groupByArticleId() Group by the article_id column
+ * @method     ChildArticleTagQuery groupByTagId() Group by the tag_id column
  *
- * @method     ChildViewQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
- * @method     ChildViewQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
- * @method     ChildViewQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ * @method     ChildArticleTagQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     ChildArticleTagQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     ChildArticleTagQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildViewQuery leftJoinArticle($relationAlias = null) Adds a LEFT JOIN clause to the query using the Article relation
- * @method     ChildViewQuery rightJoinArticle($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Article relation
- * @method     ChildViewQuery innerJoinArticle($relationAlias = null) Adds a INNER JOIN clause to the query using the Article relation
+ * @method     ChildArticleTagQuery leftJoinArticle($relationAlias = null) Adds a LEFT JOIN clause to the query using the Article relation
+ * @method     ChildArticleTagQuery rightJoinArticle($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Article relation
+ * @method     ChildArticleTagQuery innerJoinArticle($relationAlias = null) Adds a INNER JOIN clause to the query using the Article relation
  *
- * @method     \ArticleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildArticleTagQuery leftJoinTag($relationAlias = null) Adds a LEFT JOIN clause to the query using the Tag relation
+ * @method     ChildArticleTagQuery rightJoinTag($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Tag relation
+ * @method     ChildArticleTagQuery innerJoinTag($relationAlias = null) Adds a INNER JOIN clause to the query using the Tag relation
  *
- * @method     ChildView findOne(ConnectionInterface $con = null) Return the first ChildView matching the query
- * @method     ChildView findOneOrCreate(ConnectionInterface $con = null) Return the first ChildView matching the query, or a new ChildView object populated from the query conditions when no match is found
+ * @method     \ArticleQuery|\TagQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildView findOneById(int $id) Return the first ChildView filtered by the id column
- * @method     ChildView findOneByIpAddress(string $ip_address) Return the first ChildView filtered by the ip_address column
- * @method     ChildView findOneByTime(string $time) Return the first ChildView filtered by the time column
- * @method     ChildView findOneByArticleId(int $article_id) Return the first ChildView filtered by the article_id column *
+ * @method     ChildArticleTag findOne(ConnectionInterface $con = null) Return the first ChildArticleTag matching the query
+ * @method     ChildArticleTag findOneOrCreate(ConnectionInterface $con = null) Return the first ChildArticleTag matching the query, or a new ChildArticleTag object populated from the query conditions when no match is found
+ *
+ * @method     ChildArticleTag findOneByArticleId(int $article_id) Return the first ChildArticleTag filtered by the article_id column
+ * @method     ChildArticleTag findOneByTagId(int $tag_id) Return the first ChildArticleTag filtered by the tag_id column *
 
- * @method     ChildView requirePk($key, ConnectionInterface $con = null) Return the ChildView by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildView requireOne(ConnectionInterface $con = null) Return the first ChildView matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticleTag requirePk($key, ConnectionInterface $con = null) Return the ChildArticleTag by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticleTag requireOne(ConnectionInterface $con = null) Return the first ChildArticleTag matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildView requireOneById(int $id) Return the first ChildView filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildView requireOneByIpAddress(string $ip_address) Return the first ChildView filtered by the ip_address column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildView requireOneByTime(string $time) Return the first ChildView filtered by the time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildView requireOneByArticleId(int $article_id) Return the first ChildView filtered by the article_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticleTag requireOneByArticleId(int $article_id) Return the first ChildArticleTag filtered by the article_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticleTag requireOneByTagId(int $tag_id) Return the first ChildArticleTag filtered by the tag_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildView[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildView objects based on current ModelCriteria
- * @method     ChildView[]|ObjectCollection findById(int $id) Return ChildView objects filtered by the id column
- * @method     ChildView[]|ObjectCollection findByIpAddress(string $ip_address) Return ChildView objects filtered by the ip_address column
- * @method     ChildView[]|ObjectCollection findByTime(string $time) Return ChildView objects filtered by the time column
- * @method     ChildView[]|ObjectCollection findByArticleId(int $article_id) Return ChildView objects filtered by the article_id column
- * @method     ChildView[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @method     ChildArticleTag[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildArticleTag objects based on current ModelCriteria
+ * @method     ChildArticleTag[]|ObjectCollection findByArticleId(int $article_id) Return ChildArticleTag objects filtered by the article_id column
+ * @method     ChildArticleTag[]|ObjectCollection findByTagId(int $tag_id) Return ChildArticleTag objects filtered by the tag_id column
+ * @method     ChildArticleTag[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
-abstract class ViewQuery extends ModelCriteria
+abstract class ArticleTagQuery extends ModelCriteria
 {
 
     // query_cache behavior
@@ -73,31 +67,31 @@ abstract class ViewQuery extends ModelCriteria
                 protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
 
     /**
-     * Initializes internal state of \Base\ViewQuery object.
+     * Initializes internal state of \Base\ArticleTagQuery object.
      *
      * @param     string $dbName The database name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'blog', $modelName = '\\View', $modelAlias = null)
+    public function __construct($dbName = 'blog', $modelName = '\\ArticleTag', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
     /**
-     * Returns a new ChildViewQuery object.
+     * Returns a new ChildArticleTagQuery object.
      *
      * @param     string $modelAlias The alias of a model in the query
      * @param     Criteria $criteria Optional Criteria to build the query from
      *
-     * @return ChildViewQuery
+     * @return ChildArticleTagQuery
      */
     public static function create($modelAlias = null, Criteria $criteria = null)
     {
-        if ($criteria instanceof ChildViewQuery) {
+        if ($criteria instanceof ChildArticleTagQuery) {
             return $criteria;
         }
-        $query = new ChildViewQuery();
+        $query = new ChildArticleTagQuery();
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
@@ -114,25 +108,25 @@ abstract class ViewQuery extends ModelCriteria
      * Go fast if the query is untouched.
      *
      * <code>
-     * $obj  = $c->findPk(12, $con);
+     * $obj = $c->findPk(array(12, 34), $con);
      * </code>
      *
-     * @param mixed $key Primary key to use for the query
+     * @param array[$article_id, $tag_id] $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
-     * @return ChildView|array|mixed the result, formatted by the current formatter
+     * @return ChildArticleTag|array|mixed the result, formatted by the current formatter
      */
     public function findPk($key, ConnectionInterface $con = null)
     {
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = ViewTableMap::getInstanceFromPool((string) $key))) && !$this->formatter) {
+        if ((null !== ($obj = ArticleTagTableMap::getInstanceFromPool(serialize(array((string) $key[0], (string) $key[1]))))) && !$this->formatter) {
             // the object is already in the instance pool
             return $obj;
         }
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(ViewTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(ArticleTagTableMap::DATABASE_NAME);
         }
         $this->basePreSelect($con);
         if ($this->formatter || $this->modelAlias || $this->with || $this->select
@@ -153,14 +147,15 @@ abstract class ViewQuery extends ModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return ChildView A model object, or null if the key is not found
+     * @return ChildArticleTag A model object, or null if the key is not found
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, ip_address, time, article_id FROM view WHERE id = :p0';
+        $sql = 'SELECT article_id, tag_id FROM article_tag WHERE article_id = :p0 AND tag_id = :p1';
         try {
             $stmt = $con->prepare($sql);
-            $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
+            $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
+            $stmt->bindValue(':p1', $key[1], PDO::PARAM_INT);
             $stmt->execute();
         } catch (Exception $e) {
             Propel::log($e->getMessage(), Propel::LOG_ERR);
@@ -168,10 +163,10 @@ abstract class ViewQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
-            /** @var ChildView $obj */
-            $obj = new ChildView();
+            /** @var ChildArticleTag $obj */
+            $obj = new ChildArticleTag();
             $obj->hydrate($row);
-            ViewTableMap::addInstanceToPool($obj, (string) $key);
+            ArticleTagTableMap::addInstanceToPool($obj, serialize(array((string) $key[0], (string) $key[1])));
         }
         $stmt->closeCursor();
 
@@ -184,7 +179,7 @@ abstract class ViewQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     ConnectionInterface $con A connection object
      *
-     * @return ChildView|array|mixed the result, formatted by the current formatter
+     * @return ChildArticleTag|array|mixed the result, formatted by the current formatter
      */
     protected function findPkComplex($key, ConnectionInterface $con)
     {
@@ -200,7 +195,7 @@ abstract class ViewQuery extends ModelCriteria
     /**
      * Find objects by primary key
      * <code>
-     * $objs = $c->findPks(array(12, 56, 832), $con);
+     * $objs = $c->findPks(array(array(12, 56), array(832, 123), array(123, 456)), $con);
      * </code>
      * @param     array $keys Primary keys to use for the query
      * @param     ConnectionInterface $con an optional connection object
@@ -226,12 +221,14 @@ abstract class ViewQuery extends ModelCriteria
      *
      * @param     mixed $key Primary key to use for the query
      *
-     * @return $this|ChildViewQuery The current query, for fluid interface
+     * @return $this|ChildArticleTagQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
+        $this->addUsingAlias(ArticleTagTableMap::COL_ARTICLE_ID, $key[0], Criteria::EQUAL);
+        $this->addUsingAlias(ArticleTagTableMap::COL_TAG_ID, $key[1], Criteria::EQUAL);
 
-        return $this->addUsingAlias(ViewTableMap::COL_ID, $key, Criteria::EQUAL);
+        return $this;
     }
 
     /**
@@ -239,125 +236,21 @@ abstract class ViewQuery extends ModelCriteria
      *
      * @param     array $keys The list of primary key to use for the query
      *
-     * @return $this|ChildViewQuery The current query, for fluid interface
+     * @return $this|ChildArticleTagQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
-
-        return $this->addUsingAlias(ViewTableMap::COL_ID, $keys, Criteria::IN);
-    }
-
-    /**
-     * Filter the query on the id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterById(1234); // WHERE id = 1234
-     * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
-     * $query->filterById(array('min' => 12)); // WHERE id > 12
-     * </code>
-     *
-     * @param     mixed $id The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildViewQuery The current query, for fluid interface
-     */
-    public function filterById($id = null, $comparison = null)
-    {
-        if (is_array($id)) {
-            $useMinMax = false;
-            if (isset($id['min'])) {
-                $this->addUsingAlias(ViewTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($id['max'])) {
-                $this->addUsingAlias(ViewTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
+        if (empty($keys)) {
+            return $this->add(null, '1<>1', Criteria::CUSTOM);
+        }
+        foreach ($keys as $key) {
+            $cton0 = $this->getNewCriterion(ArticleTagTableMap::COL_ARTICLE_ID, $key[0], Criteria::EQUAL);
+            $cton1 = $this->getNewCriterion(ArticleTagTableMap::COL_TAG_ID, $key[1], Criteria::EQUAL);
+            $cton0->addAnd($cton1);
+            $this->addOr($cton0);
         }
 
-        return $this->addUsingAlias(ViewTableMap::COL_ID, $id, $comparison);
-    }
-
-    /**
-     * Filter the query on the ip_address column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByIpAddress('fooValue');   // WHERE ip_address = 'fooValue'
-     * $query->filterByIpAddress('%fooValue%'); // WHERE ip_address LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $ipAddress The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildViewQuery The current query, for fluid interface
-     */
-    public function filterByIpAddress($ipAddress = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($ipAddress)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $ipAddress)) {
-                $ipAddress = str_replace('*', '%', $ipAddress);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(ViewTableMap::COL_IP_ADDRESS, $ipAddress, $comparison);
-    }
-
-    /**
-     * Filter the query on the time column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByTime('2011-03-14'); // WHERE time = '2011-03-14'
-     * $query->filterByTime('now'); // WHERE time = '2011-03-14'
-     * $query->filterByTime(array('max' => 'yesterday')); // WHERE time > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $time The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildViewQuery The current query, for fluid interface
-     */
-    public function filterByTime($time = null, $comparison = null)
-    {
-        if (is_array($time)) {
-            $useMinMax = false;
-            if (isset($time['min'])) {
-                $this->addUsingAlias(ViewTableMap::COL_TIME, $time['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($time['max'])) {
-                $this->addUsingAlias(ViewTableMap::COL_TIME, $time['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ViewTableMap::COL_TIME, $time, $comparison);
+        return $this;
     }
 
     /**
@@ -378,18 +271,18 @@ abstract class ViewQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildViewQuery The current query, for fluid interface
+     * @return $this|ChildArticleTagQuery The current query, for fluid interface
      */
     public function filterByArticleId($articleId = null, $comparison = null)
     {
         if (is_array($articleId)) {
             $useMinMax = false;
             if (isset($articleId['min'])) {
-                $this->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $articleId['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(ArticleTagTableMap::COL_ARTICLE_ID, $articleId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($articleId['max'])) {
-                $this->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $articleId['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(ArticleTagTableMap::COL_ARTICLE_ID, $articleId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -400,7 +293,50 @@ abstract class ViewQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $articleId, $comparison);
+        return $this->addUsingAlias(ArticleTagTableMap::COL_ARTICLE_ID, $articleId, $comparison);
+    }
+
+    /**
+     * Filter the query on the tag_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByTagId(1234); // WHERE tag_id = 1234
+     * $query->filterByTagId(array(12, 34)); // WHERE tag_id IN (12, 34)
+     * $query->filterByTagId(array('min' => 12)); // WHERE tag_id > 12
+     * </code>
+     *
+     * @see       filterByTag()
+     *
+     * @param     mixed $tagId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildArticleTagQuery The current query, for fluid interface
+     */
+    public function filterByTagId($tagId = null, $comparison = null)
+    {
+        if (is_array($tagId)) {
+            $useMinMax = false;
+            if (isset($tagId['min'])) {
+                $this->addUsingAlias(ArticleTagTableMap::COL_TAG_ID, $tagId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($tagId['max'])) {
+                $this->addUsingAlias(ArticleTagTableMap::COL_TAG_ID, $tagId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ArticleTagTableMap::COL_TAG_ID, $tagId, $comparison);
     }
 
     /**
@@ -411,20 +347,20 @@ abstract class ViewQuery extends ModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return ChildViewQuery The current query, for fluid interface
+     * @return ChildArticleTagQuery The current query, for fluid interface
      */
     public function filterByArticle($article, $comparison = null)
     {
         if ($article instanceof \Article) {
             return $this
-                ->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $article->getId(), $comparison);
+                ->addUsingAlias(ArticleTagTableMap::COL_ARTICLE_ID, $article->getId(), $comparison);
         } elseif ($article instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $article->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(ArticleTagTableMap::COL_ARTICLE_ID, $article->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
             throw new PropelException('filterByArticle() only accepts arguments of type \Article or Collection');
         }
@@ -436,7 +372,7 @@ abstract class ViewQuery extends ModelCriteria
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildViewQuery The current query, for fluid interface
+     * @return $this|ChildArticleTagQuery The current query, for fluid interface
      */
     public function joinArticle($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
@@ -481,23 +417,102 @@ abstract class ViewQuery extends ModelCriteria
     }
 
     /**
-     * Exclude object from result
+     * Filter the query by a related \Tag object
      *
-     * @param   ChildView $view Object to remove from the list of results
+     * @param \Tag|ObjectCollection $tag The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildViewQuery The current query, for fluid interface
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return ChildArticleTagQuery The current query, for fluid interface
      */
-    public function prune($view = null)
+    public function filterByTag($tag, $comparison = null)
     {
-        if ($view) {
-            $this->addUsingAlias(ViewTableMap::COL_ID, $view->getId(), Criteria::NOT_EQUAL);
+        if ($tag instanceof \Tag) {
+            return $this
+                ->addUsingAlias(ArticleTagTableMap::COL_TAG_ID, $tag->getId(), $comparison);
+        } elseif ($tag instanceof ObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ArticleTagTableMap::COL_TAG_ID, $tag->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByTag() only accepts arguments of type \Tag or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Tag relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildArticleTagQuery The current query, for fluid interface
+     */
+    public function joinTag($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Tag');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Tag');
         }
 
         return $this;
     }
 
     /**
-     * Deletes all rows from the view table.
+     * Use the Tag relation Tag object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \TagQuery A secondary query class using the current class as primary query
+     */
+    public function useTagQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinTag($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Tag', '\TagQuery');
+    }
+
+    /**
+     * Exclude object from result
+     *
+     * @param   ChildArticleTag $articleTag Object to remove from the list of results
+     *
+     * @return $this|ChildArticleTagQuery The current query, for fluid interface
+     */
+    public function prune($articleTag = null)
+    {
+        if ($articleTag) {
+            $this->addCond('pruneCond0', $this->getAliasedColName(ArticleTagTableMap::COL_ARTICLE_ID), $articleTag->getArticleId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond1', $this->getAliasedColName(ArticleTagTableMap::COL_TAG_ID), $articleTag->getTagId(), Criteria::NOT_EQUAL);
+            $this->combine(array('pruneCond0', 'pruneCond1'), Criteria::LOGICAL_OR);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Deletes all rows from the article_tag table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -505,7 +520,7 @@ abstract class ViewQuery extends ModelCriteria
     public function doDeleteAll(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ViewTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ArticleTagTableMap::DATABASE_NAME);
         }
 
         // use transaction because $criteria could contain info
@@ -516,8 +531,8 @@ abstract class ViewQuery extends ModelCriteria
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            ViewTableMap::clearInstancePool();
-            ViewTableMap::clearRelatedInstancePool();
+            ArticleTagTableMap::clearInstancePool();
+            ArticleTagTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
@@ -535,23 +550,23 @@ abstract class ViewQuery extends ModelCriteria
     public function delete(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ViewTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ArticleTagTableMap::DATABASE_NAME);
         }
 
         $criteria = $this;
 
         // Set the correct dbName
-        $criteria->setDbName(ViewTableMap::DATABASE_NAME);
+        $criteria->setDbName(ArticleTagTableMap::DATABASE_NAME);
 
         // use transaction because $criteria could contain info
         // for more than one table or we could emulating ON DELETE CASCADE, etc.
         return $con->transaction(function () use ($con, $criteria) {
             $affectedRows = 0; // initialize var to track total num of affected rows
 
-            ViewTableMap::removeInstanceFromPool($criteria);
+            ArticleTagTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
-            ViewTableMap::clearRelatedInstancePool();
+            ArticleTagTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
@@ -594,8 +609,8 @@ abstract class ViewQuery extends ModelCriteria
         }
         $this->configureSelectColumns();
 
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ViewTableMap::DATABASE_NAME);
-        $db = Propel::getServiceContainer()->getAdapter(ViewTableMap::DATABASE_NAME);
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ArticleTagTableMap::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(ArticleTagTableMap::DATABASE_NAME);
 
         $key = $this->getQueryKey();
         if ($key && $this->cacheContains($key)) {
@@ -677,4 +692,4 @@ abstract class ViewQuery extends ModelCriteria
         return $con->getDataFetcher($stmt);
     }
 
-} // ViewQuery
+} // ArticleTagQuery

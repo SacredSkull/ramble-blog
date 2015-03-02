@@ -227,6 +227,13 @@ class ArticleTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', null, null, false);
+        $this->addRelation('ArticleTag', '\\ArticleTag', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':article_id',
+    1 => ':id',
+  ),
+), null, null, 'ArticleTags', false);
         $this->addRelation('View', '\\View', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -234,6 +241,7 @@ class ArticleTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', null, 'Views', false);
+        $this->addRelation('Tag', '\\Tag', RelationMap::MANY_TO_MANY, array(), null, null, 'Tags');
     } // buildRelations()
 
     /**
@@ -303,7 +311,7 @@ class ArticleTableMap extends TableMap
                 : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
         ];
     }
-    
+
     /**
      * The class that the tableMap will make instances of.
      *
@@ -364,7 +372,7 @@ class ArticleTableMap extends TableMap
     public static function populateObjects(DataFetcherInterface $dataFetcher)
     {
         $results = array();
-    
+
         // set the class once to avoid overhead in the loop
         $cls = static::getOMClass(false);
         // populate the object(s)

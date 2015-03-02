@@ -22,7 +22,7 @@ $homepageHandler = function ($page = 1) use ($app, $quote, $themes) {
         $app->redirect('/');
     }
 
-    if ($page > $maxPages) {
+    if ($page > $maxPages && $maxPages != 0) {
         $app->flash('denied', "I've failed you senpai.. I haven't got that many post pages!");
         $app->redirect('/');
     }

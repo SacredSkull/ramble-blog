@@ -5,11 +5,9 @@
 		<column name="title" type="varchar" size="255" required="true" primaryString="true" />
 		<column name="bodyHTML" type="longvarchar"/>
 		<column name="body" type="longvarchar" required="true"/>
-		<column name="tags" type="varchar" size="255" required="false"/>
 		<column name="positive_votes" type="integer" required="false" defaultValue="0" />
 		<column name="negative_votes" type="integer" required="false" defaultValue="0" />
 		<column name="theme_id" type="integer" required="true" defaultValue="0" />
-		<column name="tag_id" type="integer" required="false" />
 		<column name="image" type="varchar" size="255" required="false" default="default/post_img.png" />
 		<column name="draft" type="boolean" required="false" defaultValue="false" />
 		<behavior name="timestampable"/>
@@ -18,9 +16,6 @@
 		</behavior>
 		<foreign-key foreignTable="theme" phpName="Theme" onDelete="CASCADE" refPhpName="Article">
 			<reference local="theme_id" foreign="id"/>
-		</foreign-key>
-				<foreign-key foreignTable="tag" phpName="Tag" onDelete="CASCADE" refPhpName="Article">
-			<reference local="tag_id" foreign="id"/>
 		</foreign-key>
 		<behavior name="sluggable" />
 	</table>
@@ -33,8 +28,8 @@
 		<behavior name="sluggable" />
 	</table>
 	<table name="article_tag" phpName="ArticleTag" isCrossRef="true">
-		<column name="article_id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
-		<column name="tag_id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="article_id" type="integer" required="true" primaryKey="true" />
+		<column name="tag_id" type="integer" required="true" primaryKey="true" />
 		<foreign-key foreignTable="article">
 			<reference local="article_id" foreign="id"/>
 		</foreign-key>

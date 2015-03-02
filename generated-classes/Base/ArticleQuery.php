@@ -18,7 +18,7 @@ use Propel\Runtime\Exception\PropelException;
 /**
  * Base class that represents a query for the 'article' table.
  *
- * 
+ *
  *
  * @method     ChildArticleQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildArticleQuery orderByTitle($order = Criteria::ASC) Order by the title column
@@ -62,11 +62,15 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticleQuery rightJoinTag($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Tag relation
  * @method     ChildArticleQuery innerJoinTag($relationAlias = null) Adds a INNER JOIN clause to the query using the Tag relation
  *
+ * @method     ChildArticleQuery leftJoinArticleTag($relationAlias = null) Adds a LEFT JOIN clause to the query using the ArticleTag relation
+ * @method     ChildArticleQuery rightJoinArticleTag($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ArticleTag relation
+ * @method     ChildArticleQuery innerJoinArticleTag($relationAlias = null) Adds a INNER JOIN clause to the query using the ArticleTag relation
+ *
  * @method     ChildArticleQuery leftJoinView($relationAlias = null) Adds a LEFT JOIN clause to the query using the View relation
  * @method     ChildArticleQuery rightJoinView($relationAlias = null) Adds a RIGHT JOIN clause to the query using the View relation
  * @method     ChildArticleQuery innerJoinView($relationAlias = null) Adds a INNER JOIN clause to the query using the View relation
  *
- * @method     \ThemeQuery|\TagQuery|\ViewQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \ThemeQuery|\TagQuery|\ArticleTagQuery|\ViewQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildArticle findOne(ConnectionInterface $con = null) Return the first ChildArticle matching the query
  * @method     ChildArticle findOneOrCreate(ConnectionInterface $con = null) Return the first ChildArticle matching the query, or a new ChildArticle object populated from the query conditions when no match is found
@@ -124,7 +128,7 @@ use Propel\Runtime\Exception\PropelException;
  */
 abstract class ArticleQuery extends ModelCriteria
 {
-    
+
     // query_cache behavior
     protected $queryKey = '';
     protected static $cacheBackend;
@@ -217,7 +221,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         $sql = 'SELECT id, title, bodyHTML, body, tags, positive_votes, negative_votes, theme_id, tag_id, image, draft, created_at, updated_at, slug FROM article WHERE id = :p0';
         try {
-            $stmt = $con->prepare($sql);            
+            $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
             $stmt->execute();
         } catch (Exception $e) {
@@ -956,6 +960,79 @@ abstract class ArticleQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related \ArticleTag object
+     *
+     * @param \ArticleTag|ObjectCollection $articleTag the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildArticleQuery The current query, for fluid interface
+     */
+    public function filterByArticleTag($articleTag, $comparison = null)
+    {
+        if ($articleTag instanceof \ArticleTag) {
+            return $this
+                ->addUsingAlias(ArticleTableMap::COL_ID, $articleTag->getArticleId(), $comparison);
+        } elseif ($articleTag instanceof ObjectCollection) {
+            return $this
+                ->useArticleTagQuery()
+                ->filterByPrimaryKeys($articleTag->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByArticleTag() only accepts arguments of type \ArticleTag or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ArticleTag relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildArticleQuery The current query, for fluid interface
+     */
+    public function joinArticleTag($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ArticleTag');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ArticleTag');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ArticleTag relation ArticleTag object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \ArticleTagQuery A secondary query class using the current class as primary query
+     */
+    public function useArticleTagQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinArticleTag($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ArticleTag', '\ArticleTagQuery');
+    }
+
+    /**
      * Filter the query by a related \View object
      *
      * @param \View|ObjectCollection $view the related object to use as filter
@@ -1029,6 +1106,23 @@ abstract class ArticleQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related Tag object
+     * using the article_tag table as cross reference
+     *
+     * @param Tag $tag the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildArticleQuery The current query, for fluid interface
+     */
+    public function filterByTag($tag, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useArticleTagQuery()
+            ->filterByTag($tag, $comparison)
+            ->endUse();
+    }
+
+    /**
      * Exclude object from result
      *
      * @param   ChildArticle $article Object to remove from the list of results
@@ -1095,9 +1189,9 @@ abstract class ArticleQuery extends ModelCriteria
         // for more than one table or we could emulating ON DELETE CASCADE, etc.
         return $con->transaction(function () use ($con, $criteria) {
             $affectedRows = 0; // initialize var to track total num of affected rows
-            
+
             ArticleTableMap::removeInstanceFromPool($criteria);
-        
+
             $affectedRows += ModelCriteria::delete($con);
             ArticleTableMap::clearRelatedInstancePool();
 
@@ -1106,7 +1200,7 @@ abstract class ArticleQuery extends ModelCriteria
     }
 
     // timestampable behavior
-    
+
     /**
      * Filter by the latest updated
      *
@@ -1118,7 +1212,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addUsingAlias(ArticleTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
     }
-    
+
     /**
      * Order by update date desc
      *
@@ -1128,7 +1222,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addDescendingOrderByColumn(ArticleTableMap::COL_UPDATED_AT);
     }
-    
+
     /**
      * Order by update date asc
      *
@@ -1138,7 +1232,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addAscendingOrderByColumn(ArticleTableMap::COL_UPDATED_AT);
     }
-    
+
     /**
      * Order by create date desc
      *
@@ -1148,7 +1242,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addDescendingOrderByColumn(ArticleTableMap::COL_CREATED_AT);
     }
-    
+
     /**
      * Filter by the latest created
      *
@@ -1160,7 +1254,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         return $this->addUsingAlias(ArticleTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
     }
-    
+
     /**
      * Order by create date asc
      *
@@ -1172,34 +1266,34 @@ abstract class ArticleQuery extends ModelCriteria
     }
 
     // query_cache behavior
-    
+
     public function setQueryKey($key)
     {
         $this->queryKey = $key;
-    
+
         return $this;
     }
-    
+
     public function getQueryKey()
     {
         return $this->queryKey;
     }
-    
+
     public function cacheContains($key)
     {
         throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-    
+
     public function cacheFetch($key)
     {
         throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-    
+
     public function cacheStore($key, $value, $lifetime = 3600)
     {
         throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');
     }
-    
+
     public function doSelect(ConnectionInterface $con = null)
     {
         // check that the columns of the main class are already added (if this is the primary ModelCriteria)
@@ -1207,10 +1301,10 @@ abstract class ArticleQuery extends ModelCriteria
             $this->addSelfSelectColumns();
         }
         $this->configureSelectColumns();
-    
+
         $dbMap = Propel::getServiceContainer()->getDatabaseMap(ArticleTableMap::DATABASE_NAME);
         $db = Propel::getServiceContainer()->getAdapter(ArticleTableMap::DATABASE_NAME);
-    
+
         $key = $this->getQueryKey();
         if ($key && $this->cacheContains($key)) {
             $params = $this->getParams();
@@ -1222,7 +1316,7 @@ abstract class ArticleQuery extends ModelCriteria
                 $this->cacheStore($key, $sql);
             }
         }
-    
+
         try {
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);
@@ -1231,15 +1325,15 @@ abstract class ArticleQuery extends ModelCriteria
                 Propel::log($e->getMessage(), Propel::LOG_ERR);
                 throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), 0, $e);
             }
-    
+
         return $con->getDataFetcher($stmt);
     }
-    
+
     public function doCount(ConnectionInterface $con = null)
     {
         $dbMap = Propel::getServiceContainer()->getDatabaseMap($this->getDbName());
         $db = Propel::getServiceContainer()->getAdapter($this->getDbName());
-    
+
         $key = $this->getQueryKey();
         if ($key && $this->cacheContains($key)) {
             $params = $this->getParams();
@@ -1249,15 +1343,15 @@ abstract class ArticleQuery extends ModelCriteria
             if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
                 $this->addSelfSelectColumns();
             }
-    
+
             $this->configureSelectColumns();
-    
+
             $needsComplexCount = $this->getGroupByColumns()
                 || $this->getOffset()
                 || $this->getLimit()
                 || $this->getHaving()
                 || in_array(Criteria::DISTINCT, $this->getSelectModifiers());
-    
+
             $params = array();
             if ($needsComplexCount) {
                 if ($this->needsSelectAliases()) {
@@ -1273,12 +1367,12 @@ abstract class ArticleQuery extends ModelCriteria
                 $this->clearSelectColumns()->addSelectColumn('COUNT(*)');
                 $sql = $this->createSelectSql($params);
             }
-    
+
             if ($key) {
                 $this->cacheStore($key, $sql);
             }
         }
-    
+
         try {
             $stmt = $con->prepare($sql);
             $db->bindValues($stmt, $params, $dbMap);
@@ -1287,7 +1381,7 @@ abstract class ArticleQuery extends ModelCriteria
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute COUNT statement [%s]', $sql), 0, $e);
         }
-    
+
         return $con->getDataFetcher($stmt);
     }
 

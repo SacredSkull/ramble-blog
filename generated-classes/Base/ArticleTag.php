@@ -4,11 +4,12 @@ namespace Base;
 
 use \Article as ChildArticle;
 use \ArticleQuery as ChildArticleQuery;
-use \ViewQuery as ChildViewQuery;
-use \DateTime;
+use \ArticleTagQuery as ChildArticleTagQuery;
+use \Tag as ChildTag;
+use \TagQuery as ChildTagQuery;
 use \Exception;
 use \PDO;
-use Map\ViewTableMap;
+use Map\ArticleTagTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -20,21 +21,20 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'view' table.
+ * Base class that represents a row from the 'article_tag' table.
  *
  *
  *
 * @package    propel.generator..Base
 */
-abstract class View implements ActiveRecordInterface
+abstract class ArticleTag implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Map\\ViewTableMap';
+    const TABLE_MAP = '\\Map\\ArticleTagTableMap';
 
 
     /**
@@ -64,35 +64,26 @@ abstract class View implements ActiveRecordInterface
     protected $virtualColumns = array();
 
     /**
-     * The value for the id field.
-     * @var        int
-     */
-    protected $id;
-
-    /**
-     * The value for the ip_address field.
-     * @var        string
-     */
-    protected $ip_address;
-
-    /**
-     * The value for the time field.
-     * Note: this column has a database default value of: (expression) CURRENT_TIMESTAMP
-     * @var        \DateTime
-     */
-    protected $time;
-
-    /**
      * The value for the article_id field.
-     * Note: this column has a database default value of: 0
      * @var        int
      */
     protected $article_id;
 
     /**
+     * The value for the tag_id field.
+     * @var        int
+     */
+    protected $tag_id;
+
+    /**
      * @var        ChildArticle
      */
     protected $aArticle;
+
+    /**
+     * @var        ChildTag
+     */
+    protected $aTag;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -103,23 +94,10 @@ abstract class View implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Applies default values to this object.
-     * This method should be called from the object's constructor (or
-     * equivalent initialization method).
-     * @see __construct()
-     */
-    public function applyDefaultValues()
-    {
-        $this->article_id = 0;
-    }
-
-    /**
-     * Initializes internal state of Base\View object.
-     * @see applyDefaults()
+     * Initializes internal state of Base\ArticleTag object.
      */
     public function __construct()
     {
-        $this->applyDefaultValues();
     }
 
     /**
@@ -211,9 +189,9 @@ abstract class View implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>View</code> instance.  If
-     * <code>obj</code> is an instance of <code>View</code>, delegates to
-     * <code>equals(View)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>ArticleTag</code> instance.  If
+     * <code>obj</code> is an instance of <code>ArticleTag</code>, delegates to
+     * <code>equals(ArticleTag)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -279,7 +257,7 @@ abstract class View implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|View The current object, for fluid interface
+     * @return $this|ArticleTag The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -333,46 +311,6 @@ abstract class View implements ActiveRecordInterface
     }
 
     /**
-     * Get the [id] column value.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Get the [ip_address] column value.
-     *
-     * @return string
-     */
-    public function getIpAddress()
-    {
-        return $this->ip_address;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [time] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getTime($format = NULL)
-    {
-        if ($format === null) {
-            return $this->time;
-        } else {
-            return $this->time instanceof \DateTime ? $this->time->format($format) : null;
-        }
-    }
-
-    /**
      * Get the [article_id] column value.
      *
      * @return int
@@ -383,70 +321,20 @@ abstract class View implements ActiveRecordInterface
     }
 
     /**
-     * Set the value of [id] column.
+     * Get the [tag_id] column value.
      *
-     * @param int $v new value
-     * @return $this|\View The current object (for fluent API support)
+     * @return int
      */
-    public function setId($v)
+    public function getTagId()
     {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->id !== $v) {
-            $this->id = $v;
-            $this->modifiedColumns[ViewTableMap::COL_ID] = true;
-        }
-
-        return $this;
-    } // setId()
-
-    /**
-     * Set the value of [ip_address] column.
-     *
-     * @param string $v new value
-     * @return $this|\View The current object (for fluent API support)
-     */
-    public function setIpAddress($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->ip_address !== $v) {
-            $this->ip_address = $v;
-            $this->modifiedColumns[ViewTableMap::COL_IP_ADDRESS] = true;
-        }
-
-        return $this;
-    } // setIpAddress()
-
-    /**
-     * Sets the value of [time] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\View The current object (for fluent API support)
-     */
-    public function setTime($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->time !== null || $dt !== null) {
-            if ($dt !== $this->time) {
-                $this->time = $dt;
-                $this->modifiedColumns[ViewTableMap::COL_TIME] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setTime()
+        return $this->tag_id;
+    }
 
     /**
      * Set the value of [article_id] column.
      *
      * @param int $v new value
-     * @return $this|\View The current object (for fluent API support)
+     * @return $this|\ArticleTag The current object (for fluent API support)
      */
     public function setArticleId($v)
     {
@@ -456,7 +344,7 @@ abstract class View implements ActiveRecordInterface
 
         if ($this->article_id !== $v) {
             $this->article_id = $v;
-            $this->modifiedColumns[ViewTableMap::COL_ARTICLE_ID] = true;
+            $this->modifiedColumns[ArticleTagTableMap::COL_ARTICLE_ID] = true;
         }
 
         if ($this->aArticle !== null && $this->aArticle->getId() !== $v) {
@@ -465,6 +353,30 @@ abstract class View implements ActiveRecordInterface
 
         return $this;
     } // setArticleId()
+
+    /**
+     * Set the value of [tag_id] column.
+     *
+     * @param int $v new value
+     * @return $this|\ArticleTag The current object (for fluent API support)
+     */
+    public function setTagId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->tag_id !== $v) {
+            $this->tag_id = $v;
+            $this->modifiedColumns[ArticleTagTableMap::COL_TAG_ID] = true;
+        }
+
+        if ($this->aTag !== null && $this->aTag->getId() !== $v) {
+            $this->aTag = null;
+        }
+
+        return $this;
+    } // setTagId()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -476,10 +388,6 @@ abstract class View implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->article_id !== 0) {
-                return false;
-            }
-
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -506,20 +414,11 @@ abstract class View implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ViewTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->id = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ViewTableMap::translateFieldName('IpAddress', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->ip_address = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ViewTableMap::translateFieldName('Time', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->time = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ViewTableMap::translateFieldName('ArticleId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ArticleTagTableMap::translateFieldName('ArticleId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->article_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ArticleTagTableMap::translateFieldName('TagId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->tag_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -528,10 +427,10 @@ abstract class View implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = ViewTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 2; // 2 = ArticleTagTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\View'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\ArticleTag'), 0, $e);
         }
     }
 
@@ -552,6 +451,9 @@ abstract class View implements ActiveRecordInterface
     {
         if ($this->aArticle !== null && $this->article_id !== $this->aArticle->getId()) {
             $this->aArticle = null;
+        }
+        if ($this->aTag !== null && $this->tag_id !== $this->aTag->getId()) {
+            $this->aTag = null;
         }
     } // ensureConsistency
 
@@ -576,13 +478,13 @@ abstract class View implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(ViewTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(ArticleTagTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildViewQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildArticleTagQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -593,6 +495,7 @@ abstract class View implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aArticle = null;
+            $this->aTag = null;
         } // if (deep)
     }
 
@@ -602,8 +505,8 @@ abstract class View implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see View::setDeleted()
-     * @see View::isDeleted()
+     * @see ArticleTag::setDeleted()
+     * @see ArticleTag::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -612,11 +515,11 @@ abstract class View implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ViewTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ArticleTagTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildViewQuery::create()
+            $deleteQuery = ChildArticleTagQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -647,7 +550,7 @@ abstract class View implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ViewTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ArticleTagTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -666,7 +569,7 @@ abstract class View implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ViewTableMap::addInstanceToPool($this);
+                ArticleTagTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -704,6 +607,13 @@ abstract class View implements ActiveRecordInterface
                 $this->setArticle($this->aArticle);
             }
 
+            if ($this->aTag !== null) {
+                if ($this->aTag->isModified() || $this->aTag->isNew()) {
+                    $affectedRows += $this->aTag->save($con);
+                }
+                $this->setTag($this->aTag);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -735,27 +645,25 @@ abstract class View implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[ViewTableMap::COL_ID] = true;
-        if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ViewTableMap::COL_ID . ')');
+        $this->modifiedColumns[ArticleTagTableMap::COL_ARTICLE_ID] = true;
+        if (null !== $this->article_id) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ArticleTagTableMap::COL_ARTICLE_ID . ')');
+        }
+        $this->modifiedColumns[ArticleTagTableMap::COL_TAG_ID] = true;
+        if (null !== $this->tag_id) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ArticleTagTableMap::COL_TAG_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ViewTableMap::COL_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'id';
-        }
-        if ($this->isColumnModified(ViewTableMap::COL_IP_ADDRESS)) {
-            $modifiedColumns[':p' . $index++]  = 'ip_address';
-        }
-        if ($this->isColumnModified(ViewTableMap::COL_TIME)) {
-            $modifiedColumns[':p' . $index++]  = 'time';
-        }
-        if ($this->isColumnModified(ViewTableMap::COL_ARTICLE_ID)) {
+        if ($this->isColumnModified(ArticleTagTableMap::COL_ARTICLE_ID)) {
             $modifiedColumns[':p' . $index++]  = 'article_id';
+        }
+        if ($this->isColumnModified(ArticleTagTableMap::COL_TAG_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'tag_id';
         }
 
         $sql = sprintf(
-            'INSERT INTO view (%s) VALUES (%s)',
+            'INSERT INTO article_tag (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -764,17 +672,11 @@ abstract class View implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'id':
-                        $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
-                        break;
-                    case 'ip_address':
-                        $stmt->bindValue($identifier, $this->ip_address, PDO::PARAM_STR);
-                        break;
-                    case 'time':
-                        $stmt->bindValue($identifier, $this->time ? $this->time->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
-                        break;
                     case 'article_id':
                         $stmt->bindValue($identifier, $this->article_id, PDO::PARAM_INT);
+                        break;
+                    case 'tag_id':
+                        $stmt->bindValue($identifier, $this->tag_id, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -789,7 +691,7 @@ abstract class View implements ActiveRecordInterface
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', 0, $e);
         }
-        $this->setId($pk);
+        $this->setArticleId($pk);
 
         $this->setNew(false);
     }
@@ -822,7 +724,7 @@ abstract class View implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ViewTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ArticleTagTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -839,16 +741,10 @@ abstract class View implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                return $this->getId();
+                return $this->getArticleId();
                 break;
             case 1:
-                return $this->getIpAddress();
-                break;
-            case 2:
-                return $this->getTime();
-                break;
-            case 3:
-                return $this->getArticleId();
+                return $this->getTagId();
                 break;
             default:
                 return null;
@@ -874,25 +770,15 @@ abstract class View implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['View'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['ArticleTag'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['View'][$this->hashCode()] = true;
-        $keys = ViewTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['ArticleTag'][$this->hashCode()] = true;
+        $keys = ArticleTagTableMap::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getId(),
-            $keys[1] => $this->getIpAddress(),
-            $keys[2] => $this->getTime(),
-            $keys[3] => $this->getArticleId(),
+            $keys[0] => $this->getArticleId(),
+            $keys[1] => $this->getTagId(),
         );
-
-        $utc = new \DateTimeZone('utc');
-        if ($result[$keys[2]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[2]];
-            $result[$keys[2]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
-        }
-
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
@@ -914,6 +800,21 @@ abstract class View implements ActiveRecordInterface
 
                 $result[$key] = $this->aArticle->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
+            if (null !== $this->aTag) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'tag';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'tag';
+                        break;
+                    default:
+                        $key = 'Tag';
+                }
+
+                $result[$key] = $this->aTag->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
         }
 
         return $result;
@@ -928,11 +829,11 @@ abstract class View implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\View
+     * @return $this|\ArticleTag
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ViewTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ArticleTagTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -943,22 +844,16 @@ abstract class View implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\View
+     * @return $this|\ArticleTag
      */
     public function setByPosition($pos, $value)
     {
         switch ($pos) {
             case 0:
-                $this->setId($value);
+                $this->setArticleId($value);
                 break;
             case 1:
-                $this->setIpAddress($value);
-                break;
-            case 2:
-                $this->setTime($value);
-                break;
-            case 3:
-                $this->setArticleId($value);
+                $this->setTagId($value);
                 break;
         } // switch()
 
@@ -984,19 +879,13 @@ abstract class View implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = ViewTableMap::getFieldNames($keyType);
+        $keys = ArticleTagTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setId($arr[$keys[0]]);
+            $this->setArticleId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setIpAddress($arr[$keys[1]]);
-        }
-        if (array_key_exists($keys[2], $arr)) {
-            $this->setTime($arr[$keys[2]]);
-        }
-        if (array_key_exists($keys[3], $arr)) {
-            $this->setArticleId($arr[$keys[3]]);
+            $this->setTagId($arr[$keys[1]]);
         }
     }
 
@@ -1017,7 +906,7 @@ abstract class View implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\View The current object, for fluid interface
+     * @return $this|\ArticleTag The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1037,19 +926,13 @@ abstract class View implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ViewTableMap::DATABASE_NAME);
+        $criteria = new Criteria(ArticleTagTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(ViewTableMap::COL_ID)) {
-            $criteria->add(ViewTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(ArticleTagTableMap::COL_ARTICLE_ID)) {
+            $criteria->add(ArticleTagTableMap::COL_ARTICLE_ID, $this->article_id);
         }
-        if ($this->isColumnModified(ViewTableMap::COL_IP_ADDRESS)) {
-            $criteria->add(ViewTableMap::COL_IP_ADDRESS, $this->ip_address);
-        }
-        if ($this->isColumnModified(ViewTableMap::COL_TIME)) {
-            $criteria->add(ViewTableMap::COL_TIME, $this->time);
-        }
-        if ($this->isColumnModified(ViewTableMap::COL_ARTICLE_ID)) {
-            $criteria->add(ViewTableMap::COL_ARTICLE_ID, $this->article_id);
+        if ($this->isColumnModified(ArticleTagTableMap::COL_TAG_ID)) {
+            $criteria->add(ArticleTagTableMap::COL_TAG_ID, $this->tag_id);
         }
 
         return $criteria;
@@ -1067,8 +950,9 @@ abstract class View implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildViewQuery::create();
-        $criteria->add(ViewTableMap::COL_ID, $this->id);
+        $criteria = ChildArticleTagQuery::create();
+        $criteria->add(ArticleTagTableMap::COL_ARTICLE_ID, $this->article_id);
+        $criteria->add(ArticleTagTableMap::COL_TAG_ID, $this->tag_id);
 
         return $criteria;
     }
@@ -1081,10 +965,25 @@ abstract class View implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getId();
+        $validPk = null !== $this->getArticleId() &&
+            null !== $this->getTagId();
 
-        $validPrimaryKeyFKs = 0;
+        $validPrimaryKeyFKs = 2;
         $primaryKeyFKs = [];
+
+        //relation article_tag_fk_3610e9 to table article
+        if ($this->aArticle && $hash = spl_object_hash($this->aArticle)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
+
+        //relation article_tag_fk_022a95 to table tag
+        if ($this->aTag && $hash = spl_object_hash($this->aTag)) {
+            $primaryKeyFKs[] = $hash;
+        } else {
+            $validPrimaryKeyFKs = false;
+        }
 
         if ($validPk) {
             return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
@@ -1096,23 +995,29 @@ abstract class View implements ActiveRecordInterface
     }
 
     /**
-     * Returns the primary key for this object (row).
-     * @return int
+     * Returns the composite primary key for this object.
+     * The array elements will be in same order as specified in XML.
+     * @return array
      */
     public function getPrimaryKey()
     {
-        return $this->getId();
+        $pks = array();
+        $pks[0] = $this->getArticleId();
+        $pks[1] = $this->getTagId();
+
+        return $pks;
     }
 
     /**
-     * Generic method to set the primary key (id column).
+     * Set the [composite] primary key.
      *
-     * @param       int $key Primary key.
+     * @param      array $keys The elements of the composite key (order must match the order in XML file).
      * @return void
      */
-    public function setPrimaryKey($key)
+    public function setPrimaryKey($keys)
     {
-        $this->setId($key);
+        $this->setArticleId($keys[0]);
+        $this->setTagId($keys[1]);
     }
 
     /**
@@ -1121,7 +1026,7 @@ abstract class View implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return null === $this->getId();
+        return (null === $this->getArticleId()) && (null === $this->getTagId());
     }
 
     /**
@@ -1130,19 +1035,17 @@ abstract class View implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \View (or compatible) type.
+     * @param      object $copyObj An object of \ArticleTag (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setIpAddress($this->getIpAddress());
-        $copyObj->setTime($this->getTime());
-        $copyObj->setArticleId($this->getArticleId());
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setArticleId(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setTagId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1155,7 +1058,7 @@ abstract class View implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \View Clone of current object.
+     * @return \ArticleTag Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1172,13 +1075,13 @@ abstract class View implements ActiveRecordInterface
      * Declares an association between this object and a ChildArticle object.
      *
      * @param  ChildArticle $v
-     * @return $this|\View The current object (for fluent API support)
+     * @return $this|\ArticleTag The current object (for fluent API support)
      * @throws PropelException
      */
     public function setArticle(ChildArticle $v = null)
     {
         if ($v === null) {
-            $this->setArticleId(0);
+            $this->setArticleId(NULL);
         } else {
             $this->setArticleId($v->getId());
         }
@@ -1188,7 +1091,7 @@ abstract class View implements ActiveRecordInterface
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the ChildArticle object, it will not be re-added.
         if ($v !== null) {
-            $v->addView($this);
+            $v->addArticleTag($this);
         }
 
 
@@ -1212,11 +1115,62 @@ abstract class View implements ActiveRecordInterface
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aArticle->addViews($this);
+                $this->aArticle->addArticleTags($this);
              */
         }
 
         return $this->aArticle;
+    }
+
+    /**
+     * Declares an association between this object and a ChildTag object.
+     *
+     * @param  ChildTag $v
+     * @return $this|\ArticleTag The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setTag(ChildTag $v = null)
+    {
+        if ($v === null) {
+            $this->setTagId(NULL);
+        } else {
+            $this->setTagId($v->getId());
+        }
+
+        $this->aTag = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildTag object, it will not be re-added.
+        if ($v !== null) {
+            $v->addArticleTag($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildTag object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildTag The associated ChildTag object.
+     * @throws PropelException
+     */
+    public function getTag(ConnectionInterface $con = null)
+    {
+        if ($this->aTag === null && ($this->tag_id !== null)) {
+            $this->aTag = ChildTagQuery::create()->findPk($this->tag_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aTag->addArticleTags($this);
+             */
+        }
+
+        return $this->aTag;
     }
 
     /**
@@ -1227,15 +1181,15 @@ abstract class View implements ActiveRecordInterface
     public function clear()
     {
         if (null !== $this->aArticle) {
-            $this->aArticle->removeView($this);
+            $this->aArticle->removeArticleTag($this);
         }
-        $this->id = null;
-        $this->ip_address = null;
-        $this->time = null;
+        if (null !== $this->aTag) {
+            $this->aTag->removeArticleTag($this);
+        }
         $this->article_id = null;
+        $this->tag_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
-        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -1255,6 +1209,7 @@ abstract class View implements ActiveRecordInterface
         } // if ($deep)
 
         $this->aArticle = null;
+        $this->aTag = null;
     }
 
     /**
@@ -1264,7 +1219,7 @@ abstract class View implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ViewTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(ArticleTagTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

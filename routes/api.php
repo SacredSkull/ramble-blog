@@ -1,5 +1,7 @@
 <?php
 
+use Aws\S3\S3Client;
+
 $app->group('/api', function () use ($app) {
     $app->get('/post', function () use ($app) {
         $app->redirect('/api/posts/', 301);
@@ -21,6 +23,16 @@ $app->group('/api', function () use ($app) {
 
     $app->get('/post/:slugArticle', function ($slugArticle) {
         // TODO: API output for specific post slug
+    });
+
+    $app->get('/tag/:id', function ($name) {
+
+    });
+    $app->post('/tag/:id', function ($name) {
+
+    });
+    $app->get('/tag/:id/posts', function ($name) {
+
     });
 });
 

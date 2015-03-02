@@ -40,6 +40,41 @@ CREATE TABLE `article`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
+-- tag
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `tag`;
+
+CREATE TABLE `tag`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(60) NOT NULL,
+    `slug` VARCHAR(255),
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `tag_slug` (`slug`(255))
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- article_tag
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `article_tag`;
+
+CREATE TABLE `article_tag`
+(
+    `article_id` INTEGER NOT NULL AUTO_INCREMENT,
+    `tag_id` INTEGER NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (`article_id`,`tag_id`),
+    INDEX `article_tag_fi_022a95` (`tag_id`),
+    CONSTRAINT `article_tag_fk_3610e9`
+        FOREIGN KEY (`article_id`)
+        REFERENCES `article` (`id`),
+    CONSTRAINT `article_tag_fk_022a95`
+        FOREIGN KEY (`tag_id`)
+        REFERENCES `tag` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
 -- theme
 -- ---------------------------------------------------------------------
 
@@ -54,21 +89,6 @@ CREATE TABLE `theme`
     `slug` VARCHAR(255),
     PRIMARY KEY (`id`),
     UNIQUE INDEX `theme_slug` (`slug`(255))
-) ENGINE=InnoDB;
-
--- ---------------------------------------------------------------------
--- tag
--- ---------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `tag`;
-
-CREATE TABLE `tag`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(60) NOT NULL,
-    `slug` VARCHAR(255),
-    PRIMARY KEY (`id`),
-    UNIQUE INDEX `tag_slug` (`slug`(255))
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
