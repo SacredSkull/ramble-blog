@@ -160,7 +160,7 @@
 		});
 
 		$('#form_other-post').click(function(){
-			$.getJSON('/api/posts/', function(jsonAllPosts){
+			$.getJSON('/api/posts', function(jsonAllPosts){
 				$('#form_other-post-dropdown').html('<input type="text"></input>');
 				$('#form_other-post-dropdown input').focus();
 				$.each(jsonAllPosts, function(index, value){

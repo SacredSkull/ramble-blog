@@ -119,7 +119,7 @@ require './routes/base.php';
 if ($path[0] == "/admin") {
     require './routes/admin.php';
 } elseif ($path[0] == "/api") {
-    require './routes/base.php';
+    require './routes/api.php';
 } elseif ($path[0] == "/test" && DEBUG) {
     require './routes/test.php';
 } else {

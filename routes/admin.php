@@ -11,9 +11,6 @@ $adminHandler = function ($id = -1) use ($app, $defaultTheme) {
             $post = new Article();
             $post->setTitle(null);
             $post->setBody(null);
-            $preparedFromWebFromArray = array('New Post', '#Excited');
-            $tagArray = implode(',', $preparedFromWebFromArray);
-            $post->setTags($tagArray);
             $post->setTheme($defaultTheme->findPK(1));
             $post->setDraft(true);
 
