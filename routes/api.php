@@ -11,8 +11,8 @@ $app->group('/api', function () use ($app) {
         $posts[] = null;
         foreach ($allPosts as $post) {
             $title_js_ready = jsFriendly($post->getTitle());
-            $theme_js_ready = jsFriendly($post->getTheme()->getName());
-            $posts[$post->getId()] = array('title' => $title_js_ready, 'theme' =>  $theme_js_ready, 'id' => $post->getId() );
+            $category_js_ready = jsFriendly($post->getCategory()->getName());
+            $posts[$post->getId()] = array('title' => $title_js_ready, 'category' =>  $category_js_ready, 'id' => $post->getId() );
         }
         unset($posts[0]);
         echo json_encode((object) $posts);
@@ -22,17 +22,30 @@ $app->group('/api', function () use ($app) {
     })->conditions(array('id' => '\d{1,10}'));
 
     $app->get('/post/:slugArticle', function ($slugArticle) {
-        // TODO: API output for specific post slug
+        // TODO: API input for specific post slug
     });
 
     $app->get('/tag/:id', function ($name) {
-
+        // TODO: API output for specific tag
     });
     $app->post('/tag/:id', function ($name) {
-
+        // TODO: API input for specific post tag
     });
     $app->get('/tag/:id/posts', function ($name) {
 
+    });
+    // List categories
+    $app->get('/category/:name', function ($name) use ($app) {
+        $category = CategoryQuery::create()->findOneBySlug($name);
+        $allPosts = ArticleQuery::create()->filterByCategory($category)->find();
+        $posts[] = null;
+        foreach ($allPosts as $post) {
+            $title_js_ready = jsFriendly($post->getTitle());
+            $category_js_ready = jsFriendly($post->getCategory()->getName());
+            $posts[$post->getId()] = array('title' => $title_js_ready, 'category' =>  $category_js_ready, 'id' => $post->getId() );
+        }
+        unset($posts[0]);
+        echo json_encode((object) $posts);
     });
 });
 

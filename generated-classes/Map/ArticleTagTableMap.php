@@ -72,14 +72,14 @@ class ArticleTagTableMap extends TableMap
     const NUM_HYDRATE_COLUMNS = 2;
 
     /**
-     * the column name for the article_id field
+     * the column name for the articleID field
      */
-    const COL_ARTICLE_ID = 'article_tag.article_id';
+    const COL_ARTICLEID = 'article_tag.articleID';
 
     /**
-     * the column name for the tag_id field
+     * the column name for the tagID field
      */
-    const COL_TAG_ID = 'article_tag.tag_id';
+    const COL_TAGID = 'article_tag.tagID';
 
     /**
      * The default string format for model objects of the related table
@@ -93,10 +93,10 @@ class ArticleTagTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('ArticleId', 'TagId', ),
-        self::TYPE_CAMELNAME     => array('articleId', 'tagId', ),
-        self::TYPE_COLNAME       => array(ArticleTagTableMap::COL_ARTICLE_ID, ArticleTagTableMap::COL_TAG_ID, ),
-        self::TYPE_FIELDNAME     => array('article_id', 'tag_id', ),
+        self::TYPE_PHPNAME       => array('Articleid', 'Tagid', ),
+        self::TYPE_CAMELNAME     => array('articleid', 'tagid', ),
+        self::TYPE_COLNAME       => array(ArticleTagTableMap::COL_ARTICLEID, ArticleTagTableMap::COL_TAGID, ),
+        self::TYPE_FIELDNAME     => array('articleID', 'tagID', ),
         self::TYPE_NUM           => array(0, 1, )
     );
 
@@ -107,10 +107,10 @@ class ArticleTagTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('ArticleId' => 0, 'TagId' => 1, ),
-        self::TYPE_CAMELNAME     => array('articleId' => 0, 'tagId' => 1, ),
-        self::TYPE_COLNAME       => array(ArticleTagTableMap::COL_ARTICLE_ID => 0, ArticleTagTableMap::COL_TAG_ID => 1, ),
-        self::TYPE_FIELDNAME     => array('article_id' => 0, 'tag_id' => 1, ),
+        self::TYPE_PHPNAME       => array('Articleid' => 0, 'Tagid' => 1, ),
+        self::TYPE_CAMELNAME     => array('articleid' => 0, 'tagid' => 1, ),
+        self::TYPE_COLNAME       => array(ArticleTagTableMap::COL_ARTICLEID => 0, ArticleTagTableMap::COL_TAGID => 1, ),
+        self::TYPE_FIELDNAME     => array('articleID' => 0, 'tagID' => 1, ),
         self::TYPE_NUM           => array(0, 1, )
     );
 
@@ -129,11 +129,11 @@ class ArticleTagTableMap extends TableMap
         $this->setIdentifierQuoting(false);
         $this->setClassName('\\ArticleTag');
         $this->setPackage('');
-        $this->setUseIdGenerator(true);
+        $this->setUseIdGenerator(false);
         $this->setIsCrossRef(true);
         // columns
-        $this->addForeignPrimaryKey('article_id', 'ArticleId', 'INTEGER' , 'article', 'id', true, null, null);
-        $this->addForeignPrimaryKey('tag_id', 'TagId', 'INTEGER' , 'tag', 'id', true, null, null);
+        $this->addForeignPrimaryKey('articleID', 'Articleid', 'INTEGER' , 'article', 'id', true, null, null);
+        $this->addForeignPrimaryKey('tagID', 'Tagid', 'INTEGER' , 'tag', 'id', true, null, null);
     } // initialize()
 
     /**
@@ -144,17 +144,17 @@ class ArticleTagTableMap extends TableMap
         $this->addRelation('Article', '\\Article', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':article_id',
+    0 => ':articleID',
     1 => ':id',
   ),
-), null, null, null, false);
+), 'CASCADE', null, null, false);
         $this->addRelation('Tag', '\\Tag', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':tag_id',
+    0 => ':tagID',
     1 => ':id',
   ),
-), null, null, null, false);
+), 'CASCADE', null, null, false);
     } // buildRelations()
 
     /**
@@ -185,7 +185,7 @@ class ArticleTagTableMap extends TableMap
     {
         if (Propel::isInstancePoolingEnabled()) {
             if (null === $key) {
-                $key = serialize(array((string) $obj->getArticleId(), (string) $obj->getTagId()));
+                $key = serialize(array((string) $obj->getArticleid(), (string) $obj->getTagid()));
             } // if key === null
             self::$instances[$key] = $obj;
         }
@@ -205,7 +205,7 @@ class ArticleTagTableMap extends TableMap
     {
         if (Propel::isInstancePoolingEnabled() && null !== $value) {
             if (is_object($value) && $value instanceof \ArticleTag) {
-                $key = serialize(array((string) $value->getArticleId(), (string) $value->getTagId()));
+                $key = serialize(array((string) $value->getArticleid(), (string) $value->getTagid()));
 
             } elseif (is_array($value) && count($value) === 2) {
                 // assume we've been passed a primary key";
@@ -239,11 +239,11 @@ class ArticleTagTableMap extends TableMap
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
         // If the PK cannot be derived from the row, return NULL.
-        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('ArticleId', TableMap::TYPE_PHPNAME, $indexType)] === null && $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('TagId', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Articleid', TableMap::TYPE_PHPNAME, $indexType)] === null && $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('Tagid', TableMap::TYPE_PHPNAME, $indexType)] === null) {
             return null;
         }
 
-        return serialize(array((string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('ArticleId', TableMap::TYPE_PHPNAME, $indexType)], (string) $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('TagId', TableMap::TYPE_PHPNAME, $indexType)]));
+        return serialize(array((string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Articleid', TableMap::TYPE_PHPNAME, $indexType)], (string) $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('Tagid', TableMap::TYPE_PHPNAME, $indexType)]));
     }
 
     /**
@@ -265,12 +265,12 @@ class ArticleTagTableMap extends TableMap
         $pks[] = (int) $row[
             $indexType == TableMap::TYPE_NUM
                 ? 0 + $offset
-                : self::translateFieldName('ArticleId', TableMap::TYPE_PHPNAME, $indexType)
+                : self::translateFieldName('Articleid', TableMap::TYPE_PHPNAME, $indexType)
         ];
         $pks[] = (int) $row[
             $indexType == TableMap::TYPE_NUM
                 ? 1 + $offset
-                : self::translateFieldName('TagId', TableMap::TYPE_PHPNAME, $indexType)
+                : self::translateFieldName('Tagid', TableMap::TYPE_PHPNAME, $indexType)
         ];
 
         return $pks;
@@ -373,11 +373,11 @@ class ArticleTagTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ArticleTagTableMap::COL_ARTICLE_ID);
-            $criteria->addSelectColumn(ArticleTagTableMap::COL_TAG_ID);
+            $criteria->addSelectColumn(ArticleTagTableMap::COL_ARTICLEID);
+            $criteria->addSelectColumn(ArticleTagTableMap::COL_TAGID);
         } else {
-            $criteria->addSelectColumn($alias . '.article_id');
-            $criteria->addSelectColumn($alias . '.tag_id');
+            $criteria->addSelectColumn($alias . '.articleID');
+            $criteria->addSelectColumn($alias . '.tagID');
         }
     }
 
@@ -436,8 +436,8 @@ class ArticleTagTableMap extends TableMap
                 $values = array($values);
             }
             foreach ($values as $value) {
-                $criterion = $criteria->getNewCriterion(ArticleTagTableMap::COL_ARTICLE_ID, $value[0]);
-                $criterion->addAnd($criteria->getNewCriterion(ArticleTagTableMap::COL_TAG_ID, $value[1]));
+                $criterion = $criteria->getNewCriterion(ArticleTagTableMap::COL_ARTICLEID, $value[0]);
+                $criterion->addAnd($criteria->getNewCriterion(ArticleTagTableMap::COL_TAGID, $value[1]));
                 $criteria->addOr($criterion);
             }
         }
@@ -485,14 +485,6 @@ class ArticleTagTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from ArticleTag object
-        }
-
-        if ($criteria->containsKey(ArticleTagTableMap::COL_ARTICLE_ID) && $criteria->keyContainsValue(ArticleTagTableMap::COL_ARTICLE_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ArticleTagTableMap::COL_ARTICLE_ID.')');
-        }
-
-        if ($criteria->containsKey(ArticleTagTableMap::COL_TAG_ID) && $criteria->keyContainsValue(ArticleTagTableMap::COL_TAG_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ArticleTagTableMap::COL_TAG_ID.')');
         }
 
 

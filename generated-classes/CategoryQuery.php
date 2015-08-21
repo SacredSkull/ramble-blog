@@ -1,9 +1,9 @@
 <?php
 
-use Base\ThemeQuery as BaseThemeQuery;
+use Base\CategoryQuery as BaseCategoryQuery;
 
 /**
- * Skeleton subclass for performing query and update operations on the 'theme' table.
+ * Skeleton subclass for performing query and update operations on the 'category' table.
  *
  *
  *
@@ -12,19 +12,21 @@ use Base\ThemeQuery as BaseThemeQuery;
  * long as it does not already exist in the output directory.
  *
  */
+define('USING_WINDOWS', (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'));
 
-define('USING_WINDOWS', (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'));  
-
-class ThemeQuery extends BaseThemeQuery
+class CategoryQuery extends BaseCategoryQuery
 {
-    public function cacheContains($key){
+    public function cacheContains($key)
+    {
         $key = str_replace(" ", "_", $key);
+
         return $this->getCacheBackend()->get($key);
     }
 
     public function cacheFetch($key)
     {
         $key = str_replace(" ", "_", $key);
+
         return $this->getCacheBackend()->get($key);
     }
 
@@ -32,29 +34,32 @@ class ThemeQuery extends BaseThemeQuery
     {
         $key = str_replace(" ", "_", $key);
         if (USING_WINDOWS) {
-            return $this->getCacheBackend()->set($key, $value, 0 , $lifetime);
+            return $this->getCacheBackend()->set($key, $value, 0, $lifetime);
         } else {
             return $this->getCacheBackend()->set($key, $value, $lifetime);
         }
     }
 
-    protected function getCacheBackend(){
+    protected function getCacheBackend()
+    {
         if (USING_WINDOWS == false) {
             self::$cacheBackend = new Memcached();
             $servers = self::$cacheBackend->getServerList();
             if (is_array($servers)) {
-                foreach ($servers as $server){
-                    if($server['host'] == 'localhost' and $server['port'] == '11211'){
+                foreach ($servers as $server) {
+                    if ($server['host'] == 'localhost' and $server['port'] == '11211') {
                         return self::$cacheBackend;
                     }
                 }
             }
             self::$cacheBackend->addServer('localhost', 11211);
+
             return self::$cacheBackend;
         } else {
             self::$cacheBackend = new Memcache();
             self::$cacheBackend->addServer('localhost', 11211);
+
             return self::$cacheBackend;
         }
     }
-} // ThemeQuery
+} // CategoryQuery

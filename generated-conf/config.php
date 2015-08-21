@@ -4,7 +4,7 @@ $serviceContainer->checkVersion('2.0.0-dev');
 $serviceContainer->setAdapterClass('blog', 'mysql');
 $manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
 $manager->setConfiguration(array (
-  'classname' => 'Propel\\Runtime\\Connection\\ConnectionWrapper',
+  'classname' => 'Propel\\Runtime\\Connection\\DebugPDO',
   'dsn' => 'mysql:host=localhost;dbname=blog',
   'user' => 'blog',
   'password' => 'sacredskullBlog',

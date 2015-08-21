@@ -78,18 +78,6 @@ abstract class Tag implements ActiveRecordInterface
     protected $name;
 
     /**
-     * The value for the slug field.
-     * @var        string
-     */
-    protected $slug;
-
-    /**
-     * @var        ObjectCollection|ChildArticle[] Collection to store aggregation of ChildArticle objects.
-     */
-    protected $collArticles;
-    protected $collArticlesPartial;
-
-    /**
      * @var        ObjectCollection|ChildArticleTag[] Collection to store aggregation of ChildArticleTag objects.
      */
     protected $collArticleTags;
@@ -112,12 +100,6 @@ abstract class Tag implements ActiveRecordInterface
      * @var boolean
      */
     protected $alreadyInSave = false;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildArticle[]
-     */
-    protected $articlesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -369,16 +351,6 @@ abstract class Tag implements ActiveRecordInterface
     }
 
     /**
-     * Get the [slug] column value.
-     *
-     * @return string
-     */
-    public function getSlug()
-    {
-        return $this->slug;
-    }
-
-    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -417,26 +389,6 @@ abstract class Tag implements ActiveRecordInterface
 
         return $this;
     } // setName()
-
-    /**
-     * Set the value of [slug] column.
-     *
-     * @param string $v new value
-     * @return $this|\Tag The current object (for fluent API support)
-     */
-    public function setSlug($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->slug !== $v) {
-            $this->slug = $v;
-            $this->modifiedColumns[TagTableMap::COL_SLUG] = true;
-        }
-
-        return $this;
-    } // setSlug()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -479,9 +431,6 @@ abstract class Tag implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : TagTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
             $this->name = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : TagTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->slug = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -490,7 +439,7 @@ abstract class Tag implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = TagTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 2; // 2 = TagTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Tag'), 0, $e);
@@ -550,8 +499,6 @@ abstract class Tag implements ActiveRecordInterface
         $this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
-
-            $this->collArticles = null;
 
             $this->collArticleTags = null;
 
@@ -616,13 +563,6 @@ abstract class Tag implements ActiveRecordInterface
         return $con->transaction(function () use ($con) {
             $isInsert = $this->isNew();
             $ret = $this->preSave($con);
-            // sluggable behavior
-
-            if ($this->isColumnModified(TagTableMap::COL_SLUG) && $this->getSlug()) {
-                $this->setSlug($this->makeSlugUnique($this->getSlug()));
-            } else {
-                $this->setSlug($this->createSlug());
-            }
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
             } else {
@@ -702,23 +642,6 @@ abstract class Tag implements ActiveRecordInterface
             }
 
 
-            if ($this->articlesScheduledForDeletion !== null) {
-                if (!$this->articlesScheduledForDeletion->isEmpty()) {
-                    \ArticleQuery::create()
-                        ->filterByPrimaryKeys($this->articlesScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->articlesScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collArticles !== null) {
-                foreach ($this->collArticles as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
             if ($this->articleTagsScheduledForDeletion !== null) {
                 if (!$this->articleTagsScheduledForDeletion->isEmpty()) {
                     \ArticleTagQuery::create()
@@ -768,9 +691,6 @@ abstract class Tag implements ActiveRecordInterface
         if ($this->isColumnModified(TagTableMap::COL_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'name';
         }
-        if ($this->isColumnModified(TagTableMap::COL_SLUG)) {
-            $modifiedColumns[':p' . $index++]  = 'slug';
-        }
 
         $sql = sprintf(
             'INSERT INTO tag (%s) VALUES (%s)',
@@ -787,9 +707,6 @@ abstract class Tag implements ActiveRecordInterface
                         break;
                     case 'name':
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
-                        break;
-                    case 'slug':
-                        $stmt->bindValue($identifier, $this->slug, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -859,9 +776,6 @@ abstract class Tag implements ActiveRecordInterface
             case 1:
                 return $this->getName();
                 break;
-            case 2:
-                return $this->getSlug();
-                break;
             default:
                 return null;
                 break;
@@ -894,7 +808,6 @@ abstract class Tag implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
-            $keys[2] => $this->getSlug(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -902,21 +815,6 @@ abstract class Tag implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collArticles) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'articles';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'articles';
-                        break;
-                    default:
-                        $key = 'Articles';
-                }
-
-                $result[$key] = $this->collArticles->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
             if (null !== $this->collArticleTags) {
 
                 switch ($keyType) {
@@ -972,9 +870,6 @@ abstract class Tag implements ActiveRecordInterface
             case 1:
                 $this->setName($value);
                 break;
-            case 2:
-                $this->setSlug($value);
-                break;
         } // switch()
 
         return $this;
@@ -1006,9 +901,6 @@ abstract class Tag implements ActiveRecordInterface
         }
         if (array_key_exists($keys[1], $arr)) {
             $this->setName($arr[$keys[1]]);
-        }
-        if (array_key_exists($keys[2], $arr)) {
-            $this->setSlug($arr[$keys[2]]);
         }
     }
 
@@ -1056,9 +948,6 @@ abstract class Tag implements ActiveRecordInterface
         }
         if ($this->isColumnModified(TagTableMap::COL_NAME)) {
             $criteria->add(TagTableMap::COL_NAME, $this->name);
-        }
-        if ($this->isColumnModified(TagTableMap::COL_SLUG)) {
-            $criteria->add(TagTableMap::COL_SLUG, $this->slug);
         }
 
         return $criteria;
@@ -1147,18 +1036,11 @@ abstract class Tag implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setName($this->getName());
-        $copyObj->setSlug($this->getSlug());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
-
-            foreach ($this->getArticles() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addArticle($relObj->copy($deepCopy));
-                }
-            }
 
             foreach ($this->getArticleTags() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
@@ -1207,255 +1089,9 @@ abstract class Tag implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('Article' == $relationName) {
-            return $this->initArticles();
-        }
         if ('ArticleTag' == $relationName) {
             return $this->initArticleTags();
         }
-    }
-
-    /**
-     * Clears out the collArticles collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addArticles()
-     */
-    public function clearArticles()
-    {
-        $this->collArticles = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collArticles collection loaded partially.
-     */
-    public function resetPartialArticles($v = true)
-    {
-        $this->collArticlesPartial = $v;
-    }
-
-    /**
-     * Initializes the collArticles collection.
-     *
-     * By default this just sets the collArticles collection to an empty array (like clearcollArticles());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initArticles($overrideExisting = true)
-    {
-        if (null !== $this->collArticles && !$overrideExisting) {
-            return;
-        }
-        $this->collArticles = new ObjectCollection();
-        $this->collArticles->setModel('\Article');
-    }
-
-    /**
-     * Gets an array of ChildArticle objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildTag is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildArticle[] List of ChildArticle objects
-     * @throws PropelException
-     */
-    public function getArticles(Criteria $criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collArticlesPartial && !$this->isNew();
-        if (null === $this->collArticles || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collArticles) {
-                // return empty collection
-                $this->initArticles();
-            } else {
-                $collArticles = ChildArticleQuery::create(null, $criteria)
-                    ->filterByTag($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collArticlesPartial && count($collArticles)) {
-                        $this->initArticles(false);
-
-                        foreach ($collArticles as $obj) {
-                            if (false == $this->collArticles->contains($obj)) {
-                                $this->collArticles->append($obj);
-                            }
-                        }
-
-                        $this->collArticlesPartial = true;
-                    }
-
-                    return $collArticles;
-                }
-
-                if ($partial && $this->collArticles) {
-                    foreach ($this->collArticles as $obj) {
-                        if ($obj->isNew()) {
-                            $collArticles[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collArticles = $collArticles;
-                $this->collArticlesPartial = false;
-            }
-        }
-
-        return $this->collArticles;
-    }
-
-    /**
-     * Sets a collection of ChildArticle objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $articles A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildTag The current object (for fluent API support)
-     */
-    public function setArticles(Collection $articles, ConnectionInterface $con = null)
-    {
-        /** @var ChildArticle[] $articlesToDelete */
-        $articlesToDelete = $this->getArticles(new Criteria(), $con)->diff($articles);
-
-
-        $this->articlesScheduledForDeletion = $articlesToDelete;
-
-        foreach ($articlesToDelete as $articleRemoved) {
-            $articleRemoved->setTag(null);
-        }
-
-        $this->collArticles = null;
-        foreach ($articles as $article) {
-            $this->addArticle($article);
-        }
-
-        $this->collArticles = $articles;
-        $this->collArticlesPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Article objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related Article objects.
-     * @throws PropelException
-     */
-    public function countArticles(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collArticlesPartial && !$this->isNew();
-        if (null === $this->collArticles || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collArticles) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getArticles());
-            }
-
-            $query = ChildArticleQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByTag($this)
-                ->count($con);
-        }
-
-        return count($this->collArticles);
-    }
-
-    /**
-     * Method called to associate a ChildArticle object to this object
-     * through the ChildArticle foreign key attribute.
-     *
-     * @param  ChildArticle $l ChildArticle
-     * @return $this|\Tag The current object (for fluent API support)
-     */
-    public function addArticle(ChildArticle $l)
-    {
-        if ($this->collArticles === null) {
-            $this->initArticles();
-            $this->collArticlesPartial = true;
-        }
-
-        if (!$this->collArticles->contains($l)) {
-            $this->doAddArticle($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ChildArticle $article The ChildArticle object to add.
-     */
-    protected function doAddArticle(ChildArticle $article)
-    {
-        $this->collArticles[]= $article;
-        $article->setTag($this);
-    }
-
-    /**
-     * @param  ChildArticle $article The ChildArticle object to remove.
-     * @return $this|ChildTag The current object (for fluent API support)
-     */
-    public function removeArticle(ChildArticle $article)
-    {
-        if ($this->getArticles()->contains($article)) {
-            $pos = $this->collArticles->search($article);
-            $this->collArticles->remove($pos);
-            if (null === $this->articlesScheduledForDeletion) {
-                $this->articlesScheduledForDeletion = clone $this->collArticles;
-                $this->articlesScheduledForDeletion->clear();
-            }
-            $this->articlesScheduledForDeletion[]= $article;
-            $article->setTag(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Tag is new, it will return
-     * an empty collection; or if this Tag has previously
-     * been saved, it will retrieve related Articles from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Tag.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildArticle[] List of ChildArticle objects
-     */
-    public function getArticlesJoinTheme(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
-    {
-        $query = ChildArticleQuery::create(null, $criteria);
-        $query->joinWith('Theme', $joinBehavior);
-
-        return $this->getArticles($query, $con);
     }
 
     /**
@@ -1955,7 +1591,6 @@ abstract class Tag implements ActiveRecordInterface
     {
         $this->id = null;
         $this->name = null;
-        $this->slug = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1974,11 +1609,6 @@ abstract class Tag implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collArticles) {
-                foreach ($this->collArticles as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collArticleTags) {
                 foreach ($this->collArticleTags as $o) {
                     $o->clearAllReferences($deep);
@@ -1991,7 +1621,6 @@ abstract class Tag implements ActiveRecordInterface
             }
         } // if ($deep)
 
-        $this->collArticles = null;
         $this->collArticleTags = null;
         $this->collArticles = null;
     }
@@ -2004,152 +1633,6 @@ abstract class Tag implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->getName();
-    }
-
-    // sluggable behavior
-
-    /**
-     * Create a unique slug based on the object
-     *
-     * @return string The object slug
-     */
-    protected function createSlug()
-    {
-        $slug = $this->createRawSlug();
-        $slug = $this->limitSlugSize($slug);
-        $slug = $this->makeSlugUnique($slug);
-
-        return $slug;
-    }
-
-    /**
-     * Create the slug from the appropriate columns
-     *
-     * @return string
-     */
-    protected function createRawSlug()
-    {
-        return $this->cleanupSlugPart($this->__toString());
-    }
-
-    /**
-     * Cleanup a string to make a slug of it
-     * Removes special characters, replaces blanks with a separator, and trim it
-     *
-     * @param     string $slug        the text to slugify
-     * @param     string $replacement the separator used by slug
-     * @return    string               the slugified text
-     */
-    protected static function cleanupSlugPart($slug, $replacement = '-')
-    {
-        // transliterate
-        if (function_exists('iconv')) {
-            $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
-        }
-
-        // lowercase
-        if (function_exists('mb_strtolower')) {
-            $slug = mb_strtolower($slug);
-        } else {
-            $slug = strtolower($slug);
-        }
-
-        // remove accents resulting from OSX's iconv
-        $slug = str_replace(array('\'', '`', '^'), '', $slug);
-
-        // replace non letter or digits with separator
-        $slug = preg_replace('/\W+/', $replacement, $slug);
-
-        // trim
-        $slug = trim($slug, $replacement);
-
-        if (empty($slug)) {
-            return 'n-a';
-        }
-
-        return $slug;
-    }
-
-
-    /**
-     * Make sure the slug is short enough to accommodate the column size
-     *
-     * @param    string $slug            the slug to check
-     *
-     * @return string                        the truncated slug
-     */
-    protected static function limitSlugSize($slug, $incrementReservedSpace = 3)
-    {
-        // check length, as suffix could put it over maximum
-        if (strlen($slug) > (255 - $incrementReservedSpace)) {
-            $slug = substr($slug, 0, 255 - $incrementReservedSpace);
-        }
-
-        return $slug;
-    }
-
-
-    /**
-     * Get the slug, ensuring its uniqueness
-     *
-     * @param    string $slug            the slug to check
-     * @param    string $separator       the separator used by slug
-     * @param    int    $alreadyExists   false for the first try, true for the second, and take the high count + 1
-     * @return   string                   the unique slug
-     */
-    protected function makeSlugUnique($slug, $separator = '-', $alreadyExists = false)
-    {
-        if (!$alreadyExists) {
-            $slug2 = $slug;
-        } else {
-            $slug2 = $slug . $separator;
-
-            $count = \TagQuery::create()
-                ->filterBySlug($this->getSlug())
-                ->filterByPrimaryKey($this->getPrimaryKey())
-            ->count();
-
-            if (1 == $count) {
-                return $this->getSlug();
-            }
-        }
-
-        $adapter = \Propel\Runtime\Propel::getServiceContainer()->getAdapter('blog');
-        $col = 'q.Slug';
-        $compare = $alreadyExists ? $adapter->compareRegex($col, '?') : sprintf('%s = ?', $col);
-
-        $query = \TagQuery::create('q')
-            ->where($compare, $alreadyExists ? '^' . $slug2 . '[0-9]+$' : $slug2)
-            ->prune($this)
-        ;
-
-        if (!$alreadyExists) {
-            $count = $query->count();
-            if ($count > 0) {
-                return $this->makeSlugUnique($slug, $separator, true);
-            }
-
-            return $slug2;
-        }
-
-        $adapter = \Propel\Runtime\Propel::getServiceContainer()->getAdapter('blog');
-        // Already exists
-        $object = $query
-            ->addDescendingOrderByColumn($adapter->strLength('slug'))
-            ->addDescendingOrderByColumn('slug')
-        ->findOne();
-
-        // First duplicate slug
-        if (null == $object) {
-            return $slug2 . '1';
-        }
-
-        $slugNum = substr($object->getSlug(), strlen($slug) + 1);
-        if (0 == $slugNum[0]) {
-            $slugNum[0] = 1;
-        }
-
-        return $slug2 . ($slugNum + 1);
     }
 
     /**

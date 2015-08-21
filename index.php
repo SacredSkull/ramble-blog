@@ -11,7 +11,8 @@ if ($_SERVER['HTTP_HOST'] !== "sacredskull.net") {
     define('DEBUG', false);
 }
 define('WIREFRAME', false);
-define('CERT_AUTH', true);
+define('CERT_AUTH', false);
+define('BYPASS_AUTH', true);
 define('SITE_ROOT', realpath(dirname(__FILE__)));
 define('USING_PARSEDOWN', false);
 if (defined('USING_WINDOWS')) {
@@ -47,6 +48,8 @@ function isAdmin()
         }
 
         return false;
+    } else if(BYPASS_AUTH){
+        return true;
     } else {
         // use a cookie for auth?
         $allowedips = array('127.0.0.1', '192.168.1.102');
@@ -73,13 +76,13 @@ $logger->pushHandler(new StreamHandler('./logs/propel.log'));
 
 session_start();
 
-$defaultTheme = new ThemeQuery();
-if (!$defaultTheme->findPK(1)) {
-    $theme = new Theme();
-    $theme->setName('Stuff');
-    $theme->setRoot('/');
-    $theme->setColour('#66C4F0');
-    $theme->save();
+$defaultCategory = new CategoryQuery();
+if (!$defaultCategory->findPK(1)) {
+    $category = new Category();
+    $category->setName('Stuff');
+    $category->setRoot('/');
+    $category->setColour('#66C4F0');
+    $category->save();
 }
 
 $app = new \Slim\Slim(array(
@@ -108,16 +111,16 @@ $random = rand(0, sizeof($sayings)-1);
 
 $quote = $sayings[$random];
 
-$themes = ThemeQuery::create()
-    ->setQueryKey('get_all_themes')
-    ->find();
-
 preg_match("/\/(?:19|20)\d\d|\/\w*/", $app->request()->getPathInfo(), $path);
 
 require './routes/base.php';
 
 if ($path[0] == "/admin") {
     require './routes/admin.php';
+} elseif ($path[0] == "/category") {
+    require './routes/category.php';
+} elseif ($path[0] == "/tag") {
+    require './routes/tag.php';
 } elseif ($path[0] == "/api") {
     require './routes/api.php';
 } elseif ($path[0] == "/test" && DEBUG) {
@@ -126,7 +129,5 @@ if ($path[0] == "/admin") {
     require './routes/post.php';
     require './routes/search.php';
 }
-
-// TODO: Rename themes to categories. Theme conflicts with tagging, and category is much more understandable.
 
 $app->run();

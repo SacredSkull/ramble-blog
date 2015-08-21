@@ -1,6 +1,6 @@
 {% extends 'skeleton.php' %}
 	{% block title %}
-		<h1 class="title" id="theme_name">Back End &#62;</h1>
+		<h1 class="title" id="category_name">Back End &#62;</h1>
 		<p class="title">{{mode|title}} Post</p>
 		<hr>
 		<h4></h4>
@@ -19,6 +19,19 @@
 			<div class="input-group">
 				<span class="input-group-addon">Title</span>
 				<input value="{{post.getTitle}}" id="form_title" type="text" name="title">
+			</div>
+			<div class="checkbox">
+				<label>
+					<input id="form_draft" type="checkbox" name="draft" value="true" {% if post.getDraft == true %}checked{%endif%}> Draft?
+				</label>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">Category</span>
+				<select id="form_category" name="category">{%for category in categories%}<option {%if post.getCategory.getId == category.getId%}selected="selected"{%endif%} value="{{category.id}}">{{category.name}}</option>{%endfor%}</select>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">Tags</span>
+				<input value="{{post.getTags|join(',')}}" id="form_tags" type="text" name="tags">
 			</div>
 			<div class="input-group">
 				<button class="btn btn-default" id="form_img">
@@ -165,7 +178,7 @@
 				$('#form_other-post-dropdown input').focus();
 				$.each(jsonAllPosts, function(index, value){
 					if(value !== null){
-						$('#form_other-post-dropdown').append('<li class="other-post-list"><a onclick="insertPostRef(\''+ value.id +'\')" class="other-post-list-link" href="#">' + "<code>" + value.theme + "</code><kbd>" + value.title + '</kbd></li></a>');
+						$('#form_other-post-dropdown').append('<li class="other-post-list"><a onclick="insertPostRef(\''+ value.id +'\')" class="other-post-list-link" href="#">' + "<code>" + value.category + "</code><kbd>" + value.title + '</kbd></li></a>');
 					}
 				});
 				console.log(jsonAllPosts);
@@ -184,12 +197,19 @@
 			$("#save").css('color', '#7DBEEE');
 			console.log('Attempting AJAX...');
 			var form_title = $('#form_title').val();
+			var form_draft = $('#form_draft').is(':checked');
+			console.log(form_draft);
+			var form_category = $('#form_category').val();
+			var form_tags = $('#form_tags').val();
 			editor.save();
 			var form_body = editor.exportFile();
 			$.post( "/admin/{{post.getId}}",
 			{
 				'body': form_body,
-				'title': form_title
+				'title': form_title,
+				'draft': form_draft,
+				'category': form_category,
+				'tags': form_tags
 			}).done(function(data){
 				console.log('Received back ' + data);
 				$('#save span').removeClass('glyphicon-transfer');

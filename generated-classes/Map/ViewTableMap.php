@@ -59,7 +59,7 @@ class ViewTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 3;
 
     /**
      * The number of lazy-loaded columns
@@ -69,12 +69,12 @@ class ViewTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 3;
 
     /**
-     * the column name for the id field
+     * the column name for the article_id field
      */
-    const COL_ID = 'view.id';
+    const COL_ARTICLE_ID = 'view.article_id';
 
     /**
      * the column name for the ip_address field
@@ -85,11 +85,6 @@ class ViewTableMap extends TableMap
      * the column name for the time field
      */
     const COL_TIME = 'view.time';
-
-    /**
-     * the column name for the article_id field
-     */
-    const COL_ARTICLE_ID = 'view.article_id';
 
     /**
      * The default string format for model objects of the related table
@@ -103,11 +98,11 @@ class ViewTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'IpAddress', 'Time', 'ArticleId', ),
-        self::TYPE_CAMELNAME     => array('id', 'ipAddress', 'time', 'articleId', ),
-        self::TYPE_COLNAME       => array(ViewTableMap::COL_ID, ViewTableMap::COL_IP_ADDRESS, ViewTableMap::COL_TIME, ViewTableMap::COL_ARTICLE_ID, ),
-        self::TYPE_FIELDNAME     => array('id', 'ip_address', 'time', 'article_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('ArticleId', 'IpAddress', 'Time', ),
+        self::TYPE_CAMELNAME     => array('articleId', 'ipAddress', 'time', ),
+        self::TYPE_COLNAME       => array(ViewTableMap::COL_ARTICLE_ID, ViewTableMap::COL_IP_ADDRESS, ViewTableMap::COL_TIME, ),
+        self::TYPE_FIELDNAME     => array('article_id', 'ip_address', 'time', ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -117,11 +112,11 @@ class ViewTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'IpAddress' => 1, 'Time' => 2, 'ArticleId' => 3, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'ipAddress' => 1, 'time' => 2, 'articleId' => 3, ),
-        self::TYPE_COLNAME       => array(ViewTableMap::COL_ID => 0, ViewTableMap::COL_IP_ADDRESS => 1, ViewTableMap::COL_TIME => 2, ViewTableMap::COL_ARTICLE_ID => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'ip_address' => 1, 'time' => 2, 'article_id' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('ArticleId' => 0, 'IpAddress' => 1, 'Time' => 2, ),
+        self::TYPE_CAMELNAME     => array('articleId' => 0, 'ipAddress' => 1, 'time' => 2, ),
+        self::TYPE_COLNAME       => array(ViewTableMap::COL_ARTICLE_ID => 0, ViewTableMap::COL_IP_ADDRESS => 1, ViewTableMap::COL_TIME => 2, ),
+        self::TYPE_FIELDNAME     => array('article_id' => 0, 'ip_address' => 1, 'time' => 2, ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -139,12 +134,11 @@ class ViewTableMap extends TableMap
         $this->setIdentifierQuoting(false);
         $this->setClassName('\\View');
         $this->setPackage('');
-        $this->setUseIdGenerator(true);
+        $this->setUseIdGenerator(false);
         // columns
-        $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('ip_address', 'IpAddress', 'VARCHAR', true, 30, null);
+        $this->addForeignPrimaryKey('article_id', 'ArticleId', 'INTEGER' , 'article', 'id', true, null, null);
+        $this->addColumn('ip_address', 'IpAddress', 'VARCHAR', true, 20, null);
         $this->addColumn('time', 'Time', 'TIMESTAMP', true, null, 'CURRENT_TIMESTAMP');
-        $this->addForeignKey('article_id', 'ArticleId', 'INTEGER', 'article', 'id', true, null, 0);
     } // initialize()
 
     /**
@@ -152,13 +146,21 @@ class ViewTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Article', '\\Article', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('ViewArticle', '\\Article', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':article_id',
     1 => ':id',
   ),
 ), 'CASCADE', null, null, false);
+        $this->addRelation('Vote', '\\Vote', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':ip',
+    1 => ':ip_address',
+  ),
+), null, null, 'Votes', false);
+        $this->addRelation('VoteArticle', '\\Article', RelationMap::MANY_TO_MANY, array(), null, null, 'VoteArticles');
     } // buildRelations()
 
     /**
@@ -190,11 +192,11 @@ class ViewTableMap extends TableMap
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
         // If the PK cannot be derived from the row, return NULL.
-        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('ArticleId', TableMap::TYPE_PHPNAME, $indexType)] === null) {
             return null;
         }
 
-        return (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+        return (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('ArticleId', TableMap::TYPE_PHPNAME, $indexType)];
     }
 
     /**
@@ -214,7 +216,7 @@ class ViewTableMap extends TableMap
         return (int) $row[
             $indexType == TableMap::TYPE_NUM
                 ? 0 + $offset
-                : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
+                : self::translateFieldName('ArticleId', TableMap::TYPE_PHPNAME, $indexType)
         ];
     }
 
@@ -315,15 +317,13 @@ class ViewTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ViewTableMap::COL_ID);
+            $criteria->addSelectColumn(ViewTableMap::COL_ARTICLE_ID);
             $criteria->addSelectColumn(ViewTableMap::COL_IP_ADDRESS);
             $criteria->addSelectColumn(ViewTableMap::COL_TIME);
-            $criteria->addSelectColumn(ViewTableMap::COL_ARTICLE_ID);
         } else {
-            $criteria->addSelectColumn($alias . '.id');
+            $criteria->addSelectColumn($alias . '.article_id');
             $criteria->addSelectColumn($alias . '.ip_address');
             $criteria->addSelectColumn($alias . '.time');
-            $criteria->addSelectColumn($alias . '.article_id');
         }
     }
 
@@ -375,7 +375,7 @@ class ViewTableMap extends TableMap
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
             $criteria = new Criteria(ViewTableMap::DATABASE_NAME);
-            $criteria->add(ViewTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria->add(ViewTableMap::COL_ARTICLE_ID, (array) $values, Criteria::IN);
         }
 
         $query = ViewQuery::create()->mergeWith($criteria);
@@ -421,10 +421,6 @@ class ViewTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from View object
-        }
-
-        if ($criteria->containsKey(ViewTableMap::COL_ID) && $criteria->keyContainsValue(ViewTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ViewTableMap::COL_ID.')');
         }
 
 

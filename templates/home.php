@@ -12,10 +12,10 @@
                         <div id="left-nav">
                             <h2>The Specifics.</h2>
                             <div id="left-nav-categories">
-                                {% for theme in themes %}
-                                <a href="#" class="category">
-                                    <img height="20px" src="/include/img/skull.png" alt="...">
-                                    <p style="color: {{theme.getColour}};">{{theme.getName}}</p>
+                                {% for category in categories %}
+                                <a href="{{baseUrl()}}/category/{{category.getSlug}}" class="category">
+                                    <!-- <img height="20px" src="/include/img/skull.png" alt="..."> -->
+                                    <p style="color: {{category.getColour}};">{{category.getSlug}}</p>
                                 </a>
                                 {% endfor %}
                             </div>
@@ -25,9 +25,9 @@
                             {% for post in posts %}
                             <div class="row">
                                 <div id="whitespace">
-                                    <h2 class="title"  id="theme_name"><a style="color: {{post.getTheme.getColour}};" href="/{{post.getTheme.getName}}/">{{post.getTheme.getName}} &#62;</a></h2>
+                                    <h2 class="title"  id="category_name"><a style="color: {{post.getCategory.getColour}};" href="/category/{{post.getCategory.getSlug}}">{{post.getCategory.getName}} &#62;</a></h2>
                                     {% set slug = post.getSlug|split('_') %}
-                                    <h1 class="title"><a class="title_link" href="/{{slug[0]|date('Y/m/d/')}}{{slug[1]}}">{{post.getTitle|title}}</a></h1>
+                                    <h1 class="title"><a class="title_link" href="{{baseUrl()}}/{{slug[0]|date('Y/m/d/')}}{{slug[1]}}">{{post.getTitle|title}}</a></h1>
                                     <hr>
                                     <h4>{{post.getCreatedAt|date("d l, F Y G:i")}}</h4>
                                 </div>
@@ -36,11 +36,11 @@
                                 {#<div class="col-md-1"></div>#}
                                 {# Start content #}
                                 <div id="content">
-                                    {% if admin %}<a class="pull-right" title="Edit Post" style="font-size: 32px;" href="/admin/{{post.getId}}"><span class="glyphicon glyphicon-edit"></span></a>{% endif %}
-                                    {% set url = "/post/#{post.getSlug}" %}
-                                    {% set url = '<p class="text-center post-cont-link"><a href="' ~ url ~ '"> <span class="glyphicon glyphicon-chevron-down"></span></a></p>'%}
+                                    {% if admin %}<form method="get" action="{{baseUrl()}}/admin/{{post.id}}"><button type="submit" class="pull-right post-button btn btn-link" href="/admin/{{post.getId}}"><span class="glyphicon glyphicon-edit"></span></button></form>
+                                    <form method="post" action="{{baseUrl()}}/admin/{{post.id}}"><input type="hidden" name="_METHOD" value="DELETE"/><button type="submit" class="pull-right post-button btn btn-link" href="/admin/{{post.getId}}"><span class="glyphicon glyphicon-trash"></span></button></form>{% endif %}
                                     {{post.getBodyhtml|truncateHTML(2000, " ...")}}
-                                    {{ url|raw }}
+                                    <p class="text-center post-cont-link"><a href="{{baseUrl()}}/{{slug[0]|date('Y/m/d/')}}{{slug[1]}}"> <span class="glyphicon glyphicon-chevron-down"></span></a></p>
+                                    {% for tag in post.getTags  %}<a class="tag" href="{{baseUrl}}/tag/{{tag.getName}}">{{tag.getName}}</a> {%endfor%}
                                     <hr>
                                 </div>
                                 {# end content #}

@@ -24,13 +24,10 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticleQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method     ChildArticleQuery orderByBodyhtml($order = Criteria::ASC) Order by the bodyHTML column
  * @method     ChildArticleQuery orderByBody($order = Criteria::ASC) Order by the body column
- * @method     ChildArticleQuery orderByTags($order = Criteria::ASC) Order by the tags column
- * @method     ChildArticleQuery orderByPositiveVotes($order = Criteria::ASC) Order by the positive_votes column
- * @method     ChildArticleQuery orderByNegativeVotes($order = Criteria::ASC) Order by the negative_votes column
- * @method     ChildArticleQuery orderByThemeId($order = Criteria::ASC) Order by the theme_id column
- * @method     ChildArticleQuery orderByTagId($order = Criteria::ASC) Order by the tag_id column
+ * @method     ChildArticleQuery orderByCategoryId($order = Criteria::ASC) Order by the category_id column
  * @method     ChildArticleQuery orderByImage($order = Criteria::ASC) Order by the image column
  * @method     ChildArticleQuery orderByDraft($order = Criteria::ASC) Order by the draft column
+ * @method     ChildArticleQuery orderByPollQuestion($order = Criteria::ASC) Order by the poll_question column
  * @method     ChildArticleQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildArticleQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  * @method     ChildArticleQuery orderBySlug($order = Criteria::ASC) Order by the slug column
@@ -39,13 +36,10 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticleQuery groupByTitle() Group by the title column
  * @method     ChildArticleQuery groupByBodyhtml() Group by the bodyHTML column
  * @method     ChildArticleQuery groupByBody() Group by the body column
- * @method     ChildArticleQuery groupByTags() Group by the tags column
- * @method     ChildArticleQuery groupByPositiveVotes() Group by the positive_votes column
- * @method     ChildArticleQuery groupByNegativeVotes() Group by the negative_votes column
- * @method     ChildArticleQuery groupByThemeId() Group by the theme_id column
- * @method     ChildArticleQuery groupByTagId() Group by the tag_id column
+ * @method     ChildArticleQuery groupByCategoryId() Group by the category_id column
  * @method     ChildArticleQuery groupByImage() Group by the image column
  * @method     ChildArticleQuery groupByDraft() Group by the draft column
+ * @method     ChildArticleQuery groupByPollQuestion() Group by the poll_question column
  * @method     ChildArticleQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildArticleQuery groupByUpdatedAt() Group by the updated_at column
  * @method     ChildArticleQuery groupBySlug() Group by the slug column
@@ -54,23 +48,23 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticleQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildArticleQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildArticleQuery leftJoinTheme($relationAlias = null) Adds a LEFT JOIN clause to the query using the Theme relation
- * @method     ChildArticleQuery rightJoinTheme($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Theme relation
- * @method     ChildArticleQuery innerJoinTheme($relationAlias = null) Adds a INNER JOIN clause to the query using the Theme relation
- *
- * @method     ChildArticleQuery leftJoinTag($relationAlias = null) Adds a LEFT JOIN clause to the query using the Tag relation
- * @method     ChildArticleQuery rightJoinTag($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Tag relation
- * @method     ChildArticleQuery innerJoinTag($relationAlias = null) Adds a INNER JOIN clause to the query using the Tag relation
+ * @method     ChildArticleQuery leftJoinCategory($relationAlias = null) Adds a LEFT JOIN clause to the query using the Category relation
+ * @method     ChildArticleQuery rightJoinCategory($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Category relation
+ * @method     ChildArticleQuery innerJoinCategory($relationAlias = null) Adds a INNER JOIN clause to the query using the Category relation
  *
  * @method     ChildArticleQuery leftJoinArticleTag($relationAlias = null) Adds a LEFT JOIN clause to the query using the ArticleTag relation
  * @method     ChildArticleQuery rightJoinArticleTag($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ArticleTag relation
  * @method     ChildArticleQuery innerJoinArticleTag($relationAlias = null) Adds a INNER JOIN clause to the query using the ArticleTag relation
  *
- * @method     ChildArticleQuery leftJoinView($relationAlias = null) Adds a LEFT JOIN clause to the query using the View relation
- * @method     ChildArticleQuery rightJoinView($relationAlias = null) Adds a RIGHT JOIN clause to the query using the View relation
- * @method     ChildArticleQuery innerJoinView($relationAlias = null) Adds a INNER JOIN clause to the query using the View relation
+ * @method     ChildArticleQuery leftJoinviewArticleForeign($relationAlias = null) Adds a LEFT JOIN clause to the query using the viewArticleForeign relation
+ * @method     ChildArticleQuery rightJoinviewArticleForeign($relationAlias = null) Adds a RIGHT JOIN clause to the query using the viewArticleForeign relation
+ * @method     ChildArticleQuery innerJoinviewArticleForeign($relationAlias = null) Adds a INNER JOIN clause to the query using the viewArticleForeign relation
  *
- * @method     \ThemeQuery|\TagQuery|\ArticleTagQuery|\ViewQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildArticleQuery leftJoinVoteArticleForeign($relationAlias = null) Adds a LEFT JOIN clause to the query using the VoteArticleForeign relation
+ * @method     ChildArticleQuery rightJoinVoteArticleForeign($relationAlias = null) Adds a RIGHT JOIN clause to the query using the VoteArticleForeign relation
+ * @method     ChildArticleQuery innerJoinVoteArticleForeign($relationAlias = null) Adds a INNER JOIN clause to the query using the VoteArticleForeign relation
+ *
+ * @method     \CategoryQuery|\ArticleTagQuery|\ViewQuery|\VoteQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildArticle findOne(ConnectionInterface $con = null) Return the first ChildArticle matching the query
  * @method     ChildArticle findOneOrCreate(ConnectionInterface $con = null) Return the first ChildArticle matching the query, or a new ChildArticle object populated from the query conditions when no match is found
@@ -79,13 +73,10 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticle findOneByTitle(string $title) Return the first ChildArticle filtered by the title column
  * @method     ChildArticle findOneByBodyhtml(string $bodyHTML) Return the first ChildArticle filtered by the bodyHTML column
  * @method     ChildArticle findOneByBody(string $body) Return the first ChildArticle filtered by the body column
- * @method     ChildArticle findOneByTags(string $tags) Return the first ChildArticle filtered by the tags column
- * @method     ChildArticle findOneByPositiveVotes(int $positive_votes) Return the first ChildArticle filtered by the positive_votes column
- * @method     ChildArticle findOneByNegativeVotes(int $negative_votes) Return the first ChildArticle filtered by the negative_votes column
- * @method     ChildArticle findOneByThemeId(int $theme_id) Return the first ChildArticle filtered by the theme_id column
- * @method     ChildArticle findOneByTagId(int $tag_id) Return the first ChildArticle filtered by the tag_id column
+ * @method     ChildArticle findOneByCategoryId(int $category_id) Return the first ChildArticle filtered by the category_id column
  * @method     ChildArticle findOneByImage(string $image) Return the first ChildArticle filtered by the image column
  * @method     ChildArticle findOneByDraft(boolean $draft) Return the first ChildArticle filtered by the draft column
+ * @method     ChildArticle findOneByPollQuestion(string $poll_question) Return the first ChildArticle filtered by the poll_question column
  * @method     ChildArticle findOneByCreatedAt(string $created_at) Return the first ChildArticle filtered by the created_at column
  * @method     ChildArticle findOneByUpdatedAt(string $updated_at) Return the first ChildArticle filtered by the updated_at column
  * @method     ChildArticle findOneBySlug(string $slug) Return the first ChildArticle filtered by the slug column *
@@ -97,13 +88,10 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticle requireOneByTitle(string $title) Return the first ChildArticle filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildArticle requireOneByBodyhtml(string $bodyHTML) Return the first ChildArticle filtered by the bodyHTML column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildArticle requireOneByBody(string $body) Return the first ChildArticle filtered by the body column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildArticle requireOneByTags(string $tags) Return the first ChildArticle filtered by the tags column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildArticle requireOneByPositiveVotes(int $positive_votes) Return the first ChildArticle filtered by the positive_votes column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildArticle requireOneByNegativeVotes(int $negative_votes) Return the first ChildArticle filtered by the negative_votes column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildArticle requireOneByThemeId(int $theme_id) Return the first ChildArticle filtered by the theme_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildArticle requireOneByTagId(int $tag_id) Return the first ChildArticle filtered by the tag_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneByCategoryId(int $category_id) Return the first ChildArticle filtered by the category_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildArticle requireOneByImage(string $image) Return the first ChildArticle filtered by the image column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildArticle requireOneByDraft(boolean $draft) Return the first ChildArticle filtered by the draft column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticle requireOneByPollQuestion(string $poll_question) Return the first ChildArticle filtered by the poll_question column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildArticle requireOneByCreatedAt(string $created_at) Return the first ChildArticle filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildArticle requireOneByUpdatedAt(string $updated_at) Return the first ChildArticle filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildArticle requireOneBySlug(string $slug) Return the first ChildArticle filtered by the slug column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -113,13 +101,10 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticle[]|ObjectCollection findByTitle(string $title) Return ChildArticle objects filtered by the title column
  * @method     ChildArticle[]|ObjectCollection findByBodyhtml(string $bodyHTML) Return ChildArticle objects filtered by the bodyHTML column
  * @method     ChildArticle[]|ObjectCollection findByBody(string $body) Return ChildArticle objects filtered by the body column
- * @method     ChildArticle[]|ObjectCollection findByTags(string $tags) Return ChildArticle objects filtered by the tags column
- * @method     ChildArticle[]|ObjectCollection findByPositiveVotes(int $positive_votes) Return ChildArticle objects filtered by the positive_votes column
- * @method     ChildArticle[]|ObjectCollection findByNegativeVotes(int $negative_votes) Return ChildArticle objects filtered by the negative_votes column
- * @method     ChildArticle[]|ObjectCollection findByThemeId(int $theme_id) Return ChildArticle objects filtered by the theme_id column
- * @method     ChildArticle[]|ObjectCollection findByTagId(int $tag_id) Return ChildArticle objects filtered by the tag_id column
+ * @method     ChildArticle[]|ObjectCollection findByCategoryId(int $category_id) Return ChildArticle objects filtered by the category_id column
  * @method     ChildArticle[]|ObjectCollection findByImage(string $image) Return ChildArticle objects filtered by the image column
  * @method     ChildArticle[]|ObjectCollection findByDraft(boolean $draft) Return ChildArticle objects filtered by the draft column
+ * @method     ChildArticle[]|ObjectCollection findByPollQuestion(string $poll_question) Return ChildArticle objects filtered by the poll_question column
  * @method     ChildArticle[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildArticle objects filtered by the created_at column
  * @method     ChildArticle[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildArticle objects filtered by the updated_at column
  * @method     ChildArticle[]|ObjectCollection findBySlug(string $slug) Return ChildArticle objects filtered by the slug column
@@ -219,7 +204,7 @@ abstract class ArticleQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, title, bodyHTML, body, tags, positive_votes, negative_votes, theme_id, tag_id, image, draft, created_at, updated_at, slug FROM article WHERE id = :p0';
+        $sql = 'SELECT id, title, bodyHTML, body, category_id, image, draft, poll_question, created_at, updated_at, slug FROM article WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -438,45 +423,18 @@ abstract class ArticleQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the tags column
+     * Filter the query on the category_id column
      *
      * Example usage:
      * <code>
-     * $query->filterByTags('fooValue');   // WHERE tags = 'fooValue'
-     * $query->filterByTags('%fooValue%'); // WHERE tags LIKE '%fooValue%'
+     * $query->filterByCategoryId(1234); // WHERE category_id = 1234
+     * $query->filterByCategoryId(array(12, 34)); // WHERE category_id IN (12, 34)
+     * $query->filterByCategoryId(array('min' => 12)); // WHERE category_id > 12
      * </code>
      *
-     * @param     string $tags The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @see       filterByCategory()
      *
-     * @return $this|ChildArticleQuery The current query, for fluid interface
-     */
-    public function filterByTags($tags = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($tags)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $tags)) {
-                $tags = str_replace('*', '%', $tags);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(ArticleTableMap::COL_TAGS, $tags, $comparison);
-    }
-
-    /**
-     * Filter the query on the positive_votes column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByPositiveVotes(1234); // WHERE positive_votes = 1234
-     * $query->filterByPositiveVotes(array(12, 34)); // WHERE positive_votes IN (12, 34)
-     * $query->filterByPositiveVotes(array('min' => 12)); // WHERE positive_votes > 12
-     * </code>
-     *
-     * @param     mixed $positiveVotes The value to use as filter.
+     * @param     mixed $categoryId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -484,16 +442,16 @@ abstract class ArticleQuery extends ModelCriteria
      *
      * @return $this|ChildArticleQuery The current query, for fluid interface
      */
-    public function filterByPositiveVotes($positiveVotes = null, $comparison = null)
+    public function filterByCategoryId($categoryId = null, $comparison = null)
     {
-        if (is_array($positiveVotes)) {
+        if (is_array($categoryId)) {
             $useMinMax = false;
-            if (isset($positiveVotes['min'])) {
-                $this->addUsingAlias(ArticleTableMap::COL_POSITIVE_VOTES, $positiveVotes['min'], Criteria::GREATER_EQUAL);
+            if (isset($categoryId['min'])) {
+                $this->addUsingAlias(ArticleTableMap::COL_CATEGORY_ID, $categoryId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($positiveVotes['max'])) {
-                $this->addUsingAlias(ArticleTableMap::COL_POSITIVE_VOTES, $positiveVotes['max'], Criteria::LESS_EQUAL);
+            if (isset($categoryId['max'])) {
+                $this->addUsingAlias(ArticleTableMap::COL_CATEGORY_ID, $categoryId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -504,134 +462,7 @@ abstract class ArticleQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(ArticleTableMap::COL_POSITIVE_VOTES, $positiveVotes, $comparison);
-    }
-
-    /**
-     * Filter the query on the negative_votes column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByNegativeVotes(1234); // WHERE negative_votes = 1234
-     * $query->filterByNegativeVotes(array(12, 34)); // WHERE negative_votes IN (12, 34)
-     * $query->filterByNegativeVotes(array('min' => 12)); // WHERE negative_votes > 12
-     * </code>
-     *
-     * @param     mixed $negativeVotes The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildArticleQuery The current query, for fluid interface
-     */
-    public function filterByNegativeVotes($negativeVotes = null, $comparison = null)
-    {
-        if (is_array($negativeVotes)) {
-            $useMinMax = false;
-            if (isset($negativeVotes['min'])) {
-                $this->addUsingAlias(ArticleTableMap::COL_NEGATIVE_VOTES, $negativeVotes['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($negativeVotes['max'])) {
-                $this->addUsingAlias(ArticleTableMap::COL_NEGATIVE_VOTES, $negativeVotes['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ArticleTableMap::COL_NEGATIVE_VOTES, $negativeVotes, $comparison);
-    }
-
-    /**
-     * Filter the query on the theme_id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByThemeId(1234); // WHERE theme_id = 1234
-     * $query->filterByThemeId(array(12, 34)); // WHERE theme_id IN (12, 34)
-     * $query->filterByThemeId(array('min' => 12)); // WHERE theme_id > 12
-     * </code>
-     *
-     * @see       filterByTheme()
-     *
-     * @param     mixed $themeId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildArticleQuery The current query, for fluid interface
-     */
-    public function filterByThemeId($themeId = null, $comparison = null)
-    {
-        if (is_array($themeId)) {
-            $useMinMax = false;
-            if (isset($themeId['min'])) {
-                $this->addUsingAlias(ArticleTableMap::COL_THEME_ID, $themeId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($themeId['max'])) {
-                $this->addUsingAlias(ArticleTableMap::COL_THEME_ID, $themeId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ArticleTableMap::COL_THEME_ID, $themeId, $comparison);
-    }
-
-    /**
-     * Filter the query on the tag_id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByTagId(1234); // WHERE tag_id = 1234
-     * $query->filterByTagId(array(12, 34)); // WHERE tag_id IN (12, 34)
-     * $query->filterByTagId(array('min' => 12)); // WHERE tag_id > 12
-     * </code>
-     *
-     * @see       filterByTag()
-     *
-     * @param     mixed $tagId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildArticleQuery The current query, for fluid interface
-     */
-    public function filterByTagId($tagId = null, $comparison = null)
-    {
-        if (is_array($tagId)) {
-            $useMinMax = false;
-            if (isset($tagId['min'])) {
-                $this->addUsingAlias(ArticleTableMap::COL_TAG_ID, $tagId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($tagId['max'])) {
-                $this->addUsingAlias(ArticleTableMap::COL_TAG_ID, $tagId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ArticleTableMap::COL_TAG_ID, $tagId, $comparison);
+        return $this->addUsingAlias(ArticleTableMap::COL_CATEGORY_ID, $categoryId, $comparison);
     }
 
     /**
@@ -688,6 +519,35 @@ abstract class ArticleQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ArticleTableMap::COL_DRAFT, $draft, $comparison);
+    }
+
+    /**
+     * Filter the query on the poll_question column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPollQuestion('fooValue');   // WHERE poll_question = 'fooValue'
+     * $query->filterByPollQuestion('%fooValue%'); // WHERE poll_question LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $pollQuestion The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildArticleQuery The current query, for fluid interface
+     */
+    public function filterByPollQuestion($pollQuestion = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($pollQuestion)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $pollQuestion)) {
+                $pollQuestion = str_replace('*', '%', $pollQuestion);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(ArticleTableMap::COL_POLL_QUESTION, $pollQuestion, $comparison);
     }
 
     /**
@@ -806,44 +666,44 @@ abstract class ArticleQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \Theme object
+     * Filter the query by a related \Category object
      *
-     * @param \Theme|ObjectCollection $theme The related object(s) to use as filter
+     * @param \Category|ObjectCollection $category The related object(s) to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return ChildArticleQuery The current query, for fluid interface
      */
-    public function filterByTheme($theme, $comparison = null)
+    public function filterByCategory($category, $comparison = null)
     {
-        if ($theme instanceof \Theme) {
+        if ($category instanceof \Category) {
             return $this
-                ->addUsingAlias(ArticleTableMap::COL_THEME_ID, $theme->getId(), $comparison);
-        } elseif ($theme instanceof ObjectCollection) {
+                ->addUsingAlias(ArticleTableMap::COL_CATEGORY_ID, $category->getId(), $comparison);
+        } elseif ($category instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(ArticleTableMap::COL_THEME_ID, $theme->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(ArticleTableMap::COL_CATEGORY_ID, $category->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
-            throw new PropelException('filterByTheme() only accepts arguments of type \Theme or Collection');
+            throw new PropelException('filterByCategory() only accepts arguments of type \Category or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Theme relation
+     * Adds a JOIN clause to the query using the Category relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildArticleQuery The current query, for fluid interface
      */
-    public function joinTheme($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinCategory($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Theme');
+        $relationMap = $tableMap->getRelation('Category');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -858,14 +718,14 @@ abstract class ArticleQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Theme');
+            $this->addJoinObject($join, 'Category');
         }
 
         return $this;
     }
 
     /**
-     * Use the Theme relation Theme object
+     * Use the Category relation Category object
      *
      * @see useQuery()
      *
@@ -873,90 +733,13 @@ abstract class ArticleQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \ThemeQuery A secondary query class using the current class as primary query
+     * @return \CategoryQuery A secondary query class using the current class as primary query
      */
-    public function useThemeQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useCategoryQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinTheme($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Theme', '\ThemeQuery');
-    }
-
-    /**
-     * Filter the query by a related \Tag object
-     *
-     * @param \Tag|ObjectCollection $tag The related object(s) to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @throws \Propel\Runtime\Exception\PropelException
-     *
-     * @return ChildArticleQuery The current query, for fluid interface
-     */
-    public function filterByTag($tag, $comparison = null)
-    {
-        if ($tag instanceof \Tag) {
-            return $this
-                ->addUsingAlias(ArticleTableMap::COL_TAG_ID, $tag->getId(), $comparison);
-        } elseif ($tag instanceof ObjectCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-
-            return $this
-                ->addUsingAlias(ArticleTableMap::COL_TAG_ID, $tag->toKeyValue('PrimaryKey', 'Id'), $comparison);
-        } else {
-            throw new PropelException('filterByTag() only accepts arguments of type \Tag or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Tag relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this|ChildArticleQuery The current query, for fluid interface
-     */
-    public function joinTag($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Tag');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Tag');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Tag relation Tag object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return \TagQuery A secondary query class using the current class as primary query
-     */
-    public function useTagQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        return $this
-            ->joinTag($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Tag', '\TagQuery');
+            ->joinCategory($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Category', '\CategoryQuery');
     }
 
     /**
@@ -971,7 +754,7 @@ abstract class ArticleQuery extends ModelCriteria
     {
         if ($articleTag instanceof \ArticleTag) {
             return $this
-                ->addUsingAlias(ArticleTableMap::COL_ID, $articleTag->getArticleId(), $comparison);
+                ->addUsingAlias(ArticleTableMap::COL_ID, $articleTag->getArticleid(), $comparison);
         } elseif ($articleTag instanceof ObjectCollection) {
             return $this
                 ->useArticleTagQuery()
@@ -1040,33 +823,33 @@ abstract class ArticleQuery extends ModelCriteria
      *
      * @return ChildArticleQuery The current query, for fluid interface
      */
-    public function filterByView($view, $comparison = null)
+    public function filterByviewArticleForeign($view, $comparison = null)
     {
         if ($view instanceof \View) {
             return $this
                 ->addUsingAlias(ArticleTableMap::COL_ID, $view->getArticleId(), $comparison);
         } elseif ($view instanceof ObjectCollection) {
             return $this
-                ->useViewQuery()
+                ->useviewArticleForeignQuery()
                 ->filterByPrimaryKeys($view->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByView() only accepts arguments of type \View or Collection');
+            throw new PropelException('filterByviewArticleForeign() only accepts arguments of type \View or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the View relation
+     * Adds a JOIN clause to the query using the viewArticleForeign relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildArticleQuery The current query, for fluid interface
      */
-    public function joinView($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinviewArticleForeign($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('View');
+        $relationMap = $tableMap->getRelation('viewArticleForeign');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -1081,14 +864,14 @@ abstract class ArticleQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'View');
+            $this->addJoinObject($join, 'viewArticleForeign');
         }
 
         return $this;
     }
 
     /**
-     * Use the View relation View object
+     * Use the viewArticleForeign relation View object
      *
      * @see useQuery()
      *
@@ -1098,11 +881,84 @@ abstract class ArticleQuery extends ModelCriteria
      *
      * @return \ViewQuery A secondary query class using the current class as primary query
      */
-    public function useViewQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useviewArticleForeignQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinView($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'View', '\ViewQuery');
+            ->joinviewArticleForeign($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'viewArticleForeign', '\ViewQuery');
+    }
+
+    /**
+     * Filter the query by a related \Vote object
+     *
+     * @param \Vote|ObjectCollection $vote the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildArticleQuery The current query, for fluid interface
+     */
+    public function filterByVoteArticleForeign($vote, $comparison = null)
+    {
+        if ($vote instanceof \Vote) {
+            return $this
+                ->addUsingAlias(ArticleTableMap::COL_ID, $vote->getArticleid(), $comparison);
+        } elseif ($vote instanceof ObjectCollection) {
+            return $this
+                ->useVoteArticleForeignQuery()
+                ->filterByPrimaryKeys($vote->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByVoteArticleForeign() only accepts arguments of type \Vote or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the VoteArticleForeign relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildArticleQuery The current query, for fluid interface
+     */
+    public function joinVoteArticleForeign($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('VoteArticleForeign');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'VoteArticleForeign');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the VoteArticleForeign relation Vote object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \VoteQuery A secondary query class using the current class as primary query
+     */
+    public function useVoteArticleForeignQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinVoteArticleForeign($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'VoteArticleForeign', '\VoteQuery');
     }
 
     /**
@@ -1119,6 +975,23 @@ abstract class ArticleQuery extends ModelCriteria
         return $this
             ->useArticleTagQuery()
             ->filterByTag($tag, $comparison)
+            ->endUse();
+    }
+
+    /**
+     * Filter the query by a related View object
+     * using the vote table as cross reference
+     *
+     * @param View $view the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildArticleQuery The current query, for fluid interface
+     */
+    public function filterByView($view, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useVoteArticleForeignQuery()
+            ->filterByView($view, $comparison)
             ->endUse();
     }
 

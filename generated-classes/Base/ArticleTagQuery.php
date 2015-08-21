@@ -20,11 +20,11 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  *
- * @method     ChildArticleTagQuery orderByArticleId($order = Criteria::ASC) Order by the article_id column
- * @method     ChildArticleTagQuery orderByTagId($order = Criteria::ASC) Order by the tag_id column
+ * @method     ChildArticleTagQuery orderByArticleid($order = Criteria::ASC) Order by the articleID column
+ * @method     ChildArticleTagQuery orderByTagid($order = Criteria::ASC) Order by the tagID column
  *
- * @method     ChildArticleTagQuery groupByArticleId() Group by the article_id column
- * @method     ChildArticleTagQuery groupByTagId() Group by the tag_id column
+ * @method     ChildArticleTagQuery groupByArticleid() Group by the articleID column
+ * @method     ChildArticleTagQuery groupByTagid() Group by the tagID column
  *
  * @method     ChildArticleTagQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildArticleTagQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -43,18 +43,18 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticleTag findOne(ConnectionInterface $con = null) Return the first ChildArticleTag matching the query
  * @method     ChildArticleTag findOneOrCreate(ConnectionInterface $con = null) Return the first ChildArticleTag matching the query, or a new ChildArticleTag object populated from the query conditions when no match is found
  *
- * @method     ChildArticleTag findOneByArticleId(int $article_id) Return the first ChildArticleTag filtered by the article_id column
- * @method     ChildArticleTag findOneByTagId(int $tag_id) Return the first ChildArticleTag filtered by the tag_id column *
+ * @method     ChildArticleTag findOneByArticleid(int $articleID) Return the first ChildArticleTag filtered by the articleID column
+ * @method     ChildArticleTag findOneByTagid(int $tagID) Return the first ChildArticleTag filtered by the tagID column *
 
  * @method     ChildArticleTag requirePk($key, ConnectionInterface $con = null) Return the ChildArticleTag by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildArticleTag requireOne(ConnectionInterface $con = null) Return the first ChildArticleTag matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildArticleTag requireOneByArticleId(int $article_id) Return the first ChildArticleTag filtered by the article_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildArticleTag requireOneByTagId(int $tag_id) Return the first ChildArticleTag filtered by the tag_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticleTag requireOneByArticleid(int $articleID) Return the first ChildArticleTag filtered by the articleID column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildArticleTag requireOneByTagid(int $tagID) Return the first ChildArticleTag filtered by the tagID column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildArticleTag[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildArticleTag objects based on current ModelCriteria
- * @method     ChildArticleTag[]|ObjectCollection findByArticleId(int $article_id) Return ChildArticleTag objects filtered by the article_id column
- * @method     ChildArticleTag[]|ObjectCollection findByTagId(int $tag_id) Return ChildArticleTag objects filtered by the tag_id column
+ * @method     ChildArticleTag[]|ObjectCollection findByArticleid(int $articleID) Return ChildArticleTag objects filtered by the articleID column
+ * @method     ChildArticleTag[]|ObjectCollection findByTagid(int $tagID) Return ChildArticleTag objects filtered by the tagID column
  * @method     ChildArticleTag[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -111,7 +111,7 @@ abstract class ArticleTagQuery extends ModelCriteria
      * $obj = $c->findPk(array(12, 34), $con);
      * </code>
      *
-     * @param array[$article_id, $tag_id] $key Primary key to use for the query
+     * @param array[$articleID, $tagID] $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
      * @return ChildArticleTag|array|mixed the result, formatted by the current formatter
@@ -151,7 +151,7 @@ abstract class ArticleTagQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT article_id, tag_id FROM article_tag WHERE article_id = :p0 AND tag_id = :p1';
+        $sql = 'SELECT articleID, tagID FROM article_tag WHERE articleID = :p0 AND tagID = :p1';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
@@ -225,8 +225,8 @@ abstract class ArticleTagQuery extends ModelCriteria
      */
     public function filterByPrimaryKey($key)
     {
-        $this->addUsingAlias(ArticleTagTableMap::COL_ARTICLE_ID, $key[0], Criteria::EQUAL);
-        $this->addUsingAlias(ArticleTagTableMap::COL_TAG_ID, $key[1], Criteria::EQUAL);
+        $this->addUsingAlias(ArticleTagTableMap::COL_ARTICLEID, $key[0], Criteria::EQUAL);
+        $this->addUsingAlias(ArticleTagTableMap::COL_TAGID, $key[1], Criteria::EQUAL);
 
         return $this;
     }
@@ -244,8 +244,8 @@ abstract class ArticleTagQuery extends ModelCriteria
             return $this->add(null, '1<>1', Criteria::CUSTOM);
         }
         foreach ($keys as $key) {
-            $cton0 = $this->getNewCriterion(ArticleTagTableMap::COL_ARTICLE_ID, $key[0], Criteria::EQUAL);
-            $cton1 = $this->getNewCriterion(ArticleTagTableMap::COL_TAG_ID, $key[1], Criteria::EQUAL);
+            $cton0 = $this->getNewCriterion(ArticleTagTableMap::COL_ARTICLEID, $key[0], Criteria::EQUAL);
+            $cton1 = $this->getNewCriterion(ArticleTagTableMap::COL_TAGID, $key[1], Criteria::EQUAL);
             $cton0->addAnd($cton1);
             $this->addOr($cton0);
         }
@@ -254,18 +254,18 @@ abstract class ArticleTagQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the article_id column
+     * Filter the query on the articleID column
      *
      * Example usage:
      * <code>
-     * $query->filterByArticleId(1234); // WHERE article_id = 1234
-     * $query->filterByArticleId(array(12, 34)); // WHERE article_id IN (12, 34)
-     * $query->filterByArticleId(array('min' => 12)); // WHERE article_id > 12
+     * $query->filterByArticleid(1234); // WHERE articleID = 1234
+     * $query->filterByArticleid(array(12, 34)); // WHERE articleID IN (12, 34)
+     * $query->filterByArticleid(array('min' => 12)); // WHERE articleID > 12
      * </code>
      *
      * @see       filterByArticle()
      *
-     * @param     mixed $articleId The value to use as filter.
+     * @param     mixed $articleid The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -273,16 +273,16 @@ abstract class ArticleTagQuery extends ModelCriteria
      *
      * @return $this|ChildArticleTagQuery The current query, for fluid interface
      */
-    public function filterByArticleId($articleId = null, $comparison = null)
+    public function filterByArticleid($articleid = null, $comparison = null)
     {
-        if (is_array($articleId)) {
+        if (is_array($articleid)) {
             $useMinMax = false;
-            if (isset($articleId['min'])) {
-                $this->addUsingAlias(ArticleTagTableMap::COL_ARTICLE_ID, $articleId['min'], Criteria::GREATER_EQUAL);
+            if (isset($articleid['min'])) {
+                $this->addUsingAlias(ArticleTagTableMap::COL_ARTICLEID, $articleid['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($articleId['max'])) {
-                $this->addUsingAlias(ArticleTagTableMap::COL_ARTICLE_ID, $articleId['max'], Criteria::LESS_EQUAL);
+            if (isset($articleid['max'])) {
+                $this->addUsingAlias(ArticleTagTableMap::COL_ARTICLEID, $articleid['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -293,22 +293,22 @@ abstract class ArticleTagQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(ArticleTagTableMap::COL_ARTICLE_ID, $articleId, $comparison);
+        return $this->addUsingAlias(ArticleTagTableMap::COL_ARTICLEID, $articleid, $comparison);
     }
 
     /**
-     * Filter the query on the tag_id column
+     * Filter the query on the tagID column
      *
      * Example usage:
      * <code>
-     * $query->filterByTagId(1234); // WHERE tag_id = 1234
-     * $query->filterByTagId(array(12, 34)); // WHERE tag_id IN (12, 34)
-     * $query->filterByTagId(array('min' => 12)); // WHERE tag_id > 12
+     * $query->filterByTagid(1234); // WHERE tagID = 1234
+     * $query->filterByTagid(array(12, 34)); // WHERE tagID IN (12, 34)
+     * $query->filterByTagid(array('min' => 12)); // WHERE tagID > 12
      * </code>
      *
      * @see       filterByTag()
      *
-     * @param     mixed $tagId The value to use as filter.
+     * @param     mixed $tagid The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -316,16 +316,16 @@ abstract class ArticleTagQuery extends ModelCriteria
      *
      * @return $this|ChildArticleTagQuery The current query, for fluid interface
      */
-    public function filterByTagId($tagId = null, $comparison = null)
+    public function filterByTagid($tagid = null, $comparison = null)
     {
-        if (is_array($tagId)) {
+        if (is_array($tagid)) {
             $useMinMax = false;
-            if (isset($tagId['min'])) {
-                $this->addUsingAlias(ArticleTagTableMap::COL_TAG_ID, $tagId['min'], Criteria::GREATER_EQUAL);
+            if (isset($tagid['min'])) {
+                $this->addUsingAlias(ArticleTagTableMap::COL_TAGID, $tagid['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($tagId['max'])) {
-                $this->addUsingAlias(ArticleTagTableMap::COL_TAG_ID, $tagId['max'], Criteria::LESS_EQUAL);
+            if (isset($tagid['max'])) {
+                $this->addUsingAlias(ArticleTagTableMap::COL_TAGID, $tagid['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -336,7 +336,7 @@ abstract class ArticleTagQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(ArticleTagTableMap::COL_TAG_ID, $tagId, $comparison);
+        return $this->addUsingAlias(ArticleTagTableMap::COL_TAGID, $tagid, $comparison);
     }
 
     /**
@@ -353,14 +353,14 @@ abstract class ArticleTagQuery extends ModelCriteria
     {
         if ($article instanceof \Article) {
             return $this
-                ->addUsingAlias(ArticleTagTableMap::COL_ARTICLE_ID, $article->getId(), $comparison);
+                ->addUsingAlias(ArticleTagTableMap::COL_ARTICLEID, $article->getId(), $comparison);
         } elseif ($article instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(ArticleTagTableMap::COL_ARTICLE_ID, $article->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(ArticleTagTableMap::COL_ARTICLEID, $article->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
             throw new PropelException('filterByArticle() only accepts arguments of type \Article or Collection');
         }
@@ -430,14 +430,14 @@ abstract class ArticleTagQuery extends ModelCriteria
     {
         if ($tag instanceof \Tag) {
             return $this
-                ->addUsingAlias(ArticleTagTableMap::COL_TAG_ID, $tag->getId(), $comparison);
+                ->addUsingAlias(ArticleTagTableMap::COL_TAGID, $tag->getId(), $comparison);
         } elseif ($tag instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(ArticleTagTableMap::COL_TAG_ID, $tag->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(ArticleTagTableMap::COL_TAGID, $tag->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
             throw new PropelException('filterByTag() only accepts arguments of type \Tag or Collection');
         }
@@ -503,8 +503,8 @@ abstract class ArticleTagQuery extends ModelCriteria
     public function prune($articleTag = null)
     {
         if ($articleTag) {
-            $this->addCond('pruneCond0', $this->getAliasedColName(ArticleTagTableMap::COL_ARTICLE_ID), $articleTag->getArticleId(), Criteria::NOT_EQUAL);
-            $this->addCond('pruneCond1', $this->getAliasedColName(ArticleTagTableMap::COL_TAG_ID), $articleTag->getTagId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond0', $this->getAliasedColName(ArticleTagTableMap::COL_ARTICLEID), $articleTag->getArticleid(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond1', $this->getAliasedColName(ArticleTagTableMap::COL_TAGID), $articleTag->getTagid(), Criteria::NOT_EQUAL);
             $this->combine(array('pruneCond0', 'pruneCond1'), Criteria::LOGICAL_OR);
         }
 

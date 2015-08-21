@@ -4,8 +4,55 @@
  * MULTIPLE/SEARCH POST ROUTES
 */
 
+// Drafts page
+$app->get('/drafts(/:page)', function ($page = 1) use ($app, $quote) {
+    if (isAdmin()) {
+        $maxPerPage = 10;
+
+        $categories = CategoryQuery::create()
+        //->setQueryKey('get_all_categories')
+        ->find();
+
+        $posts = ArticleQuery::create()
+            ->orderById('DESC')
+            ->filterByDraft(true)
+            ->paginate($page, $maxPerPage);
+
+        $maxPages = ceil($posts->getNbResults() / $maxPerPage);
+        $pagelist = $posts->getLinks(5);
+
+        if ($page == 1 && $app->request()->getPathInfo() != "/drafts") {
+            $app->redirect('/');
+        }
+
+        if ($page > $maxPages && $maxPages != 0) {
+            $app->flash('denied', "I've failed you senpai.. I haven't got that many post pages!");
+            $app->redirect('/');
+        }
+
+        $app->render('home.php', array(
+            'admin' => isAdmin(),
+            'debug' => DEBUG,
+            'wireframe' => WIREFRAME,
+            'skull_greeting' => $quote,
+            'posts' => $posts,
+            'current_page' => $page,
+            'page_list' => $pagelist,
+            'categories' => $categories,
+            'max_pages' => $maxPages,
+        ));
+    } else {
+        $app->redirect('/');
+    }
+});
+
 // Find all posts for a specific time period
-$app->get('/:year/(:month/(:day/(:page)))', function ($year, $month = -1, $day = -1, $page = 1) use ($app, $quote, $themes) {
+$app->get('/:year/(:month/(:day/(:page)))', function ($year, $month = -1, $day = -1, $page = 1) use ($app, $quote) {
+
+    $categories = CategoryQuery::create()
+        ->setQueryKey('get_all_categories')
+        ->find();
+
     $firstDate = "";
     $secondDate = "";
     $rawDate = "";
@@ -72,7 +119,7 @@ $app->get('/:year/(:month/(:day/(:page)))', function ($year, $month = -1, $day =
         'current_page' => $page,
         'page_list' => $pagelist,
         'pagination_url' => '/'.$year."/".$month."/".$day."/",
-        'themes' => $themes,
+        'categories' => $categories,
         'max_pages' => $maxPages,
     ));
 })->conditions(array(

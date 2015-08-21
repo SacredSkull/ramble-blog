@@ -1,7 +1,11 @@
 <?php
 
-$homepageHandler = function ($page = 1) use ($app, $quote, $themes) {
+$homepageHandler = function ($page = 1) use ($app, $quote) {
     $maxPerPage = 10;
+
+    $categories = CategoryQuery::create()
+    ->setQueryKey('get_all_categories')
+    ->find();
 
     // Paginate() is currently not compatible with setQueryKey, and only caches the first
     // count query, which is useless because then it causes Twig to throw an exception
@@ -35,7 +39,7 @@ $homepageHandler = function ($page = 1) use ($app, $quote, $themes) {
         'posts' => $posts,
         'current_page' => $page,
         'page_list' => $pagelist,
-        'themes' => $themes,
+        'categories' => $categories,
         'max_pages' => $maxPages,
     ));
 };

@@ -4,14 +4,11 @@ namespace Base;
 
 use \Article as ChildArticle;
 use \ArticleQuery as ChildArticleQuery;
-use \View as ChildView;
-use \ViewQuery as ChildViewQuery;
-use \Vote as ChildVote;
-use \VoteQuery as ChildVoteQuery;
-use \DateTime;
+use \Category as ChildCategory;
+use \CategoryQuery as ChildCategoryQuery;
 use \Exception;
 use \PDO;
-use Map\ViewTableMap;
+use Map\CategoryTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -24,21 +21,20 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'view' table.
+ * Base class that represents a row from the 'category' table.
  *
  *
  *
 * @package    propel.generator..Base
 */
-abstract class View implements ActiveRecordInterface
+abstract class Category implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Map\\ViewTableMap';
+    const TABLE_MAP = '\\Map\\CategoryTableMap';
 
 
     /**
@@ -68,44 +64,41 @@ abstract class View implements ActiveRecordInterface
     protected $virtualColumns = array();
 
     /**
-     * The value for the article_id field.
+     * The value for the id field.
      * @var        int
      */
-    protected $article_id;
+    protected $id;
 
     /**
-     * The value for the ip_address field.
+     * The value for the name field.
      * @var        string
      */
-    protected $ip_address;
+    protected $name;
 
     /**
-     * The value for the time field.
-     * Note: this column has a database default value of: (expression) CURRENT_TIMESTAMP
-     * @var        \DateTime
+     * The value for the root field.
+     * @var        string
      */
-    protected $time;
+    protected $root;
 
     /**
-     * @var        ChildArticle
+     * The value for the colour field.
+     * Note: this column has a database default value of: 'blue'
+     * @var        string
      */
-    protected $aViewArticle;
+    protected $colour;
 
     /**
-     * @var        ObjectCollection|ChildVote[] Collection to store aggregation of ChildVote objects.
+     * The value for the slug field.
+     * @var        string
      */
-    protected $collVotes;
-    protected $collVotesPartial;
+    protected $slug;
 
     /**
-     * @var        ObjectCollection|ChildArticle[] Cross Collection to store aggregation of ChildArticle objects.
+     * @var        ObjectCollection|ChildArticle[] Collection to store aggregation of ChildArticle objects.
      */
-    protected $collVoteArticles;
-
-    /**
-     * @var bool
-     */
-    protected $collVoteArticlesPartial;
+    protected $collArticles;
+    protected $collArticlesPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -119,13 +112,7 @@ abstract class View implements ActiveRecordInterface
      * An array of objects scheduled for deletion.
      * @var ObjectCollection|ChildArticle[]
      */
-    protected $voteArticlesScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildVote[]
-     */
-    protected $votesScheduledForDeletion = null;
+    protected $articlesScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -135,10 +122,11 @@ abstract class View implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
+        $this->colour = 'blue';
     }
 
     /**
-     * Initializes internal state of Base\View object.
+     * Initializes internal state of Base\Category object.
      * @see applyDefaults()
      */
     public function __construct()
@@ -235,9 +223,9 @@ abstract class View implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>View</code> instance.  If
-     * <code>obj</code> is an instance of <code>View</code>, delegates to
-     * <code>equals(View)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Category</code> instance.  If
+     * <code>obj</code> is an instance of <code>Category</code>, delegates to
+     * <code>equals(Category)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -303,7 +291,7 @@ abstract class View implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|View The current object, for fluid interface
+     * @return $this|Category The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -357,108 +345,154 @@ abstract class View implements ActiveRecordInterface
     }
 
     /**
-     * Get the [article_id] column value.
+     * Get the [id] column value.
      *
      * @return int
      */
-    public function getArticleId()
+    public function getId()
     {
-        return $this->article_id;
+        return $this->id;
     }
 
     /**
-     * Get the [ip_address] column value.
+     * Get the [name] column value.
      *
      * @return string
      */
-    public function getIpAddress()
+    public function getName()
     {
-        return $this->ip_address;
+        return $this->name;
     }
 
     /**
-     * Get the [optionally formatted] temporal [time] column value.
+     * Get the [root] column value.
      *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
+     * @return string
      */
-    public function getTime($format = NULL)
+    public function getRoot()
     {
-        if ($format === null) {
-            return $this->time;
-        } else {
-            return $this->time instanceof \DateTime ? $this->time->format($format) : null;
-        }
+        return $this->root;
     }
 
     /**
-     * Set the value of [article_id] column.
+     * Get the [colour] column value.
+     *
+     * @return string
+     */
+    public function getColour()
+    {
+        return $this->colour;
+    }
+
+    /**
+     * Get the [slug] column value.
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\View The current object (for fluent API support)
+     * @return $this|\Category The current object (for fluent API support)
      */
-    public function setArticleId($v)
+    public function setId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->article_id !== $v) {
-            $this->article_id = $v;
-            $this->modifiedColumns[ViewTableMap::COL_ARTICLE_ID] = true;
-        }
-
-        if ($this->aViewArticle !== null && $this->aViewArticle->getId() !== $v) {
-            $this->aViewArticle = null;
+        if ($this->id !== $v) {
+            $this->id = $v;
+            $this->modifiedColumns[CategoryTableMap::COL_ID] = true;
         }
 
         return $this;
-    } // setArticleId()
+    } // setId()
 
     /**
-     * Set the value of [ip_address] column.
+     * Set the value of [name] column.
      *
      * @param string $v new value
-     * @return $this|\View The current object (for fluent API support)
+     * @return $this|\Category The current object (for fluent API support)
      */
-    public function setIpAddress($v)
+    public function setName($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->ip_address !== $v) {
-            $this->ip_address = $v;
-            $this->modifiedColumns[ViewTableMap::COL_IP_ADDRESS] = true;
+        if ($this->name !== $v) {
+            $this->name = $v;
+            $this->modifiedColumns[CategoryTableMap::COL_NAME] = true;
         }
 
         return $this;
-    } // setIpAddress()
+    } // setName()
 
     /**
-     * Sets the value of [time] column to a normalized version of the date/time value specified.
+     * Set the value of [root] column.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\View The current object (for fluent API support)
+     * @param string $v new value
+     * @return $this|\Category The current object (for fluent API support)
      */
-    public function setTime($v)
+    public function setRoot($v)
     {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->time !== null || $dt !== null) {
-            if ($this->time === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->time->format("Y-m-d H:i:s")) {
-                $this->time = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ViewTableMap::COL_TIME] = true;
-            }
-        } // if either are not null
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->root !== $v) {
+            $this->root = $v;
+            $this->modifiedColumns[CategoryTableMap::COL_ROOT] = true;
+        }
 
         return $this;
-    } // setTime()
+    } // setRoot()
+
+    /**
+     * Set the value of [colour] column.
+     *
+     * @param string $v new value
+     * @return $this|\Category The current object (for fluent API support)
+     */
+    public function setColour($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->colour !== $v) {
+            $this->colour = $v;
+            $this->modifiedColumns[CategoryTableMap::COL_COLOUR] = true;
+        }
+
+        return $this;
+    } // setColour()
+
+    /**
+     * Set the value of [slug] column.
+     *
+     * @param string $v new value
+     * @return $this|\Category The current object (for fluent API support)
+     */
+    public function setSlug($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->slug !== $v) {
+            $this->slug = $v;
+            $this->modifiedColumns[CategoryTableMap::COL_SLUG] = true;
+        }
+
+        return $this;
+    } // setSlug()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -470,6 +504,10 @@ abstract class View implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->colour !== 'blue') {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -496,17 +534,20 @@ abstract class View implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ViewTableMap::translateFieldName('ArticleId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->article_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : CategoryTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ViewTableMap::translateFieldName('IpAddress', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->ip_address = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : CategoryTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ViewTableMap::translateFieldName('Time', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->time = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CategoryTableMap::translateFieldName('Root', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->root = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : CategoryTableMap::translateFieldName('Colour', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->colour = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : CategoryTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->slug = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -515,10 +556,10 @@ abstract class View implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = ViewTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = CategoryTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\View'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Category'), 0, $e);
         }
     }
 
@@ -537,9 +578,6 @@ abstract class View implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aViewArticle !== null && $this->article_id !== $this->aViewArticle->getId()) {
-            $this->aViewArticle = null;
-        }
     } // ensureConsistency
 
     /**
@@ -563,13 +601,13 @@ abstract class View implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(ViewTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(CategoryTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildViewQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildCategoryQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -579,10 +617,8 @@ abstract class View implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aViewArticle = null;
-            $this->collVotes = null;
+            $this->collArticles = null;
 
-            $this->collVoteArticles = null;
         } // if (deep)
     }
 
@@ -592,8 +628,8 @@ abstract class View implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see View::setDeleted()
-     * @see View::isDeleted()
+     * @see Category::setDeleted()
+     * @see Category::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -602,11 +638,11 @@ abstract class View implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ViewTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(CategoryTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildViewQuery::create()
+            $deleteQuery = ChildCategoryQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -637,12 +673,19 @@ abstract class View implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ViewTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(CategoryTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
             $isInsert = $this->isNew();
             $ret = $this->preSave($con);
+            // sluggable behavior
+
+            if ($this->isColumnModified(CategoryTableMap::COL_SLUG) && $this->getSlug()) {
+                $this->setSlug($this->makeSlugUnique($this->getSlug()));
+            } else {
+                $this->setSlug($this->createSlug());
+            }
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
             } else {
@@ -656,7 +699,7 @@ abstract class View implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ViewTableMap::addInstanceToPool($this);
+                CategoryTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -682,18 +725,6 @@ abstract class View implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their corresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aViewArticle !== null) {
-                if ($this->aViewArticle->isModified() || $this->aViewArticle->isNew()) {
-                    $affectedRows += $this->aViewArticle->save($con);
-                }
-                $this->setViewArticle($this->aViewArticle);
-            }
-
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -705,46 +736,17 @@ abstract class View implements ActiveRecordInterface
                 $this->resetModified();
             }
 
-            if ($this->voteArticlesScheduledForDeletion !== null) {
-                if (!$this->voteArticlesScheduledForDeletion->isEmpty()) {
-                    $pks = array();
-                    foreach ($this->voteArticlesScheduledForDeletion as $entry) {
-                        $entryPk = [];
-
-                        $entryPk[1] = $this->getIpAddress();
-                        $entryPk[0] = $entry->getId();
-                        $pks[] = $entryPk;
-                    }
-
-                    \VoteQuery::create()
-                        ->filterByPrimaryKeys($pks)
+            if ($this->articlesScheduledForDeletion !== null) {
+                if (!$this->articlesScheduledForDeletion->isEmpty()) {
+                    \ArticleQuery::create()
+                        ->filterByPrimaryKeys($this->articlesScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-
-                    $this->voteArticlesScheduledForDeletion = null;
-                }
-
-            }
-
-            if ($this->collVoteArticles) {
-                foreach ($this->collVoteArticles as $voteArticle) {
-                    if (!$voteArticle->isDeleted() && ($voteArticle->isNew() || $voteArticle->isModified())) {
-                        $voteArticle->save($con);
-                    }
+                    $this->articlesScheduledForDeletion = null;
                 }
             }
 
-
-            if ($this->votesScheduledForDeletion !== null) {
-                if (!$this->votesScheduledForDeletion->isEmpty()) {
-                    \VoteQuery::create()
-                        ->filterByPrimaryKeys($this->votesScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->votesScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collVotes !== null) {
-                foreach ($this->collVotes as $referrerFK) {
+            if ($this->collArticles !== null) {
+                foreach ($this->collArticles as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -771,20 +773,30 @@ abstract class View implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
+        $this->modifiedColumns[CategoryTableMap::COL_ID] = true;
+        if (null !== $this->id) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . CategoryTableMap::COL_ID . ')');
+        }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ViewTableMap::COL_ARTICLE_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'article_id';
+        if ($this->isColumnModified(CategoryTableMap::COL_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(ViewTableMap::COL_IP_ADDRESS)) {
-            $modifiedColumns[':p' . $index++]  = 'ip_address';
+        if ($this->isColumnModified(CategoryTableMap::COL_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'name';
         }
-        if ($this->isColumnModified(ViewTableMap::COL_TIME)) {
-            $modifiedColumns[':p' . $index++]  = 'time';
+        if ($this->isColumnModified(CategoryTableMap::COL_ROOT)) {
+            $modifiedColumns[':p' . $index++]  = 'root';
+        }
+        if ($this->isColumnModified(CategoryTableMap::COL_COLOUR)) {
+            $modifiedColumns[':p' . $index++]  = 'colour';
+        }
+        if ($this->isColumnModified(CategoryTableMap::COL_SLUG)) {
+            $modifiedColumns[':p' . $index++]  = 'slug';
         }
 
         $sql = sprintf(
-            'INSERT INTO view (%s) VALUES (%s)',
+            'INSERT INTO category (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -793,14 +805,20 @@ abstract class View implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'article_id':
-                        $stmt->bindValue($identifier, $this->article_id, PDO::PARAM_INT);
+                    case 'id':
+                        $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'ip_address':
-                        $stmt->bindValue($identifier, $this->ip_address, PDO::PARAM_STR);
+                    case 'name':
+                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case 'time':
-                        $stmt->bindValue($identifier, $this->time ? $this->time->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                    case 'root':
+                        $stmt->bindValue($identifier, $this->root, PDO::PARAM_STR);
+                        break;
+                    case 'colour':
+                        $stmt->bindValue($identifier, $this->colour, PDO::PARAM_STR);
+                        break;
+                    case 'slug':
+                        $stmt->bindValue($identifier, $this->slug, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -809,6 +827,13 @@ abstract class View implements ActiveRecordInterface
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
         }
+
+        try {
+            $pk = $con->lastInsertId();
+        } catch (Exception $e) {
+            throw new PropelException('Unable to get autoincrement id.', 0, $e);
+        }
+        $this->setId($pk);
 
         $this->setNew(false);
     }
@@ -841,7 +866,7 @@ abstract class View implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ViewTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = CategoryTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -858,13 +883,19 @@ abstract class View implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                return $this->getArticleId();
+                return $this->getId();
                 break;
             case 1:
-                return $this->getIpAddress();
+                return $this->getName();
                 break;
             case 2:
-                return $this->getTime();
+                return $this->getRoot();
+                break;
+            case 3:
+                return $this->getColour();
+                break;
+            case 4:
+                return $this->getSlug();
                 break;
             default:
                 return null;
@@ -890,59 +921,38 @@ abstract class View implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['View'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Category'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['View'][$this->hashCode()] = true;
-        $keys = ViewTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Category'][$this->hashCode()] = true;
+        $keys = CategoryTableMap::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getArticleId(),
-            $keys[1] => $this->getIpAddress(),
-            $keys[2] => $this->getTime(),
+            $keys[0] => $this->getId(),
+            $keys[1] => $this->getName(),
+            $keys[2] => $this->getRoot(),
+            $keys[3] => $this->getColour(),
+            $keys[4] => $this->getSlug(),
         );
-
-        $utc = new \DateTimeZone('utc');
-        if ($result[$keys[2]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[2]];
-            $result[$keys[2]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
-        }
-
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aViewArticle) {
+            if (null !== $this->collArticles) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'article';
+                        $key = 'articles';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'article';
+                        $key = 'articles';
                         break;
                     default:
-                        $key = 'Article';
+                        $key = 'Articles';
                 }
 
-                $result[$key] = $this->aViewArticle->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->collVotes) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'votes';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'votes';
-                        break;
-                    default:
-                        $key = 'Votes';
-                }
-
-                $result[$key] = $this->collVotes->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->collArticles->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -958,11 +968,11 @@ abstract class View implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\View
+     * @return $this|\Category
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ViewTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = CategoryTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -973,19 +983,25 @@ abstract class View implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\View
+     * @return $this|\Category
      */
     public function setByPosition($pos, $value)
     {
         switch ($pos) {
             case 0:
-                $this->setArticleId($value);
+                $this->setId($value);
                 break;
             case 1:
-                $this->setIpAddress($value);
+                $this->setName($value);
                 break;
             case 2:
-                $this->setTime($value);
+                $this->setRoot($value);
+                break;
+            case 3:
+                $this->setColour($value);
+                break;
+            case 4:
+                $this->setSlug($value);
                 break;
         } // switch()
 
@@ -1011,16 +1027,22 @@ abstract class View implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = ViewTableMap::getFieldNames($keyType);
+        $keys = CategoryTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setArticleId($arr[$keys[0]]);
+            $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setIpAddress($arr[$keys[1]]);
+            $this->setName($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setTime($arr[$keys[2]]);
+            $this->setRoot($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setColour($arr[$keys[3]]);
+        }
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setSlug($arr[$keys[4]]);
         }
     }
 
@@ -1041,7 +1063,7 @@ abstract class View implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\View The current object, for fluid interface
+     * @return $this|\Category The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1061,16 +1083,22 @@ abstract class View implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ViewTableMap::DATABASE_NAME);
+        $criteria = new Criteria(CategoryTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(ViewTableMap::COL_ARTICLE_ID)) {
-            $criteria->add(ViewTableMap::COL_ARTICLE_ID, $this->article_id);
+        if ($this->isColumnModified(CategoryTableMap::COL_ID)) {
+            $criteria->add(CategoryTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(ViewTableMap::COL_IP_ADDRESS)) {
-            $criteria->add(ViewTableMap::COL_IP_ADDRESS, $this->ip_address);
+        if ($this->isColumnModified(CategoryTableMap::COL_NAME)) {
+            $criteria->add(CategoryTableMap::COL_NAME, $this->name);
         }
-        if ($this->isColumnModified(ViewTableMap::COL_TIME)) {
-            $criteria->add(ViewTableMap::COL_TIME, $this->time);
+        if ($this->isColumnModified(CategoryTableMap::COL_ROOT)) {
+            $criteria->add(CategoryTableMap::COL_ROOT, $this->root);
+        }
+        if ($this->isColumnModified(CategoryTableMap::COL_COLOUR)) {
+            $criteria->add(CategoryTableMap::COL_COLOUR, $this->colour);
+        }
+        if ($this->isColumnModified(CategoryTableMap::COL_SLUG)) {
+            $criteria->add(CategoryTableMap::COL_SLUG, $this->slug);
         }
 
         return $criteria;
@@ -1088,8 +1116,8 @@ abstract class View implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildViewQuery::create();
-        $criteria->add(ViewTableMap::COL_ARTICLE_ID, $this->article_id);
+        $criteria = ChildCategoryQuery::create();
+        $criteria->add(CategoryTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1102,17 +1130,10 @@ abstract class View implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getArticleId();
+        $validPk = null !== $this->getId();
 
-        $validPrimaryKeyFKs = 1;
+        $validPrimaryKeyFKs = 0;
         $primaryKeyFKs = [];
-
-        //relation view_fk_3610e9 to table article
-        if ($this->aViewArticle && $hash = spl_object_hash($this->aViewArticle)) {
-            $primaryKeyFKs[] = $hash;
-        } else {
-            $validPrimaryKeyFKs = false;
-        }
 
         if ($validPk) {
             return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
@@ -1129,18 +1150,18 @@ abstract class View implements ActiveRecordInterface
      */
     public function getPrimaryKey()
     {
-        return $this->getArticleId();
+        return $this->getId();
     }
 
     /**
-     * Generic method to set the primary key (article_id column).
+     * Generic method to set the primary key (id column).
      *
      * @param       int $key Primary key.
      * @return void
      */
     public function setPrimaryKey($key)
     {
-        $this->setArticleId($key);
+        $this->setId($key);
     }
 
     /**
@@ -1149,7 +1170,7 @@ abstract class View implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return null === $this->getArticleId();
+        return null === $this->getId();
     }
 
     /**
@@ -1158,25 +1179,26 @@ abstract class View implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \View (or compatible) type.
+     * @param      object $copyObj An object of \Category (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setArticleId($this->getArticleId());
-        $copyObj->setIpAddress($this->getIpAddress());
-        $copyObj->setTime($this->getTime());
+        $copyObj->setName($this->getName());
+        $copyObj->setRoot($this->getRoot());
+        $copyObj->setColour($this->getColour());
+        $copyObj->setSlug($this->getSlug());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
-            foreach ($this->getVotes() as $relObj) {
+            foreach ($this->getArticles() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addVote($relObj->copy($deepCopy));
+                    $copyObj->addArticle($relObj->copy($deepCopy));
                 }
             }
 
@@ -1184,6 +1206,7 @@ abstract class View implements ActiveRecordInterface
 
         if ($makeNew) {
             $copyObj->setNew(true);
+            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1196,7 +1219,7 @@ abstract class View implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \View Clone of current object.
+     * @return \Category Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1207,51 +1230,6 @@ abstract class View implements ActiveRecordInterface
         $this->copyInto($copyObj, $deepCopy);
 
         return $copyObj;
-    }
-
-    /**
-     * Declares an association between this object and a ChildArticle object.
-     *
-     * @param  ChildArticle $v
-     * @return $this|\View The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setViewArticle(ChildArticle $v = null)
-    {
-        if ($v === null) {
-            $this->setArticleId(NULL);
-        } else {
-            $this->setArticleId($v->getId());
-        }
-
-        $this->aViewArticle = $v;
-
-        // Add binding for other direction of this 1:1 relationship.
-        if ($v !== null) {
-            $v->setviewArticleForeign($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildArticle object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildArticle The associated ChildArticle object.
-     * @throws PropelException
-     */
-    public function getViewArticle(ConnectionInterface $con = null)
-    {
-        if ($this->aViewArticle === null && ($this->article_id !== null)) {
-            $this->aViewArticle = ChildArticleQuery::create()->findPk($this->article_id, $con);
-            // Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
-            $this->aViewArticle->setviewArticleForeign($this);
-        }
-
-        return $this->aViewArticle;
     }
 
 
@@ -1265,37 +1243,37 @@ abstract class View implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('Vote' == $relationName) {
-            return $this->initVotes();
+        if ('Article' == $relationName) {
+            return $this->initArticles();
         }
     }
 
     /**
-     * Clears out the collVotes collection
+     * Clears out the collArticles collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addVotes()
+     * @see        addArticles()
      */
-    public function clearVotes()
+    public function clearArticles()
     {
-        $this->collVotes = null; // important to set this to NULL since that means it is uninitialized
+        $this->collArticles = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collVotes collection loaded partially.
+     * Reset is the collArticles collection loaded partially.
      */
-    public function resetPartialVotes($v = true)
+    public function resetPartialArticles($v = true)
     {
-        $this->collVotesPartial = $v;
+        $this->collArticlesPartial = $v;
     }
 
     /**
-     * Initializes the collVotes collection.
+     * Initializes the collArticles collection.
      *
-     * By default this just sets the collVotes collection to an empty array (like clearcollVotes());
+     * By default this just sets the collArticles collection to an empty array (like clearcollArticles());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1304,456 +1282,186 @@ abstract class View implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initVotes($overrideExisting = true)
+    public function initArticles($overrideExisting = true)
     {
-        if (null !== $this->collVotes && !$overrideExisting) {
+        if (null !== $this->collArticles && !$overrideExisting) {
             return;
         }
-        $this->collVotes = new ObjectCollection();
-        $this->collVotes->setModel('\Vote');
+        $this->collArticles = new ObjectCollection();
+        $this->collArticles->setModel('\Article');
     }
 
     /**
-     * Gets an array of ChildVote objects which contain a foreign key that references this object.
+     * Gets an array of ChildArticle objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildView is new, it will return
+     * If this ChildCategory is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildVote[] List of ChildVote objects
+     * @return ObjectCollection|ChildArticle[] List of ChildArticle objects
      * @throws PropelException
      */
-    public function getVotes(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getArticles(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collVotesPartial && !$this->isNew();
-        if (null === $this->collVotes || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collVotes) {
+        $partial = $this->collArticlesPartial && !$this->isNew();
+        if (null === $this->collArticles || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collArticles) {
                 // return empty collection
-                $this->initVotes();
+                $this->initArticles();
             } else {
-                $collVotes = ChildVoteQuery::create(null, $criteria)
-                    ->filterByView($this)
+                $collArticles = ChildArticleQuery::create(null, $criteria)
+                    ->filterByCategory($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collVotesPartial && count($collVotes)) {
-                        $this->initVotes(false);
+                    if (false !== $this->collArticlesPartial && count($collArticles)) {
+                        $this->initArticles(false);
 
-                        foreach ($collVotes as $obj) {
-                            if (false == $this->collVotes->contains($obj)) {
-                                $this->collVotes->append($obj);
+                        foreach ($collArticles as $obj) {
+                            if (false == $this->collArticles->contains($obj)) {
+                                $this->collArticles->append($obj);
                             }
                         }
 
-                        $this->collVotesPartial = true;
+                        $this->collArticlesPartial = true;
                     }
 
-                    return $collVotes;
+                    return $collArticles;
                 }
 
-                if ($partial && $this->collVotes) {
-                    foreach ($this->collVotes as $obj) {
+                if ($partial && $this->collArticles) {
+                    foreach ($this->collArticles as $obj) {
                         if ($obj->isNew()) {
-                            $collVotes[] = $obj;
+                            $collArticles[] = $obj;
                         }
                     }
                 }
 
-                $this->collVotes = $collVotes;
-                $this->collVotesPartial = false;
+                $this->collArticles = $collArticles;
+                $this->collArticlesPartial = false;
             }
         }
 
-        return $this->collVotes;
+        return $this->collArticles;
     }
 
     /**
-     * Sets a collection of ChildVote objects related by a one-to-many relationship
+     * Sets a collection of ChildArticle objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $votes A Propel collection.
+     * @param      Collection $articles A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildView The current object (for fluent API support)
+     * @return $this|ChildCategory The current object (for fluent API support)
      */
-    public function setVotes(Collection $votes, ConnectionInterface $con = null)
+    public function setArticles(Collection $articles, ConnectionInterface $con = null)
     {
-        /** @var ChildVote[] $votesToDelete */
-        $votesToDelete = $this->getVotes(new Criteria(), $con)->diff($votes);
+        /** @var ChildArticle[] $articlesToDelete */
+        $articlesToDelete = $this->getArticles(new Criteria(), $con)->diff($articles);
 
 
-        //since at least one column in the foreign key is at the same time a PK
-        //we can not just set a PK to NULL in the lines below. We have to store
-        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
-        $this->votesScheduledForDeletion = clone $votesToDelete;
+        $this->articlesScheduledForDeletion = $articlesToDelete;
 
-        foreach ($votesToDelete as $voteRemoved) {
-            $voteRemoved->setView(null);
+        foreach ($articlesToDelete as $articleRemoved) {
+            $articleRemoved->setCategory(null);
         }
 
-        $this->collVotes = null;
-        foreach ($votes as $vote) {
-            $this->addVote($vote);
+        $this->collArticles = null;
+        foreach ($articles as $article) {
+            $this->addArticle($article);
         }
 
-        $this->collVotes = $votes;
-        $this->collVotesPartial = false;
+        $this->collArticles = $articles;
+        $this->collArticlesPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related Vote objects.
+     * Returns the number of related Article objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related Vote objects.
+     * @return int             Count of related Article objects.
      * @throws PropelException
      */
-    public function countVotes(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countArticles(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collVotesPartial && !$this->isNew();
-        if (null === $this->collVotes || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collVotes) {
+        $partial = $this->collArticlesPartial && !$this->isNew();
+        if (null === $this->collArticles || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collArticles) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getVotes());
+                return count($this->getArticles());
             }
 
-            $query = ChildVoteQuery::create(null, $criteria);
+            $query = ChildArticleQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
 
             return $query
-                ->filterByView($this)
+                ->filterByCategory($this)
                 ->count($con);
         }
 
-        return count($this->collVotes);
+        return count($this->collArticles);
     }
 
     /**
-     * Method called to associate a ChildVote object to this object
-     * through the ChildVote foreign key attribute.
+     * Method called to associate a ChildArticle object to this object
+     * through the ChildArticle foreign key attribute.
      *
-     * @param  ChildVote $l ChildVote
-     * @return $this|\View The current object (for fluent API support)
+     * @param  ChildArticle $l ChildArticle
+     * @return $this|\Category The current object (for fluent API support)
      */
-    public function addVote(ChildVote $l)
+    public function addArticle(ChildArticle $l)
     {
-        if ($this->collVotes === null) {
-            $this->initVotes();
-            $this->collVotesPartial = true;
+        if ($this->collArticles === null) {
+            $this->initArticles();
+            $this->collArticlesPartial = true;
         }
 
-        if (!$this->collVotes->contains($l)) {
-            $this->doAddVote($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ChildVote $vote The ChildVote object to add.
-     */
-    protected function doAddVote(ChildVote $vote)
-    {
-        $this->collVotes[]= $vote;
-        $vote->setView($this);
-    }
-
-    /**
-     * @param  ChildVote $vote The ChildVote object to remove.
-     * @return $this|ChildView The current object (for fluent API support)
-     */
-    public function removeVote(ChildVote $vote)
-    {
-        if ($this->getVotes()->contains($vote)) {
-            $pos = $this->collVotes->search($vote);
-            $this->collVotes->remove($pos);
-            if (null === $this->votesScheduledForDeletion) {
-                $this->votesScheduledForDeletion = clone $this->collVotes;
-                $this->votesScheduledForDeletion->clear();
-            }
-            $this->votesScheduledForDeletion[]= clone $vote;
-            $vote->setView(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this View is new, it will return
-     * an empty collection; or if this View has previously
-     * been saved, it will retrieve related Votes from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in View.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildVote[] List of ChildVote objects
-     */
-    public function getVotesJoinVoteArticle(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
-    {
-        $query = ChildVoteQuery::create(null, $criteria);
-        $query->joinWith('VoteArticle', $joinBehavior);
-
-        return $this->getVotes($query, $con);
-    }
-
-    /**
-     * Clears out the collVoteArticles collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addVoteArticles()
-     */
-    public function clearVoteArticles()
-    {
-        $this->collVoteArticles = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Initializes the collVoteArticles crossRef collection.
-     *
-     * By default this just sets the collVoteArticles collection to an empty collection (like clearVoteArticles());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @return void
-     */
-    public function initVoteArticles()
-    {
-        $this->collVoteArticles = new ObjectCollection();
-        $this->collVoteArticlesPartial = true;
-
-        $this->collVoteArticles->setModel('\Article');
-    }
-
-    /**
-     * Checks if the collVoteArticles collection is loaded.
-     *
-     * @return bool
-     */
-    public function isVoteArticlesLoaded()
-    {
-        return null !== $this->collVoteArticles;
-    }
-
-    /**
-     * Gets a collection of ChildArticle objects related by a many-to-many relationship
-     * to the current object by way of the vote cross-reference table.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildView is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria Optional query object to filter the query
-     * @param      ConnectionInterface $con Optional connection object
-     *
-     * @return ObjectCollection|ChildArticle[] List of ChildArticle objects
-     */
-    public function getVoteArticles(Criteria $criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collVoteArticlesPartial && !$this->isNew();
-        if (null === $this->collVoteArticles || null !== $criteria || $partial) {
-            if ($this->isNew()) {
-                // return empty collection
-                if (null === $this->collVoteArticles) {
-                    $this->initVoteArticles();
-                }
-            } else {
-
-                $query = ChildArticleQuery::create(null, $criteria)
-                    ->filterByView($this);
-                $collVoteArticles = $query->find($con);
-                if (null !== $criteria) {
-                    return $collVoteArticles;
-                }
-
-                if ($partial && $this->collVoteArticles) {
-                    //make sure that already added objects gets added to the list of the database.
-                    foreach ($this->collVoteArticles as $obj) {
-                        if (!$collVoteArticles->contains($obj)) {
-                            $collVoteArticles[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collVoteArticles = $collVoteArticles;
-                $this->collVoteArticlesPartial = false;
-            }
-        }
-
-        return $this->collVoteArticles;
-    }
-
-    /**
-     * Sets a collection of Article objects related by a many-to-many relationship
-     * to the current object by way of the vote cross-reference table.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param  Collection $voteArticles A Propel collection.
-     * @param  ConnectionInterface $con Optional connection object
-     * @return $this|ChildView The current object (for fluent API support)
-     */
-    public function setVoteArticles(Collection $voteArticles, ConnectionInterface $con = null)
-    {
-        $this->clearVoteArticles();
-        $currentVoteArticles = $this->getVoteArticles();
-
-        $voteArticlesScheduledForDeletion = $currentVoteArticles->diff($voteArticles);
-
-        foreach ($voteArticlesScheduledForDeletion as $toDelete) {
-            $this->removeVoteArticle($toDelete);
-        }
-
-        foreach ($voteArticles as $voteArticle) {
-            if (!$currentVoteArticles->contains($voteArticle)) {
-                $this->doAddVoteArticle($voteArticle);
-            }
-        }
-
-        $this->collVoteArticlesPartial = false;
-        $this->collVoteArticles = $voteArticles;
-
-        return $this;
-    }
-
-    /**
-     * Gets the number of Article objects related by a many-to-many relationship
-     * to the current object by way of the vote cross-reference table.
-     *
-     * @param      Criteria $criteria Optional query object to filter the query
-     * @param      boolean $distinct Set to true to force count distinct
-     * @param      ConnectionInterface $con Optional connection object
-     *
-     * @return int the number of related Article objects
-     */
-    public function countVoteArticles(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collVoteArticlesPartial && !$this->isNew();
-        if (null === $this->collVoteArticles || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collVoteArticles) {
-                return 0;
-            } else {
-
-                if ($partial && !$criteria) {
-                    return count($this->getVoteArticles());
-                }
-
-                $query = ChildArticleQuery::create(null, $criteria);
-                if ($distinct) {
-                    $query->distinct();
-                }
-
-                return $query
-                    ->filterByView($this)
-                    ->count($con);
-            }
-        } else {
-            return count($this->collVoteArticles);
-        }
-    }
-
-    /**
-     * Associate a ChildArticle to this object
-     * through the vote cross reference table.
-     *
-     * @param ChildArticle $voteArticle
-     * @return ChildView The current object (for fluent API support)
-     */
-    public function addVoteArticle(ChildArticle $voteArticle)
-    {
-        if ($this->collVoteArticles === null) {
-            $this->initVoteArticles();
-        }
-
-        if (!$this->getVoteArticles()->contains($voteArticle)) {
-            // only add it if the **same** object is not already associated
-            $this->collVoteArticles->push($voteArticle);
-            $this->doAddVoteArticle($voteArticle);
+        if (!$this->collArticles->contains($l)) {
+            $this->doAddArticle($l);
         }
 
         return $this;
     }
 
     /**
-     *
-     * @param ChildArticle $voteArticle
+     * @param ChildArticle $article The ChildArticle object to add.
      */
-    protected function doAddVoteArticle(ChildArticle $voteArticle)
+    protected function doAddArticle(ChildArticle $article)
     {
-        $vote = new ChildVote();
-
-        $vote->setVoteArticle($voteArticle);
-
-        $vote->setView($this);
-
-        $this->addVote($vote);
-
-        // set the back reference to this object directly as using provided method either results
-        // in endless loop or in multiple relations
-        if (!$voteArticle->isViewsLoaded()) {
-            $voteArticle->initViews();
-            $voteArticle->getViews()->push($this);
-        } elseif (!$voteArticle->getViews()->contains($this)) {
-            $voteArticle->getViews()->push($this);
-        }
-
+        $this->collArticles[]= $article;
+        $article->setCategory($this);
     }
 
     /**
-     * Remove voteArticle of this object
-     * through the vote cross reference table.
-     *
-     * @param ChildArticle $voteArticle
-     * @return ChildView The current object (for fluent API support)
+     * @param  ChildArticle $article The ChildArticle object to remove.
+     * @return $this|ChildCategory The current object (for fluent API support)
      */
-    public function removeVoteArticle(ChildArticle $voteArticle)
+    public function removeArticle(ChildArticle $article)
     {
-        if ($this->getVoteArticles()->contains($voteArticle)) { $vote = new ChildVote();
-
-            $vote->setVoteArticle($voteArticle);
-            if ($voteArticle->isViewsLoaded()) {
-                //remove the back reference if available
-                $voteArticle->getViews()->removeObject($this);
+        if ($this->getArticles()->contains($article)) {
+            $pos = $this->collArticles->search($article);
+            $this->collArticles->remove($pos);
+            if (null === $this->articlesScheduledForDeletion) {
+                $this->articlesScheduledForDeletion = clone $this->collArticles;
+                $this->articlesScheduledForDeletion->clear();
             }
-
-            $vote->setView($this);
-            $this->removeVote(clone $vote);
-            $vote->clear();
-
-            $this->collVoteArticles->remove($this->collVoteArticles->search($voteArticle));
-
-            if (null === $this->voteArticlesScheduledForDeletion) {
-                $this->voteArticlesScheduledForDeletion = clone $this->collVoteArticles;
-                $this->voteArticlesScheduledForDeletion->clear();
-            }
-
-            $this->voteArticlesScheduledForDeletion->push($voteArticle);
+            $this->articlesScheduledForDeletion[]= clone $article;
+            $article->setCategory(null);
         }
-
 
         return $this;
     }
@@ -1765,12 +1473,11 @@ abstract class View implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aViewArticle) {
-            $this->aViewArticle->removeviewArticleForeign($this);
-        }
-        $this->article_id = null;
-        $this->ip_address = null;
-        $this->time = null;
+        $this->id = null;
+        $this->name = null;
+        $this->root = null;
+        $this->colour = null;
+        $this->slug = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();
@@ -1790,31 +1497,170 @@ abstract class View implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collVotes) {
-                foreach ($this->collVotes as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
-            if ($this->collVoteArticles) {
-                foreach ($this->collVoteArticles as $o) {
+            if ($this->collArticles) {
+                foreach ($this->collArticles as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
         } // if ($deep)
 
-        $this->collVotes = null;
-        $this->collVoteArticles = null;
-        $this->aViewArticle = null;
+        $this->collArticles = null;
     }
 
     /**
      * Return the string representation of this object
      *
-     * @return string
+     * @return string The value of the 'name' column
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ViewTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->getName();
+    }
+
+    // sluggable behavior
+
+    /**
+     * Create a unique slug based on the object
+     *
+     * @return string The object slug
+     */
+    protected function createSlug()
+    {
+        $slug = $this->createRawSlug();
+        $slug = $this->limitSlugSize($slug);
+        $slug = $this->makeSlugUnique($slug);
+
+        return $slug;
+    }
+
+    /**
+     * Create the slug from the appropriate columns
+     *
+     * @return string
+     */
+    protected function createRawSlug()
+    {
+        return $this->cleanupSlugPart($this->__toString());
+    }
+
+    /**
+     * Cleanup a string to make a slug of it
+     * Removes special characters, replaces blanks with a separator, and trim it
+     *
+     * @param     string $slug        the text to slugify
+     * @param     string $replacement the separator used by slug
+     * @return    string               the slugified text
+     */
+    protected static function cleanupSlugPart($slug, $replacement = '-')
+    {
+        // transliterate
+        if (function_exists('iconv')) {
+            $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
+        }
+
+        // lowercase
+        if (function_exists('mb_strtolower')) {
+            $slug = mb_strtolower($slug);
+        } else {
+            $slug = strtolower($slug);
+        }
+
+        // remove accents resulting from OSX's iconv
+        $slug = str_replace(array('\'', '`', '^'), '', $slug);
+
+        // replace non letter or digits with separator
+        $slug = preg_replace('/\W+/', $replacement, $slug);
+
+        // trim
+        $slug = trim($slug, $replacement);
+
+        if (empty($slug)) {
+            return 'n-a';
+        }
+
+        return $slug;
+    }
+
+
+    /**
+     * Make sure the slug is short enough to accommodate the column size
+     *
+     * @param    string $slug            the slug to check
+     *
+     * @return string                        the truncated slug
+     */
+    protected static function limitSlugSize($slug, $incrementReservedSpace = 3)
+    {
+        // check length, as suffix could put it over maximum
+        if (strlen($slug) > (255 - $incrementReservedSpace)) {
+            $slug = substr($slug, 0, 255 - $incrementReservedSpace);
+        }
+
+        return $slug;
+    }
+
+
+    /**
+     * Get the slug, ensuring its uniqueness
+     *
+     * @param    string $slug            the slug to check
+     * @param    string $separator       the separator used by slug
+     * @param    int    $alreadyExists   false for the first try, true for the second, and take the high count + 1
+     * @return   string                   the unique slug
+     */
+    protected function makeSlugUnique($slug, $separator = '-', $alreadyExists = false)
+    {
+        if (!$alreadyExists) {
+            $slug2 = $slug;
+        } else {
+            $slug2 = $slug . $separator;
+
+            $count = \CategoryQuery::create()
+                ->filterBySlug($this->getSlug())
+                ->filterByPrimaryKey($this->getPrimaryKey())
+            ->count();
+
+            if (1 == $count) {
+                return $this->getSlug();
+            }
+        }
+
+        $adapter = \Propel\Runtime\Propel::getServiceContainer()->getAdapter('blog');
+        $col = 'q.Slug';
+        $compare = $alreadyExists ? $adapter->compareRegex($col, '?') : sprintf('%s = ?', $col);
+
+        $query = \CategoryQuery::create('q')
+            ->where($compare, $alreadyExists ? '^' . $slug2 . '[0-9]+$' : $slug2)
+            ->prune($this)
+        ;
+
+        if (!$alreadyExists) {
+            $count = $query->count();
+            if ($count > 0) {
+                return $this->makeSlugUnique($slug, $separator, true);
+            }
+
+            return $slug2;
+        }
+
+        $adapter = \Propel\Runtime\Propel::getServiceContainer()->getAdapter('blog');
+        // Already exists
+        $object = $query
+            ->addDescendingOrderByColumn($adapter->strLength('slug'))
+            ->addDescendingOrderByColumn('slug')
+        ->findOne();
+
+        // First duplicate slug
+        if (null == $object) {
+            return $slug2 . '1';
+        }
+
+        $slugNum = substr($object->getSlug(), strlen($slug) + 1);
+        if (0 == $slugNum[0]) {
+            $slugNum[0] = 1;
+        }
+
+        return $slug2 . ($slugNum + 1);
     }
 
     /**

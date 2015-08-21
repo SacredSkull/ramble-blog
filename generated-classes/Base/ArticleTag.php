@@ -64,16 +64,16 @@ abstract class ArticleTag implements ActiveRecordInterface
     protected $virtualColumns = array();
 
     /**
-     * The value for the article_id field.
+     * The value for the articleid field.
      * @var        int
      */
-    protected $article_id;
+    protected $articleid;
 
     /**
-     * The value for the tag_id field.
+     * The value for the tagid field.
      * @var        int
      */
-    protected $tag_id;
+    protected $tagid;
 
     /**
      * @var        ChildArticle
@@ -311,40 +311,40 @@ abstract class ArticleTag implements ActiveRecordInterface
     }
 
     /**
-     * Get the [article_id] column value.
+     * Get the [articleid] column value.
      *
      * @return int
      */
-    public function getArticleId()
+    public function getArticleid()
     {
-        return $this->article_id;
+        return $this->articleid;
     }
 
     /**
-     * Get the [tag_id] column value.
+     * Get the [tagid] column value.
      *
      * @return int
      */
-    public function getTagId()
+    public function getTagid()
     {
-        return $this->tag_id;
+        return $this->tagid;
     }
 
     /**
-     * Set the value of [article_id] column.
+     * Set the value of [articleid] column.
      *
      * @param int $v new value
      * @return $this|\ArticleTag The current object (for fluent API support)
      */
-    public function setArticleId($v)
+    public function setArticleid($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->article_id !== $v) {
-            $this->article_id = $v;
-            $this->modifiedColumns[ArticleTagTableMap::COL_ARTICLE_ID] = true;
+        if ($this->articleid !== $v) {
+            $this->articleid = $v;
+            $this->modifiedColumns[ArticleTagTableMap::COL_ARTICLEID] = true;
         }
 
         if ($this->aArticle !== null && $this->aArticle->getId() !== $v) {
@@ -352,23 +352,23 @@ abstract class ArticleTag implements ActiveRecordInterface
         }
 
         return $this;
-    } // setArticleId()
+    } // setArticleid()
 
     /**
-     * Set the value of [tag_id] column.
+     * Set the value of [tagid] column.
      *
      * @param int $v new value
      * @return $this|\ArticleTag The current object (for fluent API support)
      */
-    public function setTagId($v)
+    public function setTagid($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->tag_id !== $v) {
-            $this->tag_id = $v;
-            $this->modifiedColumns[ArticleTagTableMap::COL_TAG_ID] = true;
+        if ($this->tagid !== $v) {
+            $this->tagid = $v;
+            $this->modifiedColumns[ArticleTagTableMap::COL_TAGID] = true;
         }
 
         if ($this->aTag !== null && $this->aTag->getId() !== $v) {
@@ -376,7 +376,7 @@ abstract class ArticleTag implements ActiveRecordInterface
         }
 
         return $this;
-    } // setTagId()
+    } // setTagid()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -414,11 +414,11 @@ abstract class ArticleTag implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ArticleTagTableMap::translateFieldName('ArticleId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->article_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ArticleTagTableMap::translateFieldName('Articleid', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->articleid = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ArticleTagTableMap::translateFieldName('TagId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->tag_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ArticleTagTableMap::translateFieldName('Tagid', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->tagid = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -449,10 +449,10 @@ abstract class ArticleTag implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aArticle !== null && $this->article_id !== $this->aArticle->getId()) {
+        if ($this->aArticle !== null && $this->articleid !== $this->aArticle->getId()) {
             $this->aArticle = null;
         }
-        if ($this->aTag !== null && $this->tag_id !== $this->aTag->getId()) {
+        if ($this->aTag !== null && $this->tagid !== $this->aTag->getId()) {
             $this->aTag = null;
         }
     } // ensureConsistency
@@ -645,21 +645,13 @@ abstract class ArticleTag implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[ArticleTagTableMap::COL_ARTICLE_ID] = true;
-        if (null !== $this->article_id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ArticleTagTableMap::COL_ARTICLE_ID . ')');
-        }
-        $this->modifiedColumns[ArticleTagTableMap::COL_TAG_ID] = true;
-        if (null !== $this->tag_id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ArticleTagTableMap::COL_TAG_ID . ')');
-        }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ArticleTagTableMap::COL_ARTICLE_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'article_id';
+        if ($this->isColumnModified(ArticleTagTableMap::COL_ARTICLEID)) {
+            $modifiedColumns[':p' . $index++]  = 'articleID';
         }
-        if ($this->isColumnModified(ArticleTagTableMap::COL_TAG_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'tag_id';
+        if ($this->isColumnModified(ArticleTagTableMap::COL_TAGID)) {
+            $modifiedColumns[':p' . $index++]  = 'tagID';
         }
 
         $sql = sprintf(
@@ -672,11 +664,11 @@ abstract class ArticleTag implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'article_id':
-                        $stmt->bindValue($identifier, $this->article_id, PDO::PARAM_INT);
+                    case 'articleID':
+                        $stmt->bindValue($identifier, $this->articleid, PDO::PARAM_INT);
                         break;
-                    case 'tag_id':
-                        $stmt->bindValue($identifier, $this->tag_id, PDO::PARAM_INT);
+                    case 'tagID':
+                        $stmt->bindValue($identifier, $this->tagid, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -685,13 +677,6 @@ abstract class ArticleTag implements ActiveRecordInterface
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
         }
-
-        try {
-            $pk = $con->lastInsertId();
-        } catch (Exception $e) {
-            throw new PropelException('Unable to get autoincrement id.', 0, $e);
-        }
-        $this->setArticleId($pk);
 
         $this->setNew(false);
     }
@@ -741,10 +726,10 @@ abstract class ArticleTag implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                return $this->getArticleId();
+                return $this->getArticleid();
                 break;
             case 1:
-                return $this->getTagId();
+                return $this->getTagid();
                 break;
             default:
                 return null;
@@ -776,8 +761,8 @@ abstract class ArticleTag implements ActiveRecordInterface
         $alreadyDumpedObjects['ArticleTag'][$this->hashCode()] = true;
         $keys = ArticleTagTableMap::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getArticleId(),
-            $keys[1] => $this->getTagId(),
+            $keys[0] => $this->getArticleid(),
+            $keys[1] => $this->getTagid(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -850,10 +835,10 @@ abstract class ArticleTag implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                $this->setArticleId($value);
+                $this->setArticleid($value);
                 break;
             case 1:
-                $this->setTagId($value);
+                $this->setTagid($value);
                 break;
         } // switch()
 
@@ -882,10 +867,10 @@ abstract class ArticleTag implements ActiveRecordInterface
         $keys = ArticleTagTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setArticleId($arr[$keys[0]]);
+            $this->setArticleid($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setTagId($arr[$keys[1]]);
+            $this->setTagid($arr[$keys[1]]);
         }
     }
 
@@ -928,11 +913,11 @@ abstract class ArticleTag implements ActiveRecordInterface
     {
         $criteria = new Criteria(ArticleTagTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(ArticleTagTableMap::COL_ARTICLE_ID)) {
-            $criteria->add(ArticleTagTableMap::COL_ARTICLE_ID, $this->article_id);
+        if ($this->isColumnModified(ArticleTagTableMap::COL_ARTICLEID)) {
+            $criteria->add(ArticleTagTableMap::COL_ARTICLEID, $this->articleid);
         }
-        if ($this->isColumnModified(ArticleTagTableMap::COL_TAG_ID)) {
-            $criteria->add(ArticleTagTableMap::COL_TAG_ID, $this->tag_id);
+        if ($this->isColumnModified(ArticleTagTableMap::COL_TAGID)) {
+            $criteria->add(ArticleTagTableMap::COL_TAGID, $this->tagid);
         }
 
         return $criteria;
@@ -951,8 +936,8 @@ abstract class ArticleTag implements ActiveRecordInterface
     public function buildPkeyCriteria()
     {
         $criteria = ChildArticleTagQuery::create();
-        $criteria->add(ArticleTagTableMap::COL_ARTICLE_ID, $this->article_id);
-        $criteria->add(ArticleTagTableMap::COL_TAG_ID, $this->tag_id);
+        $criteria->add(ArticleTagTableMap::COL_ARTICLEID, $this->articleid);
+        $criteria->add(ArticleTagTableMap::COL_TAGID, $this->tagid);
 
         return $criteria;
     }
@@ -965,20 +950,20 @@ abstract class ArticleTag implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getArticleId() &&
-            null !== $this->getTagId();
+        $validPk = null !== $this->getArticleid() &&
+            null !== $this->getTagid();
 
         $validPrimaryKeyFKs = 2;
         $primaryKeyFKs = [];
 
-        //relation article_tag_fk_3610e9 to table article
+        //relation article_tag_fk_5868da to table article
         if ($this->aArticle && $hash = spl_object_hash($this->aArticle)) {
             $primaryKeyFKs[] = $hash;
         } else {
             $validPrimaryKeyFKs = false;
         }
 
-        //relation article_tag_fk_022a95 to table tag
+        //relation article_tag_fk_180726 to table tag
         if ($this->aTag && $hash = spl_object_hash($this->aTag)) {
             $primaryKeyFKs[] = $hash;
         } else {
@@ -1002,8 +987,8 @@ abstract class ArticleTag implements ActiveRecordInterface
     public function getPrimaryKey()
     {
         $pks = array();
-        $pks[0] = $this->getArticleId();
-        $pks[1] = $this->getTagId();
+        $pks[0] = $this->getArticleid();
+        $pks[1] = $this->getTagid();
 
         return $pks;
     }
@@ -1016,8 +1001,8 @@ abstract class ArticleTag implements ActiveRecordInterface
      */
     public function setPrimaryKey($keys)
     {
-        $this->setArticleId($keys[0]);
-        $this->setTagId($keys[1]);
+        $this->setArticleid($keys[0]);
+        $this->setTagid($keys[1]);
     }
 
     /**
@@ -1026,7 +1011,7 @@ abstract class ArticleTag implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return (null === $this->getArticleId()) && (null === $this->getTagId());
+        return (null === $this->getArticleid()) && (null === $this->getTagid());
     }
 
     /**
@@ -1042,10 +1027,10 @@ abstract class ArticleTag implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
+        $copyObj->setArticleid($this->getArticleid());
+        $copyObj->setTagid($this->getTagid());
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setArticleId(NULL); // this is a auto-increment column, so set to default value
-            $copyObj->setTagId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1081,9 +1066,9 @@ abstract class ArticleTag implements ActiveRecordInterface
     public function setArticle(ChildArticle $v = null)
     {
         if ($v === null) {
-            $this->setArticleId(NULL);
+            $this->setArticleid(NULL);
         } else {
-            $this->setArticleId($v->getId());
+            $this->setArticleid($v->getId());
         }
 
         $this->aArticle = $v;
@@ -1108,8 +1093,8 @@ abstract class ArticleTag implements ActiveRecordInterface
      */
     public function getArticle(ConnectionInterface $con = null)
     {
-        if ($this->aArticle === null && ($this->article_id !== null)) {
-            $this->aArticle = ChildArticleQuery::create()->findPk($this->article_id, $con);
+        if ($this->aArticle === null && ($this->articleid !== null)) {
+            $this->aArticle = ChildArticleQuery::create()->findPk($this->articleid, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
@@ -1132,9 +1117,9 @@ abstract class ArticleTag implements ActiveRecordInterface
     public function setTag(ChildTag $v = null)
     {
         if ($v === null) {
-            $this->setTagId(NULL);
+            $this->setTagid(NULL);
         } else {
-            $this->setTagId($v->getId());
+            $this->setTagid($v->getId());
         }
 
         $this->aTag = $v;
@@ -1159,8 +1144,8 @@ abstract class ArticleTag implements ActiveRecordInterface
      */
     public function getTag(ConnectionInterface $con = null)
     {
-        if ($this->aTag === null && ($this->tag_id !== null)) {
-            $this->aTag = ChildTagQuery::create()->findPk($this->tag_id, $con);
+        if ($this->aTag === null && ($this->tagid !== null)) {
+            $this->aTag = ChildTagQuery::create()->findPk($this->tagid, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
@@ -1186,8 +1171,8 @@ abstract class ArticleTag implements ActiveRecordInterface
         if (null !== $this->aTag) {
             $this->aTag->removeArticleTag($this);
         }
-        $this->article_id = null;
-        $this->tag_id = null;
+        $this->articleid = null;
+        $this->tagid = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();

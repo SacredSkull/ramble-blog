@@ -1,41 +1,46 @@
 <?php
 
-$app->get('/category/:slugTheme(/)(:page)', function ($slugTheme, $page = 1) use ($app, $quote, $themes) {
-    $maxPerPage = 10;
-    $theme = ThemeQuery::create()->findOneBySlug($themeSlug);
+// Find all posts for a category
+$app->get('/category/:categorySlug(/:page)', function ($categorySlug, $page = 1) use ($app, $quote) {
 
-    // Paginate() is currently not compatible with setQueryKey, and only caches the first
-    // count query, which is useless because then it causes Twig to throw an exception
-    // because propel threw an exception. It was horrible to diagnose and you'd better take
-    // your own word for it!
-    //
-    // TL;DR - paginate() & setQueryKey() do not play well together currently!
-    $themedPosts = ArticleQuery::create()
-        //->setQueryKey('posts_of_particular_theme')
-        ->filterByTheme($theme)
+    $categories = CategoryQuery::create()
+            ->setQueryKey('get_all_categories')
+            ->find();
+
+    $specificCategory = CategoryQuery::create()
+        ->findOneBySlug($categorySlug);
+
+    $maxPerPage = 10;
+
+    $posts = ArticleQuery::create()
+        //->setQueryKey('homepage')
+        ->orderById('DESC')
+        ->filterByCategory($specificCategory)
+        ->filterByDraft(false)
         ->paginate($page, $maxPerPage);
 
-    $maxPages = ceil($themedPosts->getNbResults() / $maxPerPage);
-    $pagelist = $themedPosts->getLinks(5);
-
-    if ($page == 1 && $app->request()->getPathInfo() != "/category/".$themeSlug) {
-        $app->redirect('/category/'.$themeSlug);
+    $maxPages = ceil($posts->getNbResults() / $maxPerPage);
+    if ($specificCategory == null) {
+        $app->flash('denied', "$categorySlug hasn't been created yet");
+        $app->redirect('/');
+    } elseif (!$maxPages > 0) {
+        $app->flash('denied', "I haven't posted anything in $categorySlug");
+        $app->redirect('/');
     }
 
-    if ($page > $maxPages) {
-        $app->flash('denied', "I've failed you senpai.. I haven't got that many post pages!");
-        $app->redirect('/'.$themeSlug."/".$maxPages);
-    }
+    $pagelist = $posts->getLinks(5);
 
     $app->render('home.php', array(
         'admin' => isAdmin(),
         'debug' => DEBUG,
         'wireframe' => WIREFRAME,
         'skull_greeting' => $quote,
-        'posts' => $themedPosts,
+        'posts' => $posts,
         'current_page' => $page,
         'page_list' => $pagelist,
-        'themes' => $themes,
+        'pagination_url' => '/category/'.$categorySlug.'/',
+        'categories' => $categories,
         'max_pages' => $maxPages,
     ));
+
 });

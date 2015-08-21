@@ -59,7 +59,7 @@ class ArticleTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 14;
+    const NUM_COLUMNS = 11;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ArticleTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 14;
+    const NUM_HYDRATE_COLUMNS = 11;
 
     /**
      * the column name for the id field
@@ -92,29 +92,9 @@ class ArticleTableMap extends TableMap
     const COL_BODY = 'article.body';
 
     /**
-     * the column name for the tags field
+     * the column name for the category_id field
      */
-    const COL_TAGS = 'article.tags';
-
-    /**
-     * the column name for the positive_votes field
-     */
-    const COL_POSITIVE_VOTES = 'article.positive_votes';
-
-    /**
-     * the column name for the negative_votes field
-     */
-    const COL_NEGATIVE_VOTES = 'article.negative_votes';
-
-    /**
-     * the column name for the theme_id field
-     */
-    const COL_THEME_ID = 'article.theme_id';
-
-    /**
-     * the column name for the tag_id field
-     */
-    const COL_TAG_ID = 'article.tag_id';
+    const COL_CATEGORY_ID = 'article.category_id';
 
     /**
      * the column name for the image field
@@ -125,6 +105,11 @@ class ArticleTableMap extends TableMap
      * the column name for the draft field
      */
     const COL_DRAFT = 'article.draft';
+
+    /**
+     * the column name for the poll_question field
+     */
+    const COL_POLL_QUESTION = 'article.poll_question';
 
     /**
      * the column name for the created_at field
@@ -153,11 +138,11 @@ class ArticleTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Title', 'Bodyhtml', 'Body', 'Tags', 'PositiveVotes', 'NegativeVotes', 'ThemeId', 'TagId', 'Image', 'Draft', 'CreatedAt', 'UpdatedAt', 'Slug', ),
-        self::TYPE_CAMELNAME     => array('id', 'title', 'bodyhtml', 'body', 'tags', 'positiveVotes', 'negativeVotes', 'themeId', 'tagId', 'image', 'draft', 'createdAt', 'updatedAt', 'slug', ),
-        self::TYPE_COLNAME       => array(ArticleTableMap::COL_ID, ArticleTableMap::COL_TITLE, ArticleTableMap::COL_BODYHTML, ArticleTableMap::COL_BODY, ArticleTableMap::COL_TAGS, ArticleTableMap::COL_POSITIVE_VOTES, ArticleTableMap::COL_NEGATIVE_VOTES, ArticleTableMap::COL_THEME_ID, ArticleTableMap::COL_TAG_ID, ArticleTableMap::COL_IMAGE, ArticleTableMap::COL_DRAFT, ArticleTableMap::COL_CREATED_AT, ArticleTableMap::COL_UPDATED_AT, ArticleTableMap::COL_SLUG, ),
-        self::TYPE_FIELDNAME     => array('id', 'title', 'bodyHTML', 'body', 'tags', 'positive_votes', 'negative_votes', 'theme_id', 'tag_id', 'image', 'draft', 'created_at', 'updated_at', 'slug', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+        self::TYPE_PHPNAME       => array('Id', 'Title', 'Bodyhtml', 'Body', 'CategoryId', 'Image', 'Draft', 'PollQuestion', 'CreatedAt', 'UpdatedAt', 'Slug', ),
+        self::TYPE_CAMELNAME     => array('id', 'title', 'bodyhtml', 'body', 'categoryId', 'image', 'draft', 'pollQuestion', 'createdAt', 'updatedAt', 'slug', ),
+        self::TYPE_COLNAME       => array(ArticleTableMap::COL_ID, ArticleTableMap::COL_TITLE, ArticleTableMap::COL_BODYHTML, ArticleTableMap::COL_BODY, ArticleTableMap::COL_CATEGORY_ID, ArticleTableMap::COL_IMAGE, ArticleTableMap::COL_DRAFT, ArticleTableMap::COL_POLL_QUESTION, ArticleTableMap::COL_CREATED_AT, ArticleTableMap::COL_UPDATED_AT, ArticleTableMap::COL_SLUG, ),
+        self::TYPE_FIELDNAME     => array('id', 'title', 'bodyHTML', 'body', 'category_id', 'image', 'draft', 'poll_question', 'created_at', 'updated_at', 'slug', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
     /**
@@ -167,11 +152,11 @@ class ArticleTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Title' => 1, 'Bodyhtml' => 2, 'Body' => 3, 'Tags' => 4, 'PositiveVotes' => 5, 'NegativeVotes' => 6, 'ThemeId' => 7, 'TagId' => 8, 'Image' => 9, 'Draft' => 10, 'CreatedAt' => 11, 'UpdatedAt' => 12, 'Slug' => 13, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'title' => 1, 'bodyhtml' => 2, 'body' => 3, 'tags' => 4, 'positiveVotes' => 5, 'negativeVotes' => 6, 'themeId' => 7, 'tagId' => 8, 'image' => 9, 'draft' => 10, 'createdAt' => 11, 'updatedAt' => 12, 'slug' => 13, ),
-        self::TYPE_COLNAME       => array(ArticleTableMap::COL_ID => 0, ArticleTableMap::COL_TITLE => 1, ArticleTableMap::COL_BODYHTML => 2, ArticleTableMap::COL_BODY => 3, ArticleTableMap::COL_TAGS => 4, ArticleTableMap::COL_POSITIVE_VOTES => 5, ArticleTableMap::COL_NEGATIVE_VOTES => 6, ArticleTableMap::COL_THEME_ID => 7, ArticleTableMap::COL_TAG_ID => 8, ArticleTableMap::COL_IMAGE => 9, ArticleTableMap::COL_DRAFT => 10, ArticleTableMap::COL_CREATED_AT => 11, ArticleTableMap::COL_UPDATED_AT => 12, ArticleTableMap::COL_SLUG => 13, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'title' => 1, 'bodyHTML' => 2, 'body' => 3, 'tags' => 4, 'positive_votes' => 5, 'negative_votes' => 6, 'theme_id' => 7, 'tag_id' => 8, 'image' => 9, 'draft' => 10, 'created_at' => 11, 'updated_at' => 12, 'slug' => 13, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Title' => 1, 'Bodyhtml' => 2, 'Body' => 3, 'CategoryId' => 4, 'Image' => 5, 'Draft' => 6, 'PollQuestion' => 7, 'CreatedAt' => 8, 'UpdatedAt' => 9, 'Slug' => 10, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'title' => 1, 'bodyhtml' => 2, 'body' => 3, 'categoryId' => 4, 'image' => 5, 'draft' => 6, 'pollQuestion' => 7, 'createdAt' => 8, 'updatedAt' => 9, 'slug' => 10, ),
+        self::TYPE_COLNAME       => array(ArticleTableMap::COL_ID => 0, ArticleTableMap::COL_TITLE => 1, ArticleTableMap::COL_BODYHTML => 2, ArticleTableMap::COL_BODY => 3, ArticleTableMap::COL_CATEGORY_ID => 4, ArticleTableMap::COL_IMAGE => 5, ArticleTableMap::COL_DRAFT => 6, ArticleTableMap::COL_POLL_QUESTION => 7, ArticleTableMap::COL_CREATED_AT => 8, ArticleTableMap::COL_UPDATED_AT => 9, ArticleTableMap::COL_SLUG => 10, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'title' => 1, 'bodyHTML' => 2, 'body' => 3, 'category_id' => 4, 'image' => 5, 'draft' => 6, 'poll_question' => 7, 'created_at' => 8, 'updated_at' => 9, 'slug' => 10, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
     /**
@@ -192,17 +177,14 @@ class ArticleTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('title', 'Title', 'VARCHAR', true, 255, null);
+        $this->addColumn('title', 'Title', 'VARCHAR', false, 255, 'Untitled');
         $this->getColumn('title')->setPrimaryString(true);
         $this->addColumn('bodyHTML', 'Bodyhtml', 'LONGVARCHAR', false, null, null);
-        $this->addColumn('body', 'Body', 'LONGVARCHAR', true, null, null);
-        $this->addColumn('tags', 'Tags', 'VARCHAR', false, 255, null);
-        $this->addColumn('positive_votes', 'PositiveVotes', 'INTEGER', false, null, 0);
-        $this->addColumn('negative_votes', 'NegativeVotes', 'INTEGER', false, null, 0);
-        $this->addForeignKey('theme_id', 'ThemeId', 'INTEGER', 'theme', 'id', true, null, 0);
-        $this->addForeignKey('tag_id', 'TagId', 'INTEGER', 'tag', 'id', false, null, null);
+        $this->addColumn('body', 'Body', 'LONGVARCHAR', false, null, null);
+        $this->addForeignKey('category_id', 'CategoryId', 'INTEGER', 'category', 'id', true, null, 0);
         $this->addColumn('image', 'Image', 'VARCHAR', false, 255, 'default/post_img.png');
         $this->addColumn('draft', 'Draft', 'BOOLEAN', false, 1, false);
+        $this->addColumn('poll_question', 'PollQuestion', 'VARCHAR', false, 255, 'false');
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('slug', 'Slug', 'VARCHAR', false, 255, null);
@@ -213,35 +195,36 @@ class ArticleTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Theme', '\\Theme', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('Category', '\\Category', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':theme_id',
-    1 => ':id',
-  ),
-), 'CASCADE', null, null, false);
-        $this->addRelation('Tag', '\\Tag', RelationMap::MANY_TO_ONE, array (
-  0 =>
-  array (
-    0 => ':tag_id',
+    0 => ':category_id',
     1 => ':id',
   ),
 ), 'CASCADE', null, null, false);
         $this->addRelation('ArticleTag', '\\ArticleTag', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':article_id',
+    0 => ':articleID',
     1 => ':id',
   ),
-), null, null, 'ArticleTags', false);
-        $this->addRelation('View', '\\View', RelationMap::ONE_TO_MANY, array (
+), 'CASCADE', null, 'ArticleTags', false);
+        $this->addRelation('viewArticleForeign', '\\View', RelationMap::ONE_TO_ONE, array (
   0 =>
   array (
     0 => ':article_id',
     1 => ':id',
   ),
-), 'CASCADE', null, 'Views', false);
-        $this->addRelation('Tag', '\\Tag', RelationMap::MANY_TO_MANY, array(), null, null, 'Tags');
+), 'CASCADE', null, null, false);
+        $this->addRelation('VoteArticleForeign', '\\Vote', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':articleID',
+    1 => ':id',
+  ),
+), null, null, 'VoteArticleForeigns', false);
+        $this->addRelation('Tag', '\\Tag', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Tags');
+        $this->addRelation('View', '\\View', RelationMap::MANY_TO_MANY, array(), null, null, 'Views');
     } // buildRelations()
 
     /**
@@ -265,6 +248,7 @@ class ArticleTableMap extends TableMap
     {
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ArticleTagTableMap::clearInstancePool();
         ViewTableMap::clearInstancePool();
     }
 
@@ -413,13 +397,10 @@ class ArticleTableMap extends TableMap
             $criteria->addSelectColumn(ArticleTableMap::COL_TITLE);
             $criteria->addSelectColumn(ArticleTableMap::COL_BODYHTML);
             $criteria->addSelectColumn(ArticleTableMap::COL_BODY);
-            $criteria->addSelectColumn(ArticleTableMap::COL_TAGS);
-            $criteria->addSelectColumn(ArticleTableMap::COL_POSITIVE_VOTES);
-            $criteria->addSelectColumn(ArticleTableMap::COL_NEGATIVE_VOTES);
-            $criteria->addSelectColumn(ArticleTableMap::COL_THEME_ID);
-            $criteria->addSelectColumn(ArticleTableMap::COL_TAG_ID);
+            $criteria->addSelectColumn(ArticleTableMap::COL_CATEGORY_ID);
             $criteria->addSelectColumn(ArticleTableMap::COL_IMAGE);
             $criteria->addSelectColumn(ArticleTableMap::COL_DRAFT);
+            $criteria->addSelectColumn(ArticleTableMap::COL_POLL_QUESTION);
             $criteria->addSelectColumn(ArticleTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(ArticleTableMap::COL_UPDATED_AT);
             $criteria->addSelectColumn(ArticleTableMap::COL_SLUG);
@@ -428,13 +409,10 @@ class ArticleTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.title');
             $criteria->addSelectColumn($alias . '.bodyHTML');
             $criteria->addSelectColumn($alias . '.body');
-            $criteria->addSelectColumn($alias . '.tags');
-            $criteria->addSelectColumn($alias . '.positive_votes');
-            $criteria->addSelectColumn($alias . '.negative_votes');
-            $criteria->addSelectColumn($alias . '.theme_id');
-            $criteria->addSelectColumn($alias . '.tag_id');
+            $criteria->addSelectColumn($alias . '.category_id');
             $criteria->addSelectColumn($alias . '.image');
             $criteria->addSelectColumn($alias . '.draft');
+            $criteria->addSelectColumn($alias . '.poll_question');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
             $criteria->addSelectColumn($alias . '.slug');

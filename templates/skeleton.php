@@ -22,18 +22,21 @@
 			<span id='skull'></span>
 			<span id='head-nav-bg'>
 			</span>
-			<a href="/" class="head-nav-link">
+			<a href="{{baseUrl()}}" class="head-nav-link">
 				<span>HOME</span>
 			</a>
-			<a href="/contact" class="head-nav-link">
+			<a href="{{baseUrl()}}/contact" class="head-nav-link">
 				<span>CONTACT</span>
 			</a>
-			<a href="/about" class="head-nav-link">
+			<a href="{{baseUrl()}}/about" class="head-nav-link">
 				<span>ABOUT</span>
 			</a>
 			{% if admin %}
-			<a href="/admin" class="head-nav-link">
+			<a href="{{baseUrl()}}/admin" class="head-nav-link">
 				<span>NEW POST</span>
+			</a>
+			<a href="{{baseUrl()}}/drafts" class="head-nav-link">
+				<span>DRAFTS</span>
 			</a>
 			{% endif %}
 			<div id='skull-bubble' class='bubble'>
@@ -93,6 +96,8 @@
 				<div class="col-md-1"></div>
 			</div>
 			{% endblock article_cont %}
+			{% block comments%}
+			{% endblock comments%}
 			<div class="footer">
 				<span id='footer-white'>&nbsp;</span>
 				<div class="container">
@@ -101,7 +106,7 @@
 					<br>
 					<div class="col-md-6">
 						<div class="row">
-							<p></span><b>Made with </b><span class="glyphicon glyphicon-hand-down"></span></p>
+							<p><b>Made with </b><span class="glyphicon glyphicon-hand-down"></span></p>
 							<p><a href="http://www.slimframework.com/">The Slim Framework</a></p>
 							<p><a href="http://propelorm.org/">Propel2 ORM</a></p>
 							<p><a href="http://hhvm.com/">HHVM</a></p>

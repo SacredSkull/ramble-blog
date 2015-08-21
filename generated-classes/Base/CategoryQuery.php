@@ -2,11 +2,11 @@
 
 namespace Base;
 
-use \Tag as ChildTag;
-use \TagQuery as ChildTagQuery;
+use \Category as ChildCategory;
+use \CategoryQuery as ChildCategoryQuery;
 use \Exception;
 use \PDO;
-use Map\TagTableMap;
+use Map\CategoryTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -16,45 +16,60 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Base class that represents a query for the 'tag' table.
+ * Base class that represents a query for the 'category' table.
  *
  *
  *
- * @method     ChildTagQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildTagQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method     ChildCategoryQuery orderById($order = Criteria::ASC) Order by the id column
+ * @method     ChildCategoryQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method     ChildCategoryQuery orderByRoot($order = Criteria::ASC) Order by the root column
+ * @method     ChildCategoryQuery orderByColour($order = Criteria::ASC) Order by the colour column
+ * @method     ChildCategoryQuery orderBySlug($order = Criteria::ASC) Order by the slug column
  *
- * @method     ChildTagQuery groupById() Group by the id column
- * @method     ChildTagQuery groupByName() Group by the name column
+ * @method     ChildCategoryQuery groupById() Group by the id column
+ * @method     ChildCategoryQuery groupByName() Group by the name column
+ * @method     ChildCategoryQuery groupByRoot() Group by the root column
+ * @method     ChildCategoryQuery groupByColour() Group by the colour column
+ * @method     ChildCategoryQuery groupBySlug() Group by the slug column
  *
- * @method     ChildTagQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
- * @method     ChildTagQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
- * @method     ChildTagQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ * @method     ChildCategoryQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     ChildCategoryQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     ChildCategoryQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildTagQuery leftJoinArticleTag($relationAlias = null) Adds a LEFT JOIN clause to the query using the ArticleTag relation
- * @method     ChildTagQuery rightJoinArticleTag($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ArticleTag relation
- * @method     ChildTagQuery innerJoinArticleTag($relationAlias = null) Adds a INNER JOIN clause to the query using the ArticleTag relation
+ * @method     ChildCategoryQuery leftJoinArticle($relationAlias = null) Adds a LEFT JOIN clause to the query using the Article relation
+ * @method     ChildCategoryQuery rightJoinArticle($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Article relation
+ * @method     ChildCategoryQuery innerJoinArticle($relationAlias = null) Adds a INNER JOIN clause to the query using the Article relation
  *
- * @method     \ArticleTagQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \ArticleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
- * @method     ChildTag findOne(ConnectionInterface $con = null) Return the first ChildTag matching the query
- * @method     ChildTag findOneOrCreate(ConnectionInterface $con = null) Return the first ChildTag matching the query, or a new ChildTag object populated from the query conditions when no match is found
+ * @method     ChildCategory findOne(ConnectionInterface $con = null) Return the first ChildCategory matching the query
+ * @method     ChildCategory findOneOrCreate(ConnectionInterface $con = null) Return the first ChildCategory matching the query, or a new ChildCategory object populated from the query conditions when no match is found
  *
- * @method     ChildTag findOneById(int $id) Return the first ChildTag filtered by the id column
- * @method     ChildTag findOneByName(string $name) Return the first ChildTag filtered by the name column *
+ * @method     ChildCategory findOneById(int $id) Return the first ChildCategory filtered by the id column
+ * @method     ChildCategory findOneByName(string $name) Return the first ChildCategory filtered by the name column
+ * @method     ChildCategory findOneByRoot(string $root) Return the first ChildCategory filtered by the root column
+ * @method     ChildCategory findOneByColour(string $colour) Return the first ChildCategory filtered by the colour column
+ * @method     ChildCategory findOneBySlug(string $slug) Return the first ChildCategory filtered by the slug column *
 
- * @method     ChildTag requirePk($key, ConnectionInterface $con = null) Return the ChildTag by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildTag requireOne(ConnectionInterface $con = null) Return the first ChildTag matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCategory requirePk($key, ConnectionInterface $con = null) Return the ChildCategory by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCategory requireOne(ConnectionInterface $con = null) Return the first ChildCategory matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildTag requireOneById(int $id) Return the first ChildTag filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildTag requireOneByName(string $name) Return the first ChildTag filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCategory requireOneById(int $id) Return the first ChildCategory filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCategory requireOneByName(string $name) Return the first ChildCategory filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCategory requireOneByRoot(string $root) Return the first ChildCategory filtered by the root column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCategory requireOneByColour(string $colour) Return the first ChildCategory filtered by the colour column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildCategory requireOneBySlug(string $slug) Return the first ChildCategory filtered by the slug column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildTag[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildTag objects based on current ModelCriteria
- * @method     ChildTag[]|ObjectCollection findById(int $id) Return ChildTag objects filtered by the id column
- * @method     ChildTag[]|ObjectCollection findByName(string $name) Return ChildTag objects filtered by the name column
- * @method     ChildTag[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @method     ChildCategory[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildCategory objects based on current ModelCriteria
+ * @method     ChildCategory[]|ObjectCollection findById(int $id) Return ChildCategory objects filtered by the id column
+ * @method     ChildCategory[]|ObjectCollection findByName(string $name) Return ChildCategory objects filtered by the name column
+ * @method     ChildCategory[]|ObjectCollection findByRoot(string $root) Return ChildCategory objects filtered by the root column
+ * @method     ChildCategory[]|ObjectCollection findByColour(string $colour) Return ChildCategory objects filtered by the colour column
+ * @method     ChildCategory[]|ObjectCollection findBySlug(string $slug) Return ChildCategory objects filtered by the slug column
+ * @method     ChildCategory[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
-abstract class TagQuery extends ModelCriteria
+abstract class CategoryQuery extends ModelCriteria
 {
 
     // query_cache behavior
@@ -63,31 +78,31 @@ abstract class TagQuery extends ModelCriteria
                 protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
 
     /**
-     * Initializes internal state of \Base\TagQuery object.
+     * Initializes internal state of \Base\CategoryQuery object.
      *
      * @param     string $dbName The database name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'blog', $modelName = '\\Tag', $modelAlias = null)
+    public function __construct($dbName = 'blog', $modelName = '\\Category', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
     /**
-     * Returns a new ChildTagQuery object.
+     * Returns a new ChildCategoryQuery object.
      *
      * @param     string $modelAlias The alias of a model in the query
      * @param     Criteria $criteria Optional Criteria to build the query from
      *
-     * @return ChildTagQuery
+     * @return ChildCategoryQuery
      */
     public static function create($modelAlias = null, Criteria $criteria = null)
     {
-        if ($criteria instanceof ChildTagQuery) {
+        if ($criteria instanceof ChildCategoryQuery) {
             return $criteria;
         }
-        $query = new ChildTagQuery();
+        $query = new ChildCategoryQuery();
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
@@ -110,19 +125,19 @@ abstract class TagQuery extends ModelCriteria
      * @param mixed $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
-     * @return ChildTag|array|mixed the result, formatted by the current formatter
+     * @return ChildCategory|array|mixed the result, formatted by the current formatter
      */
     public function findPk($key, ConnectionInterface $con = null)
     {
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = TagTableMap::getInstanceFromPool((string) $key))) && !$this->formatter) {
+        if ((null !== ($obj = CategoryTableMap::getInstanceFromPool((string) $key))) && !$this->formatter) {
             // the object is already in the instance pool
             return $obj;
         }
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(TagTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(CategoryTableMap::DATABASE_NAME);
         }
         $this->basePreSelect($con);
         if ($this->formatter || $this->modelAlias || $this->with || $this->select
@@ -143,11 +158,11 @@ abstract class TagQuery extends ModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return ChildTag A model object, or null if the key is not found
+     * @return ChildCategory A model object, or null if the key is not found
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name FROM tag WHERE id = :p0';
+        $sql = 'SELECT id, name, root, colour, slug FROM category WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -158,10 +173,10 @@ abstract class TagQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
-            /** @var ChildTag $obj */
-            $obj = new ChildTag();
+            /** @var ChildCategory $obj */
+            $obj = new ChildCategory();
             $obj->hydrate($row);
-            TagTableMap::addInstanceToPool($obj, (string) $key);
+            CategoryTableMap::addInstanceToPool($obj, (string) $key);
         }
         $stmt->closeCursor();
 
@@ -174,7 +189,7 @@ abstract class TagQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     ConnectionInterface $con A connection object
      *
-     * @return ChildTag|array|mixed the result, formatted by the current formatter
+     * @return ChildCategory|array|mixed the result, formatted by the current formatter
      */
     protected function findPkComplex($key, ConnectionInterface $con)
     {
@@ -216,12 +231,12 @@ abstract class TagQuery extends ModelCriteria
      *
      * @param     mixed $key Primary key to use for the query
      *
-     * @return $this|ChildTagQuery The current query, for fluid interface
+     * @return $this|ChildCategoryQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
 
-        return $this->addUsingAlias(TagTableMap::COL_ID, $key, Criteria::EQUAL);
+        return $this->addUsingAlias(CategoryTableMap::COL_ID, $key, Criteria::EQUAL);
     }
 
     /**
@@ -229,12 +244,12 @@ abstract class TagQuery extends ModelCriteria
      *
      * @param     array $keys The list of primary key to use for the query
      *
-     * @return $this|ChildTagQuery The current query, for fluid interface
+     * @return $this|ChildCategoryQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
 
-        return $this->addUsingAlias(TagTableMap::COL_ID, $keys, Criteria::IN);
+        return $this->addUsingAlias(CategoryTableMap::COL_ID, $keys, Criteria::IN);
     }
 
     /**
@@ -253,18 +268,18 @@ abstract class TagQuery extends ModelCriteria
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildTagQuery The current query, for fluid interface
+     * @return $this|ChildCategoryQuery The current query, for fluid interface
      */
     public function filterById($id = null, $comparison = null)
     {
         if (is_array($id)) {
             $useMinMax = false;
             if (isset($id['min'])) {
-                $this->addUsingAlias(TagTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
+                $this->addUsingAlias(CategoryTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
             if (isset($id['max'])) {
-                $this->addUsingAlias(TagTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
+                $this->addUsingAlias(CategoryTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -275,7 +290,7 @@ abstract class TagQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(TagTableMap::COL_ID, $id, $comparison);
+        return $this->addUsingAlias(CategoryTableMap::COL_ID, $id, $comparison);
     }
 
     /**
@@ -291,7 +306,7 @@ abstract class TagQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildTagQuery The current query, for fluid interface
+     * @return $this|ChildCategoryQuery The current query, for fluid interface
      */
     public function filterByName($name = null, $comparison = null)
     {
@@ -304,44 +319,131 @@ abstract class TagQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(TagTableMap::COL_NAME, $name, $comparison);
+        return $this->addUsingAlias(CategoryTableMap::COL_NAME, $name, $comparison);
     }
 
     /**
-     * Filter the query by a related \ArticleTag object
+     * Filter the query on the root column
      *
-     * @param \ArticleTag|ObjectCollection $articleTag the related object to use as filter
+     * Example usage:
+     * <code>
+     * $query->filterByRoot('fooValue');   // WHERE root = 'fooValue'
+     * $query->filterByRoot('%fooValue%'); // WHERE root LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $root The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildCategoryQuery The current query, for fluid interface
+     */
+    public function filterByRoot($root = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($root)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $root)) {
+                $root = str_replace('*', '%', $root);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(CategoryTableMap::COL_ROOT, $root, $comparison);
+    }
+
+    /**
+     * Filter the query on the colour column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByColour('fooValue');   // WHERE colour = 'fooValue'
+     * $query->filterByColour('%fooValue%'); // WHERE colour LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $colour The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildCategoryQuery The current query, for fluid interface
+     */
+    public function filterByColour($colour = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($colour)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $colour)) {
+                $colour = str_replace('*', '%', $colour);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(CategoryTableMap::COL_COLOUR, $colour, $comparison);
+    }
+
+    /**
+     * Filter the query on the slug column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterBySlug('fooValue');   // WHERE slug = 'fooValue'
+     * $query->filterBySlug('%fooValue%'); // WHERE slug LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $slug The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildCategoryQuery The current query, for fluid interface
+     */
+    public function filterBySlug($slug = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($slug)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $slug)) {
+                $slug = str_replace('*', '%', $slug);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(CategoryTableMap::COL_SLUG, $slug, $comparison);
+    }
+
+    /**
+     * Filter the query by a related \Article object
+     *
+     * @param \Article|ObjectCollection $article the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return ChildTagQuery The current query, for fluid interface
+     * @return ChildCategoryQuery The current query, for fluid interface
      */
-    public function filterByArticleTag($articleTag, $comparison = null)
+    public function filterByArticle($article, $comparison = null)
     {
-        if ($articleTag instanceof \ArticleTag) {
+        if ($article instanceof \Article) {
             return $this
-                ->addUsingAlias(TagTableMap::COL_ID, $articleTag->getTagid(), $comparison);
-        } elseif ($articleTag instanceof ObjectCollection) {
+                ->addUsingAlias(CategoryTableMap::COL_ID, $article->getCategoryId(), $comparison);
+        } elseif ($article instanceof ObjectCollection) {
             return $this
-                ->useArticleTagQuery()
-                ->filterByPrimaryKeys($articleTag->getPrimaryKeys())
+                ->useArticleQuery()
+                ->filterByPrimaryKeys($article->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByArticleTag() only accepts arguments of type \ArticleTag or Collection');
+            throw new PropelException('filterByArticle() only accepts arguments of type \Article or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the ArticleTag relation
+     * Adds a JOIN clause to the query using the Article relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildTagQuery The current query, for fluid interface
+     * @return $this|ChildCategoryQuery The current query, for fluid interface
      */
-    public function joinArticleTag($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinArticle($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('ArticleTag');
+        $relationMap = $tableMap->getRelation('Article');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -356,14 +458,14 @@ abstract class TagQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'ArticleTag');
+            $this->addJoinObject($join, 'Article');
         }
 
         return $this;
     }
 
     /**
-     * Use the ArticleTag relation ArticleTag object
+     * Use the Article relation Article object
      *
      * @see useQuery()
      *
@@ -371,50 +473,33 @@ abstract class TagQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \ArticleTagQuery A secondary query class using the current class as primary query
+     * @return \ArticleQuery A secondary query class using the current class as primary query
      */
-    public function useArticleTagQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useArticleQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinArticleTag($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'ArticleTag', '\ArticleTagQuery');
-    }
-
-    /**
-     * Filter the query by a related Article object
-     * using the article_tag table as cross reference
-     *
-     * @param Article $article the related object to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildTagQuery The current query, for fluid interface
-     */
-    public function filterByArticle($article, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->useArticleTagQuery()
-            ->filterByArticle($article, $comparison)
-            ->endUse();
+            ->joinArticle($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Article', '\ArticleQuery');
     }
 
     /**
      * Exclude object from result
      *
-     * @param   ChildTag $tag Object to remove from the list of results
+     * @param   ChildCategory $category Object to remove from the list of results
      *
-     * @return $this|ChildTagQuery The current query, for fluid interface
+     * @return $this|ChildCategoryQuery The current query, for fluid interface
      */
-    public function prune($tag = null)
+    public function prune($category = null)
     {
-        if ($tag) {
-            $this->addUsingAlias(TagTableMap::COL_ID, $tag->getId(), Criteria::NOT_EQUAL);
+        if ($category) {
+            $this->addUsingAlias(CategoryTableMap::COL_ID, $category->getId(), Criteria::NOT_EQUAL);
         }
 
         return $this;
     }
 
     /**
-     * Deletes all rows from the tag table.
+     * Deletes all rows from the category table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -422,7 +507,7 @@ abstract class TagQuery extends ModelCriteria
     public function doDeleteAll(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(TagTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(CategoryTableMap::DATABASE_NAME);
         }
 
         // use transaction because $criteria could contain info
@@ -433,8 +518,8 @@ abstract class TagQuery extends ModelCriteria
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            TagTableMap::clearInstancePool();
-            TagTableMap::clearRelatedInstancePool();
+            CategoryTableMap::clearInstancePool();
+            CategoryTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
@@ -452,23 +537,23 @@ abstract class TagQuery extends ModelCriteria
     public function delete(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(TagTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(CategoryTableMap::DATABASE_NAME);
         }
 
         $criteria = $this;
 
         // Set the correct dbName
-        $criteria->setDbName(TagTableMap::DATABASE_NAME);
+        $criteria->setDbName(CategoryTableMap::DATABASE_NAME);
 
         // use transaction because $criteria could contain info
         // for more than one table or we could emulating ON DELETE CASCADE, etc.
         return $con->transaction(function () use ($con, $criteria) {
             $affectedRows = 0; // initialize var to track total num of affected rows
 
-            TagTableMap::removeInstanceFromPool($criteria);
+            CategoryTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
-            TagTableMap::clearRelatedInstancePool();
+            CategoryTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
@@ -511,8 +596,8 @@ abstract class TagQuery extends ModelCriteria
         }
         $this->configureSelectColumns();
 
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(TagTableMap::DATABASE_NAME);
-        $db = Propel::getServiceContainer()->getAdapter(TagTableMap::DATABASE_NAME);
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(CategoryTableMap::DATABASE_NAME);
+        $db = Propel::getServiceContainer()->getAdapter(CategoryTableMap::DATABASE_NAME);
 
         $key = $this->getQueryKey();
         if ($key && $this->cacheContains($key)) {
@@ -594,4 +679,4 @@ abstract class TagQuery extends ModelCriteria
         return $con->getDataFetcher($stmt);
     }
 
-} // TagQuery
+} // CategoryQuery

@@ -20,47 +20,46 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  *
- * @method     ChildViewQuery orderById($order = Criteria::ASC) Order by the id column
+ * @method     ChildViewQuery orderByArticleId($order = Criteria::ASC) Order by the article_id column
  * @method     ChildViewQuery orderByIpAddress($order = Criteria::ASC) Order by the ip_address column
  * @method     ChildViewQuery orderByTime($order = Criteria::ASC) Order by the time column
- * @method     ChildViewQuery orderByArticleId($order = Criteria::ASC) Order by the article_id column
  *
- * @method     ChildViewQuery groupById() Group by the id column
+ * @method     ChildViewQuery groupByArticleId() Group by the article_id column
  * @method     ChildViewQuery groupByIpAddress() Group by the ip_address column
  * @method     ChildViewQuery groupByTime() Group by the time column
- * @method     ChildViewQuery groupByArticleId() Group by the article_id column
  *
  * @method     ChildViewQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildViewQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildViewQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildViewQuery leftJoinArticle($relationAlias = null) Adds a LEFT JOIN clause to the query using the Article relation
- * @method     ChildViewQuery rightJoinArticle($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Article relation
- * @method     ChildViewQuery innerJoinArticle($relationAlias = null) Adds a INNER JOIN clause to the query using the Article relation
+ * @method     ChildViewQuery leftJoinViewArticle($relationAlias = null) Adds a LEFT JOIN clause to the query using the ViewArticle relation
+ * @method     ChildViewQuery rightJoinViewArticle($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ViewArticle relation
+ * @method     ChildViewQuery innerJoinViewArticle($relationAlias = null) Adds a INNER JOIN clause to the query using the ViewArticle relation
  *
- * @method     \ArticleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildViewQuery leftJoinVote($relationAlias = null) Adds a LEFT JOIN clause to the query using the Vote relation
+ * @method     ChildViewQuery rightJoinVote($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Vote relation
+ * @method     ChildViewQuery innerJoinVote($relationAlias = null) Adds a INNER JOIN clause to the query using the Vote relation
+ *
+ * @method     \ArticleQuery|\VoteQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildView findOne(ConnectionInterface $con = null) Return the first ChildView matching the query
  * @method     ChildView findOneOrCreate(ConnectionInterface $con = null) Return the first ChildView matching the query, or a new ChildView object populated from the query conditions when no match is found
  *
- * @method     ChildView findOneById(int $id) Return the first ChildView filtered by the id column
+ * @method     ChildView findOneByArticleId(int $article_id) Return the first ChildView filtered by the article_id column
  * @method     ChildView findOneByIpAddress(string $ip_address) Return the first ChildView filtered by the ip_address column
- * @method     ChildView findOneByTime(string $time) Return the first ChildView filtered by the time column
- * @method     ChildView findOneByArticleId(int $article_id) Return the first ChildView filtered by the article_id column *
+ * @method     ChildView findOneByTime(string $time) Return the first ChildView filtered by the time column *
 
  * @method     ChildView requirePk($key, ConnectionInterface $con = null) Return the ChildView by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildView requireOne(ConnectionInterface $con = null) Return the first ChildView matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildView requireOneById(int $id) Return the first ChildView filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildView requireOneByArticleId(int $article_id) Return the first ChildView filtered by the article_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildView requireOneByIpAddress(string $ip_address) Return the first ChildView filtered by the ip_address column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildView requireOneByTime(string $time) Return the first ChildView filtered by the time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildView requireOneByArticleId(int $article_id) Return the first ChildView filtered by the article_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildView[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildView objects based on current ModelCriteria
- * @method     ChildView[]|ObjectCollection findById(int $id) Return ChildView objects filtered by the id column
+ * @method     ChildView[]|ObjectCollection findByArticleId(int $article_id) Return ChildView objects filtered by the article_id column
  * @method     ChildView[]|ObjectCollection findByIpAddress(string $ip_address) Return ChildView objects filtered by the ip_address column
  * @method     ChildView[]|ObjectCollection findByTime(string $time) Return ChildView objects filtered by the time column
- * @method     ChildView[]|ObjectCollection findByArticleId(int $article_id) Return ChildView objects filtered by the article_id column
  * @method     ChildView[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -157,7 +156,7 @@ abstract class ViewQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, ip_address, time, article_id FROM view WHERE id = :p0';
+        $sql = 'SELECT article_id, ip_address, time FROM view WHERE article_id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -231,7 +230,7 @@ abstract class ViewQuery extends ModelCriteria
     public function filterByPrimaryKey($key)
     {
 
-        return $this->addUsingAlias(ViewTableMap::COL_ID, $key, Criteria::EQUAL);
+        return $this->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $key, Criteria::EQUAL);
     }
 
     /**
@@ -244,20 +243,22 @@ abstract class ViewQuery extends ModelCriteria
     public function filterByPrimaryKeys($keys)
     {
 
-        return $this->addUsingAlias(ViewTableMap::COL_ID, $keys, Criteria::IN);
+        return $this->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $keys, Criteria::IN);
     }
 
     /**
-     * Filter the query on the id column
+     * Filter the query on the article_id column
      *
      * Example usage:
      * <code>
-     * $query->filterById(1234); // WHERE id = 1234
-     * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
-     * $query->filterById(array('min' => 12)); // WHERE id > 12
+     * $query->filterByArticleId(1234); // WHERE article_id = 1234
+     * $query->filterByArticleId(array(12, 34)); // WHERE article_id IN (12, 34)
+     * $query->filterByArticleId(array('min' => 12)); // WHERE article_id > 12
      * </code>
      *
-     * @param     mixed $id The value to use as filter.
+     * @see       filterByViewArticle()
+     *
+     * @param     mixed $articleId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -265,16 +266,16 @@ abstract class ViewQuery extends ModelCriteria
      *
      * @return $this|ChildViewQuery The current query, for fluid interface
      */
-    public function filterById($id = null, $comparison = null)
+    public function filterByArticleId($articleId = null, $comparison = null)
     {
-        if (is_array($id)) {
+        if (is_array($articleId)) {
             $useMinMax = false;
-            if (isset($id['min'])) {
-                $this->addUsingAlias(ViewTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
+            if (isset($articleId['min'])) {
+                $this->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $articleId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($id['max'])) {
-                $this->addUsingAlias(ViewTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
+            if (isset($articleId['max'])) {
+                $this->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $articleId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -285,7 +286,7 @@ abstract class ViewQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(ViewTableMap::COL_ID, $id, $comparison);
+        return $this->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $articleId, $comparison);
     }
 
     /**
@@ -361,49 +362,6 @@ abstract class ViewQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the article_id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByArticleId(1234); // WHERE article_id = 1234
-     * $query->filterByArticleId(array(12, 34)); // WHERE article_id IN (12, 34)
-     * $query->filterByArticleId(array('min' => 12)); // WHERE article_id > 12
-     * </code>
-     *
-     * @see       filterByArticle()
-     *
-     * @param     mixed $articleId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildViewQuery The current query, for fluid interface
-     */
-    public function filterByArticleId($articleId = null, $comparison = null)
-    {
-        if (is_array($articleId)) {
-            $useMinMax = false;
-            if (isset($articleId['min'])) {
-                $this->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $articleId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($articleId['max'])) {
-                $this->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $articleId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $articleId, $comparison);
-    }
-
-    /**
      * Filter the query by a related \Article object
      *
      * @param \Article|ObjectCollection $article The related object(s) to use as filter
@@ -413,7 +371,7 @@ abstract class ViewQuery extends ModelCriteria
      *
      * @return ChildViewQuery The current query, for fluid interface
      */
-    public function filterByArticle($article, $comparison = null)
+    public function filterByViewArticle($article, $comparison = null)
     {
         if ($article instanceof \Article) {
             return $this
@@ -426,22 +384,22 @@ abstract class ViewQuery extends ModelCriteria
             return $this
                 ->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $article->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
-            throw new PropelException('filterByArticle() only accepts arguments of type \Article or Collection');
+            throw new PropelException('filterByViewArticle() only accepts arguments of type \Article or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Article relation
+     * Adds a JOIN clause to the query using the ViewArticle relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildViewQuery The current query, for fluid interface
      */
-    public function joinArticle($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinViewArticle($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Article');
+        $relationMap = $tableMap->getRelation('ViewArticle');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -456,14 +414,14 @@ abstract class ViewQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Article');
+            $this->addJoinObject($join, 'ViewArticle');
         }
 
         return $this;
     }
 
     /**
-     * Use the Article relation Article object
+     * Use the ViewArticle relation Article object
      *
      * @see useQuery()
      *
@@ -473,11 +431,101 @@ abstract class ViewQuery extends ModelCriteria
      *
      * @return \ArticleQuery A secondary query class using the current class as primary query
      */
-    public function useArticleQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useViewArticleQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinArticle($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Article', '\ArticleQuery');
+            ->joinViewArticle($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ViewArticle', '\ArticleQuery');
+    }
+
+    /**
+     * Filter the query by a related \Vote object
+     *
+     * @param \Vote|ObjectCollection $vote the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildViewQuery The current query, for fluid interface
+     */
+    public function filterByVote($vote, $comparison = null)
+    {
+        if ($vote instanceof \Vote) {
+            return $this
+                ->addUsingAlias(ViewTableMap::COL_IP_ADDRESS, $vote->getIp(), $comparison);
+        } elseif ($vote instanceof ObjectCollection) {
+            return $this
+                ->useVoteQuery()
+                ->filterByPrimaryKeys($vote->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByVote() only accepts arguments of type \Vote or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Vote relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildViewQuery The current query, for fluid interface
+     */
+    public function joinVote($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Vote');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Vote');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Vote relation Vote object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \VoteQuery A secondary query class using the current class as primary query
+     */
+    public function useVoteQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinVote($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Vote', '\VoteQuery');
+    }
+
+    /**
+     * Filter the query by a related Article object
+     * using the vote table as cross reference
+     *
+     * @param Article $article the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildViewQuery The current query, for fluid interface
+     */
+    public function filterByVoteArticle($article, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useVoteQuery()
+            ->filterByVoteArticle($article, $comparison)
+            ->endUse();
     }
 
     /**
@@ -490,7 +538,7 @@ abstract class ViewQuery extends ModelCriteria
     public function prune($view = null)
     {
         if ($view) {
-            $this->addUsingAlias(ViewTableMap::COL_ID, $view->getId(), Criteria::NOT_EQUAL);
+            $this->addUsingAlias(ViewTableMap::COL_ARTICLE_ID, $view->getArticleId(), Criteria::NOT_EQUAL);
         }
 
         return $this;

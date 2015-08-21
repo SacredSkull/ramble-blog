@@ -1,39 +1,50 @@
 <?php
 
+use Propel\Runtime\Propel;
+use Map\ArticleTableMap;
+use Map\CategoryTableMap;
+
 $app->get('/test(/)', function () use ($app, $quote, $logger) {
 
     $generator = Faker\Factory::create('en_UK');
 
     if (isAdmin()) {
+        $postCon = Propel::getWriteConnection(ArticleTableMap::DATABASE_NAME);
+        $categoryCon = Propel::getWriteConnection(CategoryTableMap::DATABASE_NAME);
+        $postCon->beginTransaction();
+        $categoryCon->beginTransaction();
         for ($i = 1; $i < 20; $i++) {
             if ($i == 19) {
-                $theme = new Theme();
-                $theme->setName('A real category!');
-                $theme->setRoot('/');
-                $theme->setColour('gold');
-                $theme->save();
+                $category = new Category();
+                $category->setName('A real category!');
+                $category->setRoot('/');
+                $category->setColour('gold');
+                $category->save($categoryCon);
 
                 $post = new Article();
                 $post->setDraft(false);
                 $post->setTitle('An article that was actually typed!');
                 $post->setBody("#A post's header\n##Some subtext for the header.\n**Finally, a bit of *bold***\n\n{img a:My namesake's avatar t:The not-so household logo of SacredSkull}test.jpg{/img}");
-                $post->setTheme($theme);
-                $post->save();
+                $post->setCategory($category);
+                $post->save($postCon);
                 break;
             }
-            $theme = new Theme();
-            $theme->setName($generator->company);
-            $theme->setRoot('/');
-            $theme->setColour($generator->hexcolor);
-            $theme->save();
+            $category = new Category();
+            $category->setName($generator->bs);
+            $category->setRoot('/');
+            $category->setColour($generator->hexcolor);
+            $category->save($categoryCon);
 
             $post = new Article();
             $post->setDraft(false);
             $post->setTitle($generator->realText(25));
             $post->setBody($generator->realText(4000));
-            $post->setTheme($theme);
-            $post->save();
+            $post->setCreatedAt($generator->dateTimeThisDecade());
+            $post->setCategory($category);
+            $post->save($postCon);
         }
+        $postCon->commit();
+        $categoryCon->commit();
     }
 
     $logger->info("All test values inserted correctly!");
@@ -44,6 +55,6 @@ $app->get('/test(/)', function () use ($app, $quote, $logger) {
         'wireframe' => WIREFRAME,
         'skull_greeting' => $quote,
         //'posts' => $posts,
-        //'json_theme' => $jsonThemes
+        //'json_category' => $jsonCategorys
     ));
 });

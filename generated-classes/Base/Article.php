@@ -6,12 +6,14 @@ use \Article as ChildArticle;
 use \ArticleQuery as ChildArticleQuery;
 use \ArticleTag as ChildArticleTag;
 use \ArticleTagQuery as ChildArticleTagQuery;
+use \Category as ChildCategory;
+use \CategoryQuery as ChildCategoryQuery;
 use \Tag as ChildTag;
 use \TagQuery as ChildTagQuery;
-use \Theme as ChildTheme;
-use \ThemeQuery as ChildThemeQuery;
 use \View as ChildView;
 use \ViewQuery as ChildViewQuery;
+use \Vote as ChildVote;
+use \VoteQuery as ChildVoteQuery;
 use \DateTime;
 use \Exception;
 use \PDO;
@@ -79,6 +81,7 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * The value for the title field.
+     * Note: this column has a database default value of: 'Untitled'
      * @var        string
      */
     protected $title;
@@ -96,37 +99,11 @@ abstract class Article implements ActiveRecordInterface
     protected $body;
 
     /**
-     * The value for the tags field.
-     * @var        string
-     */
-    protected $tags;
-
-    /**
-     * The value for the positive_votes field.
+     * The value for the category_id field.
      * Note: this column has a database default value of: 0
      * @var        int
      */
-    protected $positive_votes;
-
-    /**
-     * The value for the negative_votes field.
-     * Note: this column has a database default value of: 0
-     * @var        int
-     */
-    protected $negative_votes;
-
-    /**
-     * The value for the theme_id field.
-     * Note: this column has a database default value of: 0
-     * @var        int
-     */
-    protected $theme_id;
-
-    /**
-     * The value for the tag_id field.
-     * @var        int
-     */
-    protected $tag_id;
+    protected $category_id;
 
     /**
      * The value for the image field.
@@ -141,6 +118,13 @@ abstract class Article implements ActiveRecordInterface
      * @var        boolean
      */
     protected $draft;
+
+    /**
+     * The value for the poll_question field.
+     * Note: this column has a database default value of: 'false'
+     * @var        string
+     */
+    protected $poll_question;
 
     /**
      * The value for the created_at field.
@@ -161,14 +145,9 @@ abstract class Article implements ActiveRecordInterface
     protected $slug;
 
     /**
-     * @var        ChildTheme
+     * @var        ChildCategory
      */
-    protected $aTheme;
-
-    /**
-     * @var        ChildTag
-     */
-    protected $aTag;
+    protected $aCategory;
 
     /**
      * @var        ObjectCollection|ChildArticleTag[] Collection to store aggregation of ChildArticleTag objects.
@@ -177,10 +156,15 @@ abstract class Article implements ActiveRecordInterface
     protected $collArticleTagsPartial;
 
     /**
-     * @var        ObjectCollection|ChildView[] Collection to store aggregation of ChildView objects.
+     * @var        ChildView one-to-one related ChildView object
      */
-    protected $collViews;
-    protected $collViewsPartial;
+    protected $singleviewArticleForeign;
+
+    /**
+     * @var        ObjectCollection|ChildVote[] Collection to store aggregation of ChildVote objects.
+     */
+    protected $collVoteArticleForeigns;
+    protected $collVoteArticleForeignsPartial;
 
     /**
      * @var        ObjectCollection|ChildTag[] Cross Collection to store aggregation of ChildTag objects.
@@ -191,6 +175,16 @@ abstract class Article implements ActiveRecordInterface
      * @var bool
      */
     protected $collTagsPartial;
+
+    /**
+     * @var        ObjectCollection|ChildView[] Cross Collection to store aggregation of ChildView objects.
+     */
+    protected $collViews;
+
+    /**
+     * @var bool
+     */
+    protected $collViewsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -208,15 +202,21 @@ abstract class Article implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildView[]
+     */
+    protected $viewsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
      * @var ObjectCollection|ChildArticleTag[]
      */
     protected $articleTagsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildView[]
+     * @var ObjectCollection|ChildVote[]
      */
-    protected $viewsScheduledForDeletion = null;
+    protected $voteArticleForeignsScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -226,11 +226,11 @@ abstract class Article implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
-        $this->positive_votes = 0;
-        $this->negative_votes = 0;
-        $this->theme_id = 0;
+        $this->title = 'Untitled';
+        $this->category_id = 0;
         $this->image = 'default/post_img.png';
         $this->draft = false;
+        $this->poll_question = 'false';
     }
 
     /**
@@ -493,53 +493,13 @@ abstract class Article implements ActiveRecordInterface
     }
 
     /**
-     * Get the [tags] column value.
-     *
-     * @return string
-     */
-    public function getTags()
-    {
-        return $this->tags;
-    }
-
-    /**
-     * Get the [positive_votes] column value.
+     * Get the [category_id] column value.
      *
      * @return int
      */
-    public function getPositiveVotes()
+    public function getCategoryId()
     {
-        return $this->positive_votes;
-    }
-
-    /**
-     * Get the [negative_votes] column value.
-     *
-     * @return int
-     */
-    public function getNegativeVotes()
-    {
-        return $this->negative_votes;
-    }
-
-    /**
-     * Get the [theme_id] column value.
-     *
-     * @return int
-     */
-    public function getThemeId()
-    {
-        return $this->theme_id;
-    }
-
-    /**
-     * Get the [tag_id] column value.
-     *
-     * @return int
-     */
-    public function getTagId()
-    {
-        return $this->tag_id;
+        return $this->category_id;
     }
 
     /**
@@ -570,6 +530,16 @@ abstract class Article implements ActiveRecordInterface
     public function isDraft()
     {
         return $this->getDraft();
+    }
+
+    /**
+     * Get the [poll_question] column value.
+     *
+     * @return string
+     */
+    public function getPollQuestion()
+    {
+        return $this->poll_question;
     }
 
     /**
@@ -703,112 +673,28 @@ abstract class Article implements ActiveRecordInterface
     } // setBody()
 
     /**
-     * Set the value of [tags] column.
-     *
-     * @param string $v new value
-     * @return $this|\Article The current object (for fluent API support)
-     */
-    public function setTags($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->tags !== $v) {
-            $this->tags = $v;
-            $this->modifiedColumns[ArticleTableMap::COL_TAGS] = true;
-        }
-
-        return $this;
-    } // setTags()
-
-    /**
-     * Set the value of [positive_votes] column.
+     * Set the value of [category_id] column.
      *
      * @param int $v new value
      * @return $this|\Article The current object (for fluent API support)
      */
-    public function setPositiveVotes($v)
+    public function setCategoryId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->positive_votes !== $v) {
-            $this->positive_votes = $v;
-            $this->modifiedColumns[ArticleTableMap::COL_POSITIVE_VOTES] = true;
+        if ($this->category_id !== $v) {
+            $this->category_id = $v;
+            $this->modifiedColumns[ArticleTableMap::COL_CATEGORY_ID] = true;
+        }
+
+        if ($this->aCategory !== null && $this->aCategory->getId() !== $v) {
+            $this->aCategory = null;
         }
 
         return $this;
-    } // setPositiveVotes()
-
-    /**
-     * Set the value of [negative_votes] column.
-     *
-     * @param int $v new value
-     * @return $this|\Article The current object (for fluent API support)
-     */
-    public function setNegativeVotes($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->negative_votes !== $v) {
-            $this->negative_votes = $v;
-            $this->modifiedColumns[ArticleTableMap::COL_NEGATIVE_VOTES] = true;
-        }
-
-        return $this;
-    } // setNegativeVotes()
-
-    /**
-     * Set the value of [theme_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\Article The current object (for fluent API support)
-     */
-    public function setThemeId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->theme_id !== $v) {
-            $this->theme_id = $v;
-            $this->modifiedColumns[ArticleTableMap::COL_THEME_ID] = true;
-        }
-
-        if ($this->aTheme !== null && $this->aTheme->getId() !== $v) {
-            $this->aTheme = null;
-        }
-
-        return $this;
-    } // setThemeId()
-
-    /**
-     * Set the value of [tag_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\Article The current object (for fluent API support)
-     */
-    public function setTagId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->tag_id !== $v) {
-            $this->tag_id = $v;
-            $this->modifiedColumns[ArticleTableMap::COL_TAG_ID] = true;
-        }
-
-        if ($this->aTag !== null && $this->aTag->getId() !== $v) {
-            $this->aTag = null;
-        }
-
-        return $this;
-    } // setTagId()
+    } // setCategoryId()
 
     /**
      * Set the value of [image] column.
@@ -859,6 +745,26 @@ abstract class Article implements ActiveRecordInterface
     } // setDraft()
 
     /**
+     * Set the value of [poll_question] column.
+     *
+     * @param string $v new value
+     * @return $this|\Article The current object (for fluent API support)
+     */
+    public function setPollQuestion($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->poll_question !== $v) {
+            $this->poll_question = $v;
+            $this->modifiedColumns[ArticleTableMap::COL_POLL_QUESTION] = true;
+        }
+
+        return $this;
+    } // setPollQuestion()
+
+    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
@@ -869,8 +775,8 @@ abstract class Article implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->created_at !== null || $dt !== null) {
-            if ($dt !== $this->created_at) {
-                $this->created_at = $dt;
+            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->created_at->format("Y-m-d H:i:s")) {
+                $this->created_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[ArticleTableMap::COL_CREATED_AT] = true;
             }
         } // if either are not null
@@ -889,8 +795,8 @@ abstract class Article implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->updated_at !== null || $dt !== null) {
-            if ($dt !== $this->updated_at) {
-                $this->updated_at = $dt;
+            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->updated_at->format("Y-m-d H:i:s")) {
+                $this->updated_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[ArticleTableMap::COL_UPDATED_AT] = true;
             }
         } // if either are not null
@@ -928,15 +834,11 @@ abstract class Article implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->positive_votes !== 0) {
+            if ($this->title !== 'Untitled') {
                 return false;
             }
 
-            if ($this->negative_votes !== 0) {
-                return false;
-            }
-
-            if ($this->theme_id !== 0) {
+            if ($this->category_id !== 0) {
                 return false;
             }
 
@@ -945,6 +847,10 @@ abstract class Article implements ActiveRecordInterface
             }
 
             if ($this->draft !== false) {
+                return false;
+            }
+
+            if ($this->poll_question !== 'false') {
                 return false;
             }
 
@@ -986,40 +892,31 @@ abstract class Article implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ArticleTableMap::translateFieldName('Body', TableMap::TYPE_PHPNAME, $indexType)];
             $this->body = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ArticleTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->tags = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ArticleTableMap::translateFieldName('CategoryId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->category_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ArticleTableMap::translateFieldName('PositiveVotes', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->positive_votes = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ArticleTableMap::translateFieldName('NegativeVotes', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->negative_votes = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ArticleTableMap::translateFieldName('ThemeId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->theme_id = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ArticleTableMap::translateFieldName('TagId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->tag_id = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : ArticleTableMap::translateFieldName('Image', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ArticleTableMap::translateFieldName('Image', TableMap::TYPE_PHPNAME, $indexType)];
             $this->image = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : ArticleTableMap::translateFieldName('Draft', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ArticleTableMap::translateFieldName('Draft', TableMap::TYPE_PHPNAME, $indexType)];
             $this->draft = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : ArticleTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ArticleTableMap::translateFieldName('PollQuestion', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->poll_question = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ArticleTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : ArticleTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : ArticleTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 13 + $startcol : ArticleTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : ArticleTableMap::translateFieldName('Slug', TableMap::TYPE_PHPNAME, $indexType)];
             $this->slug = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
@@ -1029,7 +926,7 @@ abstract class Article implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 14; // 14 = ArticleTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 11; // 11 = ArticleTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Article'), 0, $e);
@@ -1051,11 +948,8 @@ abstract class Article implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aTheme !== null && $this->theme_id !== $this->aTheme->getId()) {
-            $this->aTheme = null;
-        }
-        if ($this->aTag !== null && $this->tag_id !== $this->aTag->getId()) {
-            $this->aTag = null;
+        if ($this->aCategory !== null && $this->category_id !== $this->aCategory->getId()) {
+            $this->aCategory = null;
         }
     } // ensureConsistency
 
@@ -1096,13 +990,15 @@ abstract class Article implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aTheme = null;
-            $this->aTag = null;
+            $this->aCategory = null;
             $this->collArticleTags = null;
 
-            $this->collViews = null;
+            $this->singleviewArticleForeign = null;
+
+            $this->collVoteArticleForeigns = null;
 
             $this->collTags = null;
+            $this->collViews = null;
         } // if (deep)
     }
 
@@ -1226,18 +1122,11 @@ abstract class Article implements ActiveRecordInterface
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aTheme !== null) {
-                if ($this->aTheme->isModified() || $this->aTheme->isNew()) {
-                    $affectedRows += $this->aTheme->save($con);
+            if ($this->aCategory !== null) {
+                if ($this->aCategory->isModified() || $this->aCategory->isNew()) {
+                    $affectedRows += $this->aCategory->save($con);
                 }
-                $this->setTheme($this->aTheme);
-            }
-
-            if ($this->aTag !== null) {
-                if ($this->aTag->isModified() || $this->aTag->isNew()) {
-                    $affectedRows += $this->aTag->save($con);
-                }
-                $this->setTag($this->aTag);
+                $this->setCategory($this->aCategory);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -1280,6 +1169,35 @@ abstract class Article implements ActiveRecordInterface
             }
 
 
+            if ($this->viewsScheduledForDeletion !== null) {
+                if (!$this->viewsScheduledForDeletion->isEmpty()) {
+                    $pks = array();
+                    foreach ($this->viewsScheduledForDeletion as $entry) {
+                        $entryPk = [];
+
+                        $entryPk[0] = $this->getId();
+                        $entryPk[1] = $entry->getIpAddress();
+                        $pks[] = $entryPk;
+                    }
+
+                    \VoteQuery::create()
+                        ->filterByPrimaryKeys($pks)
+                        ->delete($con);
+
+                    $this->viewsScheduledForDeletion = null;
+                }
+
+            }
+
+            if ($this->collViews) {
+                foreach ($this->collViews as $view) {
+                    if (!$view->isDeleted() && ($view->isNew() || $view->isModified())) {
+                        $view->save($con);
+                    }
+                }
+            }
+
+
             if ($this->articleTagsScheduledForDeletion !== null) {
                 if (!$this->articleTagsScheduledForDeletion->isEmpty()) {
                     \ArticleTagQuery::create()
@@ -1297,17 +1215,23 @@ abstract class Article implements ActiveRecordInterface
                 }
             }
 
-            if ($this->viewsScheduledForDeletion !== null) {
-                if (!$this->viewsScheduledForDeletion->isEmpty()) {
-                    \ViewQuery::create()
-                        ->filterByPrimaryKeys($this->viewsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->viewsScheduledForDeletion = null;
+            if ($this->singleviewArticleForeign !== null) {
+                if (!$this->singleviewArticleForeign->isDeleted() && ($this->singleviewArticleForeign->isNew() || $this->singleviewArticleForeign->isModified())) {
+                    $affectedRows += $this->singleviewArticleForeign->save($con);
                 }
             }
 
-            if ($this->collViews !== null) {
-                foreach ($this->collViews as $referrerFK) {
+            if ($this->voteArticleForeignsScheduledForDeletion !== null) {
+                if (!$this->voteArticleForeignsScheduledForDeletion->isEmpty()) {
+                    \VoteQuery::create()
+                        ->filterByPrimaryKeys($this->voteArticleForeignsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->voteArticleForeignsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collVoteArticleForeigns !== null) {
+                foreach ($this->collVoteArticleForeigns as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1352,26 +1276,17 @@ abstract class Article implements ActiveRecordInterface
         if ($this->isColumnModified(ArticleTableMap::COL_BODY)) {
             $modifiedColumns[':p' . $index++]  = 'body';
         }
-        if ($this->isColumnModified(ArticleTableMap::COL_TAGS)) {
-            $modifiedColumns[':p' . $index++]  = 'tags';
-        }
-        if ($this->isColumnModified(ArticleTableMap::COL_POSITIVE_VOTES)) {
-            $modifiedColumns[':p' . $index++]  = 'positive_votes';
-        }
-        if ($this->isColumnModified(ArticleTableMap::COL_NEGATIVE_VOTES)) {
-            $modifiedColumns[':p' . $index++]  = 'negative_votes';
-        }
-        if ($this->isColumnModified(ArticleTableMap::COL_THEME_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'theme_id';
-        }
-        if ($this->isColumnModified(ArticleTableMap::COL_TAG_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'tag_id';
+        if ($this->isColumnModified(ArticleTableMap::COL_CATEGORY_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'category_id';
         }
         if ($this->isColumnModified(ArticleTableMap::COL_IMAGE)) {
             $modifiedColumns[':p' . $index++]  = 'image';
         }
         if ($this->isColumnModified(ArticleTableMap::COL_DRAFT)) {
             $modifiedColumns[':p' . $index++]  = 'draft';
+        }
+        if ($this->isColumnModified(ArticleTableMap::COL_POLL_QUESTION)) {
+            $modifiedColumns[':p' . $index++]  = 'poll_question';
         }
         if ($this->isColumnModified(ArticleTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
@@ -1405,26 +1320,17 @@ abstract class Article implements ActiveRecordInterface
                     case 'body':
                         $stmt->bindValue($identifier, $this->body, PDO::PARAM_STR);
                         break;
-                    case 'tags':
-                        $stmt->bindValue($identifier, $this->tags, PDO::PARAM_STR);
-                        break;
-                    case 'positive_votes':
-                        $stmt->bindValue($identifier, $this->positive_votes, PDO::PARAM_INT);
-                        break;
-                    case 'negative_votes':
-                        $stmt->bindValue($identifier, $this->negative_votes, PDO::PARAM_INT);
-                        break;
-                    case 'theme_id':
-                        $stmt->bindValue($identifier, $this->theme_id, PDO::PARAM_INT);
-                        break;
-                    case 'tag_id':
-                        $stmt->bindValue($identifier, $this->tag_id, PDO::PARAM_INT);
+                    case 'category_id':
+                        $stmt->bindValue($identifier, $this->category_id, PDO::PARAM_INT);
                         break;
                     case 'image':
                         $stmt->bindValue($identifier, $this->image, PDO::PARAM_STR);
                         break;
                     case 'draft':
                         $stmt->bindValue($identifier, (int) $this->draft, PDO::PARAM_INT);
+                        break;
+                    case 'poll_question':
+                        $stmt->bindValue($identifier, $this->poll_question, PDO::PARAM_STR);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -1510,33 +1416,24 @@ abstract class Article implements ActiveRecordInterface
                 return $this->getBody();
                 break;
             case 4:
-                return $this->getTags();
+                return $this->getCategoryId();
                 break;
             case 5:
-                return $this->getPositiveVotes();
-                break;
-            case 6:
-                return $this->getNegativeVotes();
-                break;
-            case 7:
-                return $this->getThemeId();
-                break;
-            case 8:
-                return $this->getTagId();
-                break;
-            case 9:
                 return $this->getImage();
                 break;
-            case 10:
+            case 6:
                 return $this->getDraft();
                 break;
-            case 11:
+            case 7:
+                return $this->getPollQuestion();
+                break;
+            case 8:
                 return $this->getCreatedAt();
                 break;
-            case 12:
+            case 9:
                 return $this->getUpdatedAt();
                 break;
-            case 13:
+            case 10:
                 return $this->getSlug();
                 break;
             default:
@@ -1573,29 +1470,26 @@ abstract class Article implements ActiveRecordInterface
             $keys[1] => $this->getTitle(),
             $keys[2] => $this->getBodyhtml(),
             $keys[3] => $this->getBody(),
-            $keys[4] => $this->getTags(),
-            $keys[5] => $this->getPositiveVotes(),
-            $keys[6] => $this->getNegativeVotes(),
-            $keys[7] => $this->getThemeId(),
-            $keys[8] => $this->getTagId(),
-            $keys[9] => $this->getImage(),
-            $keys[10] => $this->getDraft(),
-            $keys[11] => $this->getCreatedAt(),
-            $keys[12] => $this->getUpdatedAt(),
-            $keys[13] => $this->getSlug(),
+            $keys[4] => $this->getCategoryId(),
+            $keys[5] => $this->getImage(),
+            $keys[6] => $this->getDraft(),
+            $keys[7] => $this->getPollQuestion(),
+            $keys[8] => $this->getCreatedAt(),
+            $keys[9] => $this->getUpdatedAt(),
+            $keys[10] => $this->getSlug(),
         );
 
         $utc = new \DateTimeZone('utc');
-        if ($result[$keys[11]] instanceof \DateTime) {
+        if ($result[$keys[8]] instanceof \DateTime) {
             // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[11]];
-            $result[$keys[11]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+            $dateTime = clone $result[$keys[8]];
+            $result[$keys[8]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
         }
 
-        if ($result[$keys[12]] instanceof \DateTime) {
+        if ($result[$keys[9]] instanceof \DateTime) {
             // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[12]];
-            $result[$keys[12]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+            $dateTime = clone $result[$keys[9]];
+            $result[$keys[9]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1604,35 +1498,20 @@ abstract class Article implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aTheme) {
+            if (null !== $this->aCategory) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'theme';
+                        $key = 'category';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'theme';
+                        $key = 'category';
                         break;
                     default:
-                        $key = 'Theme';
+                        $key = 'Category';
                 }
 
-                $result[$key] = $this->aTheme->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aTag) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'tag';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'tag';
-                        break;
-                    default:
-                        $key = 'Tag';
-                }
-
-                $result[$key] = $this->aTag->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->aCategory->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collArticleTags) {
 
@@ -1649,20 +1528,35 @@ abstract class Article implements ActiveRecordInterface
 
                 $result[$key] = $this->collArticleTags->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
-            if (null !== $this->collViews) {
+            if (null !== $this->singleviewArticleForeign) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'views';
+                        $key = 'view';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'views';
+                        $key = 'view';
                         break;
                     default:
-                        $key = 'Views';
+                        $key = 'View';
                 }
 
-                $result[$key] = $this->collViews->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->singleviewArticleForeign->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collVoteArticleForeigns) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'votes';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'votes';
+                        break;
+                    default:
+                        $key = 'Votes';
+                }
+
+                $result[$key] = $this->collVoteArticleForeigns->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1711,33 +1605,24 @@ abstract class Article implements ActiveRecordInterface
                 $this->setBody($value);
                 break;
             case 4:
-                $this->setTags($value);
+                $this->setCategoryId($value);
                 break;
             case 5:
-                $this->setPositiveVotes($value);
-                break;
-            case 6:
-                $this->setNegativeVotes($value);
-                break;
-            case 7:
-                $this->setThemeId($value);
-                break;
-            case 8:
-                $this->setTagId($value);
-                break;
-            case 9:
                 $this->setImage($value);
                 break;
-            case 10:
+            case 6:
                 $this->setDraft($value);
                 break;
-            case 11:
+            case 7:
+                $this->setPollQuestion($value);
+                break;
+            case 8:
                 $this->setCreatedAt($value);
                 break;
-            case 12:
+            case 9:
                 $this->setUpdatedAt($value);
                 break;
-            case 13:
+            case 10:
                 $this->setSlug($value);
                 break;
         } // switch()
@@ -1779,34 +1664,25 @@ abstract class Article implements ActiveRecordInterface
             $this->setBody($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setTags($arr[$keys[4]]);
+            $this->setCategoryId($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setPositiveVotes($arr[$keys[5]]);
+            $this->setImage($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setNegativeVotes($arr[$keys[6]]);
+            $this->setDraft($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setThemeId($arr[$keys[7]]);
+            $this->setPollQuestion($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setTagId($arr[$keys[8]]);
+            $this->setCreatedAt($arr[$keys[8]]);
         }
         if (array_key_exists($keys[9], $arr)) {
-            $this->setImage($arr[$keys[9]]);
+            $this->setUpdatedAt($arr[$keys[9]]);
         }
         if (array_key_exists($keys[10], $arr)) {
-            $this->setDraft($arr[$keys[10]]);
-        }
-        if (array_key_exists($keys[11], $arr)) {
-            $this->setCreatedAt($arr[$keys[11]]);
-        }
-        if (array_key_exists($keys[12], $arr)) {
-            $this->setUpdatedAt($arr[$keys[12]]);
-        }
-        if (array_key_exists($keys[13], $arr)) {
-            $this->setSlug($arr[$keys[13]]);
+            $this->setSlug($arr[$keys[10]]);
         }
     }
 
@@ -1861,26 +1737,17 @@ abstract class Article implements ActiveRecordInterface
         if ($this->isColumnModified(ArticleTableMap::COL_BODY)) {
             $criteria->add(ArticleTableMap::COL_BODY, $this->body);
         }
-        if ($this->isColumnModified(ArticleTableMap::COL_TAGS)) {
-            $criteria->add(ArticleTableMap::COL_TAGS, $this->tags);
-        }
-        if ($this->isColumnModified(ArticleTableMap::COL_POSITIVE_VOTES)) {
-            $criteria->add(ArticleTableMap::COL_POSITIVE_VOTES, $this->positive_votes);
-        }
-        if ($this->isColumnModified(ArticleTableMap::COL_NEGATIVE_VOTES)) {
-            $criteria->add(ArticleTableMap::COL_NEGATIVE_VOTES, $this->negative_votes);
-        }
-        if ($this->isColumnModified(ArticleTableMap::COL_THEME_ID)) {
-            $criteria->add(ArticleTableMap::COL_THEME_ID, $this->theme_id);
-        }
-        if ($this->isColumnModified(ArticleTableMap::COL_TAG_ID)) {
-            $criteria->add(ArticleTableMap::COL_TAG_ID, $this->tag_id);
+        if ($this->isColumnModified(ArticleTableMap::COL_CATEGORY_ID)) {
+            $criteria->add(ArticleTableMap::COL_CATEGORY_ID, $this->category_id);
         }
         if ($this->isColumnModified(ArticleTableMap::COL_IMAGE)) {
             $criteria->add(ArticleTableMap::COL_IMAGE, $this->image);
         }
         if ($this->isColumnModified(ArticleTableMap::COL_DRAFT)) {
             $criteria->add(ArticleTableMap::COL_DRAFT, $this->draft);
+        }
+        if ($this->isColumnModified(ArticleTableMap::COL_POLL_QUESTION)) {
+            $criteria->add(ArticleTableMap::COL_POLL_QUESTION, $this->poll_question);
         }
         if ($this->isColumnModified(ArticleTableMap::COL_CREATED_AT)) {
             $criteria->add(ArticleTableMap::COL_CREATED_AT, $this->created_at);
@@ -1980,13 +1847,10 @@ abstract class Article implements ActiveRecordInterface
         $copyObj->setTitle($this->getTitle());
         $copyObj->setBodyhtml($this->getBodyhtml());
         $copyObj->setBody($this->getBody());
-        $copyObj->setTags($this->getTags());
-        $copyObj->setPositiveVotes($this->getPositiveVotes());
-        $copyObj->setNegativeVotes($this->getNegativeVotes());
-        $copyObj->setThemeId($this->getThemeId());
-        $copyObj->setTagId($this->getTagId());
+        $copyObj->setCategoryId($this->getCategoryId());
         $copyObj->setImage($this->getImage());
         $copyObj->setDraft($this->getDraft());
+        $copyObj->setPollQuestion($this->getPollQuestion());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         $copyObj->setSlug($this->getSlug());
@@ -2002,9 +1866,14 @@ abstract class Article implements ActiveRecordInterface
                 }
             }
 
-            foreach ($this->getViews() as $relObj) {
+            $relObj = $this->getviewArticleForeign();
+            if ($relObj) {
+                $copyObj->setviewArticleForeign($relObj->copy($deepCopy));
+            }
+
+            foreach ($this->getVoteArticleForeigns() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addView($relObj->copy($deepCopy));
+                    $copyObj->addVoteArticleForeign($relObj->copy($deepCopy));
                 }
             }
 
@@ -2039,24 +1908,24 @@ abstract class Article implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildTheme object.
+     * Declares an association between this object and a ChildCategory object.
      *
-     * @param  ChildTheme $v
+     * @param  ChildCategory $v
      * @return $this|\Article The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setTheme(ChildTheme $v = null)
+    public function setCategory(ChildCategory $v = null)
     {
         if ($v === null) {
-            $this->setThemeId(0);
+            $this->setCategoryId(0);
         } else {
-            $this->setThemeId($v->getId());
+            $this->setCategoryId($v->getId());
         }
 
-        $this->aTheme = $v;
+        $this->aCategory = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildTheme object, it will not be re-added.
+        // If this object has already been added to the ChildCategory object, it will not be re-added.
         if ($v !== null) {
             $v->addArticle($this);
         }
@@ -2067,77 +1936,26 @@ abstract class Article implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildTheme object
+     * Get the associated ChildCategory object
      *
      * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildTheme The associated ChildTheme object.
+     * @return ChildCategory The associated ChildCategory object.
      * @throws PropelException
      */
-    public function getTheme(ConnectionInterface $con = null)
+    public function getCategory(ConnectionInterface $con = null)
     {
-        if ($this->aTheme === null && ($this->theme_id !== null)) {
-            $this->aTheme = ChildThemeQuery::create()->findPk($this->theme_id, $con);
+        if ($this->aCategory === null && ($this->category_id !== null)) {
+            $this->aCategory = ChildCategoryQuery::create()->findPk($this->category_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aTheme->addArticles($this);
+                $this->aCategory->addArticles($this);
              */
         }
 
-        return $this->aTheme;
-    }
-
-    /**
-     * Declares an association between this object and a ChildTag object.
-     *
-     * @param  ChildTag $v
-     * @return $this|\Article The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setTag(ChildTag $v = null)
-    {
-        if ($v === null) {
-            $this->setTagId(NULL);
-        } else {
-            $this->setTagId($v->getId());
-        }
-
-        $this->aTag = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildTag object, it will not be re-added.
-        if ($v !== null) {
-            $v->addArticle($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildTag object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildTag The associated ChildTag object.
-     * @throws PropelException
-     */
-    public function getTag(ConnectionInterface $con = null)
-    {
-        if ($this->aTag === null && ($this->tag_id !== null)) {
-            $this->aTag = ChildTagQuery::create()->findPk($this->tag_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aTag->addArticles($this);
-             */
-        }
-
-        return $this->aTag;
+        return $this->aCategory;
     }
 
 
@@ -2154,8 +1972,8 @@ abstract class Article implements ActiveRecordInterface
         if ('ArticleTag' == $relationName) {
             return $this->initArticleTags();
         }
-        if ('View' == $relationName) {
-            return $this->initViews();
+        if ('VoteArticleForeign' == $relationName) {
+            return $this->initVoteArticleForeigns();
         }
     }
 
@@ -2406,31 +2224,67 @@ abstract class Article implements ActiveRecordInterface
     }
 
     /**
-     * Clears out the collViews collection
+     * Gets a single ChildView object, which is related to this object by a one-to-one relationship.
+     *
+     * @param  ConnectionInterface $con optional connection object
+     * @return ChildView
+     * @throws PropelException
+     */
+    public function getviewArticleForeign(ConnectionInterface $con = null)
+    {
+
+        if ($this->singleviewArticleForeign === null && !$this->isNew()) {
+            $this->singleviewArticleForeign = ChildViewQuery::create()->findPk($this->getPrimaryKey(), $con);
+        }
+
+        return $this->singleviewArticleForeign;
+    }
+
+    /**
+     * Sets a single ChildView object as related to this object by a one-to-one relationship.
+     *
+     * @param  ChildView $v ChildView
+     * @return $this|\Article The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setviewArticleForeign(ChildView $v = null)
+    {
+        $this->singleviewArticleForeign = $v;
+
+        // Make sure that that the passed-in ChildView isn't already associated with this object
+        if ($v !== null && $v->getViewArticle(null, false) === null) {
+            $v->setViewArticle($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collVoteArticleForeigns collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addViews()
+     * @see        addVoteArticleForeigns()
      */
-    public function clearViews()
+    public function clearVoteArticleForeigns()
     {
-        $this->collViews = null; // important to set this to NULL since that means it is uninitialized
+        $this->collVoteArticleForeigns = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collViews collection loaded partially.
+     * Reset is the collVoteArticleForeigns collection loaded partially.
      */
-    public function resetPartialViews($v = true)
+    public function resetPartialVoteArticleForeigns($v = true)
     {
-        $this->collViewsPartial = $v;
+        $this->collVoteArticleForeignsPartial = $v;
     }
 
     /**
-     * Initializes the collViews collection.
+     * Initializes the collVoteArticleForeigns collection.
      *
-     * By default this just sets the collViews collection to an empty array (like clearcollViews());
+     * By default this just sets the collVoteArticleForeigns collection to an empty array (like clearcollVoteArticleForeigns());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -2439,17 +2293,17 @@ abstract class Article implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initViews($overrideExisting = true)
+    public function initVoteArticleForeigns($overrideExisting = true)
     {
-        if (null !== $this->collViews && !$overrideExisting) {
+        if (null !== $this->collVoteArticleForeigns && !$overrideExisting) {
             return;
         }
-        $this->collViews = new ObjectCollection();
-        $this->collViews->setModel('\View');
+        $this->collVoteArticleForeigns = new ObjectCollection();
+        $this->collVoteArticleForeigns->setModel('\Vote');
     }
 
     /**
-     * Gets an array of ChildView objects which contain a foreign key that references this object.
+     * Gets an array of ChildVote objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -2459,168 +2313,196 @@ abstract class Article implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildView[] List of ChildView objects
+     * @return ObjectCollection|ChildVote[] List of ChildVote objects
      * @throws PropelException
      */
-    public function getViews(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getVoteArticleForeigns(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collViewsPartial && !$this->isNew();
-        if (null === $this->collViews || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collViews) {
+        $partial = $this->collVoteArticleForeignsPartial && !$this->isNew();
+        if (null === $this->collVoteArticleForeigns || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collVoteArticleForeigns) {
                 // return empty collection
-                $this->initViews();
+                $this->initVoteArticleForeigns();
             } else {
-                $collViews = ChildViewQuery::create(null, $criteria)
-                    ->filterByArticle($this)
+                $collVoteArticleForeigns = ChildVoteQuery::create(null, $criteria)
+                    ->filterByVoteArticle($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collViewsPartial && count($collViews)) {
-                        $this->initViews(false);
+                    if (false !== $this->collVoteArticleForeignsPartial && count($collVoteArticleForeigns)) {
+                        $this->initVoteArticleForeigns(false);
 
-                        foreach ($collViews as $obj) {
-                            if (false == $this->collViews->contains($obj)) {
-                                $this->collViews->append($obj);
+                        foreach ($collVoteArticleForeigns as $obj) {
+                            if (false == $this->collVoteArticleForeigns->contains($obj)) {
+                                $this->collVoteArticleForeigns->append($obj);
                             }
                         }
 
-                        $this->collViewsPartial = true;
+                        $this->collVoteArticleForeignsPartial = true;
                     }
 
-                    return $collViews;
+                    return $collVoteArticleForeigns;
                 }
 
-                if ($partial && $this->collViews) {
-                    foreach ($this->collViews as $obj) {
+                if ($partial && $this->collVoteArticleForeigns) {
+                    foreach ($this->collVoteArticleForeigns as $obj) {
                         if ($obj->isNew()) {
-                            $collViews[] = $obj;
+                            $collVoteArticleForeigns[] = $obj;
                         }
                     }
                 }
 
-                $this->collViews = $collViews;
-                $this->collViewsPartial = false;
+                $this->collVoteArticleForeigns = $collVoteArticleForeigns;
+                $this->collVoteArticleForeignsPartial = false;
             }
         }
 
-        return $this->collViews;
+        return $this->collVoteArticleForeigns;
     }
 
     /**
-     * Sets a collection of ChildView objects related by a one-to-many relationship
+     * Sets a collection of ChildVote objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $views A Propel collection.
+     * @param      Collection $voteArticleForeigns A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return $this|ChildArticle The current object (for fluent API support)
      */
-    public function setViews(Collection $views, ConnectionInterface $con = null)
+    public function setVoteArticleForeigns(Collection $voteArticleForeigns, ConnectionInterface $con = null)
     {
-        /** @var ChildView[] $viewsToDelete */
-        $viewsToDelete = $this->getViews(new Criteria(), $con)->diff($views);
+        /** @var ChildVote[] $voteArticleForeignsToDelete */
+        $voteArticleForeignsToDelete = $this->getVoteArticleForeigns(new Criteria(), $con)->diff($voteArticleForeigns);
 
 
-        $this->viewsScheduledForDeletion = $viewsToDelete;
+        //since at least one column in the foreign key is at the same time a PK
+        //we can not just set a PK to NULL in the lines below. We have to store
+        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
+        $this->voteArticleForeignsScheduledForDeletion = clone $voteArticleForeignsToDelete;
 
-        foreach ($viewsToDelete as $viewRemoved) {
-            $viewRemoved->setArticle(null);
+        foreach ($voteArticleForeignsToDelete as $voteArticleForeignRemoved) {
+            $voteArticleForeignRemoved->setVoteArticle(null);
         }
 
-        $this->collViews = null;
-        foreach ($views as $view) {
-            $this->addView($view);
+        $this->collVoteArticleForeigns = null;
+        foreach ($voteArticleForeigns as $voteArticleForeign) {
+            $this->addVoteArticleForeign($voteArticleForeign);
         }
 
-        $this->collViews = $views;
-        $this->collViewsPartial = false;
+        $this->collVoteArticleForeigns = $voteArticleForeigns;
+        $this->collVoteArticleForeignsPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related View objects.
+     * Returns the number of related Vote objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related View objects.
+     * @return int             Count of related Vote objects.
      * @throws PropelException
      */
-    public function countViews(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countVoteArticleForeigns(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collViewsPartial && !$this->isNew();
-        if (null === $this->collViews || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collViews) {
+        $partial = $this->collVoteArticleForeignsPartial && !$this->isNew();
+        if (null === $this->collVoteArticleForeigns || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collVoteArticleForeigns) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getViews());
+                return count($this->getVoteArticleForeigns());
             }
 
-            $query = ChildViewQuery::create(null, $criteria);
+            $query = ChildVoteQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
 
             return $query
-                ->filterByArticle($this)
+                ->filterByVoteArticle($this)
                 ->count($con);
         }
 
-        return count($this->collViews);
+        return count($this->collVoteArticleForeigns);
     }
 
     /**
-     * Method called to associate a ChildView object to this object
-     * through the ChildView foreign key attribute.
+     * Method called to associate a ChildVote object to this object
+     * through the ChildVote foreign key attribute.
      *
-     * @param  ChildView $l ChildView
+     * @param  ChildVote $l ChildVote
      * @return $this|\Article The current object (for fluent API support)
      */
-    public function addView(ChildView $l)
+    public function addVoteArticleForeign(ChildVote $l)
     {
-        if ($this->collViews === null) {
-            $this->initViews();
-            $this->collViewsPartial = true;
+        if ($this->collVoteArticleForeigns === null) {
+            $this->initVoteArticleForeigns();
+            $this->collVoteArticleForeignsPartial = true;
         }
 
-        if (!$this->collViews->contains($l)) {
-            $this->doAddView($l);
+        if (!$this->collVoteArticleForeigns->contains($l)) {
+            $this->doAddVoteArticleForeign($l);
         }
 
         return $this;
     }
 
     /**
-     * @param ChildView $view The ChildView object to add.
+     * @param ChildVote $voteArticleForeign The ChildVote object to add.
      */
-    protected function doAddView(ChildView $view)
+    protected function doAddVoteArticleForeign(ChildVote $voteArticleForeign)
     {
-        $this->collViews[]= $view;
-        $view->setArticle($this);
+        $this->collVoteArticleForeigns[]= $voteArticleForeign;
+        $voteArticleForeign->setVoteArticle($this);
     }
 
     /**
-     * @param  ChildView $view The ChildView object to remove.
+     * @param  ChildVote $voteArticleForeign The ChildVote object to remove.
      * @return $this|ChildArticle The current object (for fluent API support)
      */
-    public function removeView(ChildView $view)
+    public function removeVoteArticleForeign(ChildVote $voteArticleForeign)
     {
-        if ($this->getViews()->contains($view)) {
-            $pos = $this->collViews->search($view);
-            $this->collViews->remove($pos);
-            if (null === $this->viewsScheduledForDeletion) {
-                $this->viewsScheduledForDeletion = clone $this->collViews;
-                $this->viewsScheduledForDeletion->clear();
+        if ($this->getVoteArticleForeigns()->contains($voteArticleForeign)) {
+            $pos = $this->collVoteArticleForeigns->search($voteArticleForeign);
+            $this->collVoteArticleForeigns->remove($pos);
+            if (null === $this->voteArticleForeignsScheduledForDeletion) {
+                $this->voteArticleForeignsScheduledForDeletion = clone $this->collVoteArticleForeigns;
+                $this->voteArticleForeignsScheduledForDeletion->clear();
             }
-            $this->viewsScheduledForDeletion[]= clone $view;
-            $view->setArticle(null);
+            $this->voteArticleForeignsScheduledForDeletion[]= clone $voteArticleForeign;
+            $voteArticleForeign->setVoteArticle(null);
         }
 
         return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Article is new, it will return
+     * an empty collection; or if this Article has previously
+     * been saved, it will retrieve related VoteArticleForeigns from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Article.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildVote[] List of ChildVote objects
+     */
+    public function getVoteArticleForeignsJoinView(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildVoteQuery::create(null, $criteria);
+        $query->joinWith('View', $joinBehavior);
+
+        return $this->getVoteArticleForeigns($query, $con);
     }
 
     /**
@@ -2866,29 +2748,265 @@ abstract class Article implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collViews collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addViews()
+     */
+    public function clearViews()
+    {
+        $this->collViews = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Initializes the collViews crossRef collection.
+     *
+     * By default this just sets the collViews collection to an empty collection (like clearViews());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @return void
+     */
+    public function initViews()
+    {
+        $this->collViews = new ObjectCollection();
+        $this->collViewsPartial = true;
+
+        $this->collViews->setModel('\View');
+    }
+
+    /**
+     * Checks if the collViews collection is loaded.
+     *
+     * @return bool
+     */
+    public function isViewsLoaded()
+    {
+        return null !== $this->collViews;
+    }
+
+    /**
+     * Gets a collection of ChildView objects related by a many-to-many relationship
+     * to the current object by way of the vote cross-reference table.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildArticle is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return ObjectCollection|ChildView[] List of ChildView objects
+     */
+    public function getViews(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collViewsPartial && !$this->isNew();
+        if (null === $this->collViews || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collViews) {
+                    $this->initViews();
+                }
+            } else {
+
+                $query = ChildViewQuery::create(null, $criteria)
+                    ->filterByVoteArticle($this);
+                $collViews = $query->find($con);
+                if (null !== $criteria) {
+                    return $collViews;
+                }
+
+                if ($partial && $this->collViews) {
+                    //make sure that already added objects gets added to the list of the database.
+                    foreach ($this->collViews as $obj) {
+                        if (!$collViews->contains($obj)) {
+                            $collViews[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collViews = $collViews;
+                $this->collViewsPartial = false;
+            }
+        }
+
+        return $this->collViews;
+    }
+
+    /**
+     * Sets a collection of View objects related by a many-to-many relationship
+     * to the current object by way of the vote cross-reference table.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param  Collection $views A Propel collection.
+     * @param  ConnectionInterface $con Optional connection object
+     * @return $this|ChildArticle The current object (for fluent API support)
+     */
+    public function setViews(Collection $views, ConnectionInterface $con = null)
+    {
+        $this->clearViews();
+        $currentViews = $this->getViews();
+
+        $viewsScheduledForDeletion = $currentViews->diff($views);
+
+        foreach ($viewsScheduledForDeletion as $toDelete) {
+            $this->removeView($toDelete);
+        }
+
+        foreach ($views as $view) {
+            if (!$currentViews->contains($view)) {
+                $this->doAddView($view);
+            }
+        }
+
+        $this->collViewsPartial = false;
+        $this->collViews = $views;
+
+        return $this;
+    }
+
+    /**
+     * Gets the number of View objects related by a many-to-many relationship
+     * to the current object by way of the vote cross-reference table.
+     *
+     * @param      Criteria $criteria Optional query object to filter the query
+     * @param      boolean $distinct Set to true to force count distinct
+     * @param      ConnectionInterface $con Optional connection object
+     *
+     * @return int the number of related View objects
+     */
+    public function countViews(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collViewsPartial && !$this->isNew();
+        if (null === $this->collViews || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collViews) {
+                return 0;
+            } else {
+
+                if ($partial && !$criteria) {
+                    return count($this->getViews());
+                }
+
+                $query = ChildViewQuery::create(null, $criteria);
+                if ($distinct) {
+                    $query->distinct();
+                }
+
+                return $query
+                    ->filterByVoteArticle($this)
+                    ->count($con);
+            }
+        } else {
+            return count($this->collViews);
+        }
+    }
+
+    /**
+     * Associate a ChildView to this object
+     * through the vote cross reference table.
+     *
+     * @param ChildView $view
+     * @return ChildArticle The current object (for fluent API support)
+     */
+    public function addView(ChildView $view)
+    {
+        if ($this->collViews === null) {
+            $this->initViews();
+        }
+
+        if (!$this->getViews()->contains($view)) {
+            // only add it if the **same** object is not already associated
+            $this->collViews->push($view);
+            $this->doAddView($view);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param ChildView $view
+     */
+    protected function doAddView(ChildView $view)
+    {
+        $vote = new ChildVote();
+
+        $vote->setView($view);
+
+        $vote->setVoteArticle($this);
+
+        $this->addVoteArticleForeign($vote);
+
+        // set the back reference to this object directly as using provided method either results
+        // in endless loop or in multiple relations
+        if (!$view->isVoteArticlesLoaded()) {
+            $view->initVoteArticles();
+            $view->getVoteArticles()->push($this);
+        } elseif (!$view->getVoteArticles()->contains($this)) {
+            $view->getVoteArticles()->push($this);
+        }
+
+    }
+
+    /**
+     * Remove view of this object
+     * through the vote cross reference table.
+     *
+     * @param ChildView $view
+     * @return ChildArticle The current object (for fluent API support)
+     */
+    public function removeView(ChildView $view)
+    {
+        if ($this->getViews()->contains($view)) { $vote = new ChildVote();
+
+            $vote->setView($view);
+            if ($view->isVoteArticlesLoaded()) {
+                //remove the back reference if available
+                $view->getVoteArticles()->removeObject($this);
+            }
+
+            $vote->setVoteArticle($this);
+            $this->removeVoteArticleForeign(clone $vote);
+            $vote->clear();
+
+            $this->collViews->remove($this->collViews->search($view));
+
+            if (null === $this->viewsScheduledForDeletion) {
+                $this->viewsScheduledForDeletion = clone $this->collViews;
+                $this->viewsScheduledForDeletion->clear();
+            }
+
+            $this->viewsScheduledForDeletion->push($view);
+        }
+
+
+        return $this;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
      */
     public function clear()
     {
-        if (null !== $this->aTheme) {
-            $this->aTheme->removeArticle($this);
-        }
-        if (null !== $this->aTag) {
-            $this->aTag->removeArticle($this);
+        if (null !== $this->aCategory) {
+            $this->aCategory->removeArticle($this);
         }
         $this->id = null;
         $this->title = null;
         $this->bodyhtml = null;
         $this->body = null;
-        $this->tags = null;
-        $this->positive_votes = null;
-        $this->negative_votes = null;
-        $this->theme_id = null;
-        $this->tag_id = null;
+        $this->category_id = null;
         $this->image = null;
         $this->draft = null;
+        $this->poll_question = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->slug = null;
@@ -2916,8 +3034,11 @@ abstract class Article implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collViews) {
-                foreach ($this->collViews as $o) {
+            if ($this->singleviewArticleForeign) {
+                $this->singleviewArticleForeign->clearAllReferences($deep);
+            }
+            if ($this->collVoteArticleForeigns) {
+                foreach ($this->collVoteArticleForeigns as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -2926,13 +3047,19 @@ abstract class Article implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collViews) {
+                foreach ($this->collViews as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
         $this->collArticleTags = null;
-        $this->collViews = null;
+        $this->singleviewArticleForeign = null;
+        $this->collVoteArticleForeigns = null;
         $this->collTags = null;
-        $this->aTheme = null;
-        $this->aTag = null;
+        $this->collViews = null;
+        $this->aCategory = null;
     }
 
     /**

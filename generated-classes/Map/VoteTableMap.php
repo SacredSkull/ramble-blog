@@ -2,8 +2,8 @@
 
 namespace Map;
 
-use \Tag;
-use \TagQuery;
+use \Vote;
+use \VoteQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'tag' table.
+ * This class defines the structure of the 'vote' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class TagTableMap extends TableMap
+class VoteTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class TagTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.Map.TagTableMap';
+    const CLASS_NAME = '.Map.VoteTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class TagTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'tag';
+    const TABLE_NAME = 'vote';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Tag';
+    const OM_CLASS = '\\Vote';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Tag';
+    const CLASS_DEFAULT = 'Vote';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 2;
+    const NUM_COLUMNS = 3;
 
     /**
      * The number of lazy-loaded columns
@@ -69,17 +69,22 @@ class TagTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 2;
+    const NUM_HYDRATE_COLUMNS = 3;
 
     /**
-     * the column name for the id field
+     * the column name for the articleID field
      */
-    const COL_ID = 'tag.id';
+    const COL_ARTICLEID = 'vote.articleID';
 
     /**
-     * the column name for the name field
+     * the column name for the ip field
      */
-    const COL_NAME = 'tag.name';
+    const COL_IP = 'vote.ip';
+
+    /**
+     * the column name for the vote field
+     */
+    const COL_VOTE = 'vote.vote';
 
     /**
      * The default string format for model objects of the related table
@@ -93,11 +98,11 @@ class TagTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', ),
-        self::TYPE_COLNAME       => array(TagTableMap::COL_ID, TagTableMap::COL_NAME, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', ),
-        self::TYPE_NUM           => array(0, 1, )
+        self::TYPE_PHPNAME       => array('Articleid', 'Ip', 'Vote', ),
+        self::TYPE_CAMELNAME     => array('articleid', 'ip', 'vote', ),
+        self::TYPE_COLNAME       => array(VoteTableMap::COL_ARTICLEID, VoteTableMap::COL_IP, VoteTableMap::COL_VOTE, ),
+        self::TYPE_FIELDNAME     => array('articleID', 'ip', 'vote', ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -107,11 +112,11 @@ class TagTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, ),
-        self::TYPE_COLNAME       => array(TagTableMap::COL_ID => 0, TagTableMap::COL_NAME => 1, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, ),
-        self::TYPE_NUM           => array(0, 1, )
+        self::TYPE_PHPNAME       => array('Articleid' => 0, 'Ip' => 1, 'Vote' => 2, ),
+        self::TYPE_CAMELNAME     => array('articleid' => 0, 'ip' => 1, 'vote' => 2, ),
+        self::TYPE_COLNAME       => array(VoteTableMap::COL_ARTICLEID => 0, VoteTableMap::COL_IP => 1, VoteTableMap::COL_VOTE => 2, ),
+        self::TYPE_FIELDNAME     => array('articleID' => 0, 'ip' => 1, 'vote' => 2, ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -124,16 +129,17 @@ class TagTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('tag');
-        $this->setPhpName('Tag');
+        $this->setName('vote');
+        $this->setPhpName('Vote');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Tag');
+        $this->setClassName('\\Vote');
         $this->setPackage('');
-        $this->setUseIdGenerator(true);
+        $this->setUseIdGenerator(false);
+        $this->setIsCrossRef(true);
         // columns
-        $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('name', 'Name', 'VARCHAR', true, 60, null);
-        $this->getColumn('name')->setPrimaryString(true);
+        $this->addForeignPrimaryKey('articleID', 'Articleid', 'INTEGER' , 'article', 'id', true, null, null);
+        $this->addForeignPrimaryKey('ip', 'Ip', 'VARCHAR' , 'view', 'ip_address', true, 20, null);
+        $this->addColumn('vote', 'Vote', 'INTEGER', true, null, null);
     } // initialize()
 
     /**
@@ -141,36 +147,73 @@ class TagTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('ArticleTag', '\\ArticleTag', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('VoteArticle', '\\Article', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':tagID',
+    0 => ':articleID',
     1 => ':id',
   ),
-), 'CASCADE', null, 'ArticleTags', false);
-        $this->addRelation('Article', '\\Article', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Articles');
+), null, null, null, false);
+        $this->addRelation('View', '\\View', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':ip',
+    1 => ':ip_address',
+  ),
+), null, null, null, false);
     } // buildRelations()
 
     /**
+     * Adds an object to the instance pool.
      *
-     * Gets the list of behaviors registered for this table
+     * Propel keeps cached copies of objects in an instance pool when they are retrieved
+     * from the database. In some cases you may need to explicitly add objects
+     * to the cache in order to ensure that the same objects are always returned by find*()
+     * and findPk*() calls.
      *
-     * @return array Associative array (name => parameters) of behaviors
+     * @param \Vote $obj A \Vote object.
+     * @param string $key             (optional) key to use for instance map (for performance boost if key was already calculated externally).
      */
-    public function getBehaviors()
+    public static function addInstanceToPool($obj, $key = null)
     {
-        return array(
-            'query_cache' => array('backend' => 'custom', 'lifetime' => '3600', ),
-        );
-    } // getBehaviors()
+        if (Propel::isInstancePoolingEnabled()) {
+            if (null === $key) {
+                $key = serialize(array((string) $obj->getArticleid(), (string) $obj->getIp()));
+            } // if key === null
+            self::$instances[$key] = $obj;
+        }
+    }
+
     /**
-     * Method to invalidate the instance pool of all tables related to tag     * by a foreign key with ON DELETE CASCADE
+     * Removes an object from the instance pool.
+     *
+     * Propel keeps cached copies of objects in an instance pool when they are retrieved
+     * from the database.  In some cases -- especially when you override doDelete
+     * methods in your stub classes -- you may need to explicitly remove objects
+     * from the cache in order to prevent returning objects that no longer exist.
+     *
+     * @param mixed $value A \Vote object or a primary key value.
      */
-    public static function clearRelatedInstancePool()
+    public static function removeInstanceFromPool($value)
     {
-        // Invalidate objects in related instance pools,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ArticleTagTableMap::clearInstancePool();
+        if (Propel::isInstancePoolingEnabled() && null !== $value) {
+            if (is_object($value) && $value instanceof \Vote) {
+                $key = serialize(array((string) $value->getArticleid(), (string) $value->getIp()));
+
+            } elseif (is_array($value) && count($value) === 2) {
+                // assume we've been passed a primary key";
+                $key = serialize(array((string) $value[0], (string) $value[1]));
+            } elseif ($value instanceof Criteria) {
+                self::$instances = [];
+
+                return;
+            } else {
+                $e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or \Vote object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value, true)));
+                throw $e;
+            }
+
+            unset(self::$instances[$key]);
+        }
     }
 
     /**
@@ -189,11 +232,11 @@ class TagTableMap extends TableMap
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
         // If the PK cannot be derived from the row, return NULL.
-        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Articleid', TableMap::TYPE_PHPNAME, $indexType)] === null && $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('Ip', TableMap::TYPE_PHPNAME, $indexType)] === null) {
             return null;
         }
 
-        return (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+        return serialize(array((string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Articleid', TableMap::TYPE_PHPNAME, $indexType)], (string) $row[TableMap::TYPE_NUM == $indexType ? 1 + $offset : static::translateFieldName('Ip', TableMap::TYPE_PHPNAME, $indexType)]));
     }
 
     /**
@@ -210,11 +253,20 @@ class TagTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        return (int) $row[
+            $pks = [];
+
+        $pks[] = (int) $row[
             $indexType == TableMap::TYPE_NUM
                 ? 0 + $offset
-                : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
+                : self::translateFieldName('Articleid', TableMap::TYPE_PHPNAME, $indexType)
         ];
+        $pks[] = (string) $row[
+            $indexType == TableMap::TYPE_NUM
+                ? 1 + $offset
+                : self::translateFieldName('Ip', TableMap::TYPE_PHPNAME, $indexType)
+        ];
+
+        return $pks;
     }
 
     /**
@@ -230,7 +282,7 @@ class TagTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? TagTableMap::CLASS_DEFAULT : TagTableMap::OM_CLASS;
+        return $withPrefix ? VoteTableMap::CLASS_DEFAULT : VoteTableMap::OM_CLASS;
     }
 
     /**
@@ -244,22 +296,22 @@ class TagTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (Tag object, last column rank)
+     * @return array           (Vote object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = TagTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = TagTableMap::getInstanceFromPool($key))) {
+        $key = VoteTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = VoteTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + TagTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + VoteTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = TagTableMap::OM_CLASS;
-            /** @var Tag $obj */
+            $cls = VoteTableMap::OM_CLASS;
+            /** @var Vote $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            TagTableMap::addInstanceToPool($obj, $key);
+            VoteTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -282,18 +334,18 @@ class TagTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = TagTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = TagTableMap::getInstanceFromPool($key))) {
+            $key = VoteTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = VoteTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Tag $obj */
+                /** @var Vote $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                TagTableMap::addInstanceToPool($obj, $key);
+                VoteTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -314,11 +366,13 @@ class TagTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(TagTableMap::COL_ID);
-            $criteria->addSelectColumn(TagTableMap::COL_NAME);
+            $criteria->addSelectColumn(VoteTableMap::COL_ARTICLEID);
+            $criteria->addSelectColumn(VoteTableMap::COL_IP);
+            $criteria->addSelectColumn(VoteTableMap::COL_VOTE);
         } else {
-            $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.articleID');
+            $criteria->addSelectColumn($alias . '.ip');
+            $criteria->addSelectColumn($alias . '.vote');
         }
     }
 
@@ -331,7 +385,7 @@ class TagTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(TagTableMap::DATABASE_NAME)->getTable(TagTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(VoteTableMap::DATABASE_NAME)->getTable(VoteTableMap::TABLE_NAME);
     }
 
     /**
@@ -339,16 +393,16 @@ class TagTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(TagTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(TagTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new TagTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(VoteTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(VoteTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new VoteTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a Tag or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Vote or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Tag object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Vote object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -359,27 +413,37 @@ class TagTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(TagTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(VoteTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Tag) { // it's a model object
+        } elseif ($values instanceof \Vote) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(TagTableMap::DATABASE_NAME);
-            $criteria->add(TagTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(VoteTableMap::DATABASE_NAME);
+            // primary key is composite; we therefore, expect
+            // the primary key passed to be an array of pkey values
+            if (count($values) == count($values, COUNT_RECURSIVE)) {
+                // array is not multi-dimensional
+                $values = array($values);
+            }
+            foreach ($values as $value) {
+                $criterion = $criteria->getNewCriterion(VoteTableMap::COL_ARTICLEID, $value[0]);
+                $criterion->addAnd($criteria->getNewCriterion(VoteTableMap::COL_IP, $value[1]));
+                $criteria->addOr($criterion);
+            }
         }
 
-        $query = TagQuery::create()->mergeWith($criteria);
+        $query = VoteQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            TagTableMap::clearInstancePool();
+            VoteTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                TagTableMap::removeInstanceFromPool($singleval);
+                VoteTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -387,20 +451,20 @@ class TagTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the tag table.
+     * Deletes all rows from the vote table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return TagQuery::create()->doDeleteAll($con);
+        return VoteQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Tag or Criteria object.
+     * Performs an INSERT on the database, given a Vote or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Tag object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Vote object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -409,22 +473,18 @@ class TagTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(TagTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(VoteTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Tag object
-        }
-
-        if ($criteria->containsKey(TagTableMap::COL_ID) && $criteria->keyContainsValue(TagTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.TagTableMap::COL_ID.')');
+            $criteria = $criteria->buildCriteria(); // build Criteria from Vote object
         }
 
 
         // Set the correct dbName
-        $query = TagQuery::create()->mergeWith($criteria);
+        $query = VoteQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -433,7 +493,7 @@ class TagTableMap extends TableMap
         });
     }
 
-} // TagTableMap
+} // VoteTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-TagTableMap::buildTableMap();
+VoteTableMap::buildTableMap();

@@ -2,8 +2,8 @@
 
 namespace Map;
 
-use \Tag;
-use \TagQuery;
+use \Category;
+use \CategoryQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'tag' table.
+ * This class defines the structure of the 'category' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class TagTableMap extends TableMap
+class CategoryTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class TagTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.Map.TagTableMap';
+    const CLASS_NAME = '.Map.CategoryTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class TagTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'tag';
+    const TABLE_NAME = 'category';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Tag';
+    const OM_CLASS = '\\Category';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Tag';
+    const CLASS_DEFAULT = 'Category';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 2;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -69,17 +69,32 @@ class TagTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 2;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'tag.id';
+    const COL_ID = 'category.id';
 
     /**
      * the column name for the name field
      */
-    const COL_NAME = 'tag.name';
+    const COL_NAME = 'category.name';
+
+    /**
+     * the column name for the root field
+     */
+    const COL_ROOT = 'category.root';
+
+    /**
+     * the column name for the colour field
+     */
+    const COL_COLOUR = 'category.colour';
+
+    /**
+     * the column name for the slug field
+     */
+    const COL_SLUG = 'category.slug';
 
     /**
      * The default string format for model objects of the related table
@@ -93,11 +108,11 @@ class TagTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', ),
-        self::TYPE_COLNAME       => array(TagTableMap::COL_ID, TagTableMap::COL_NAME, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', ),
-        self::TYPE_NUM           => array(0, 1, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Root', 'Colour', 'Slug', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'root', 'colour', 'slug', ),
+        self::TYPE_COLNAME       => array(CategoryTableMap::COL_ID, CategoryTableMap::COL_NAME, CategoryTableMap::COL_ROOT, CategoryTableMap::COL_COLOUR, CategoryTableMap::COL_SLUG, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'root', 'colour', 'slug', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -107,11 +122,11 @@ class TagTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, ),
-        self::TYPE_COLNAME       => array(TagTableMap::COL_ID => 0, TagTableMap::COL_NAME => 1, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, ),
-        self::TYPE_NUM           => array(0, 1, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Root' => 2, 'Colour' => 3, 'Slug' => 4, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'root' => 2, 'colour' => 3, 'slug' => 4, ),
+        self::TYPE_COLNAME       => array(CategoryTableMap::COL_ID => 0, CategoryTableMap::COL_NAME => 1, CategoryTableMap::COL_ROOT => 2, CategoryTableMap::COL_COLOUR => 3, CategoryTableMap::COL_SLUG => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'root' => 2, 'colour' => 3, 'slug' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -124,16 +139,19 @@ class TagTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('tag');
-        $this->setPhpName('Tag');
+        $this->setName('category');
+        $this->setPhpName('Category');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Tag');
+        $this->setClassName('\\Category');
         $this->setPackage('');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', true, 60, null);
         $this->getColumn('name')->setPrimaryString(true);
+        $this->addColumn('root', 'Root', 'VARCHAR', true, 128, null);
+        $this->addColumn('colour', 'Colour', 'VARCHAR', false, 10, 'blue');
+        $this->addColumn('slug', 'Slug', 'VARCHAR', false, 255, null);
     } // initialize()
 
     /**
@@ -141,14 +159,13 @@ class TagTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('ArticleTag', '\\ArticleTag', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('Article', '\\Article', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':tagID',
+    0 => ':category_id',
     1 => ':id',
   ),
-), 'CASCADE', null, 'ArticleTags', false);
-        $this->addRelation('Article', '\\Article', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Articles');
+), 'CASCADE', null, 'Articles', false);
     } // buildRelations()
 
     /**
@@ -161,16 +178,17 @@ class TagTableMap extends TableMap
     {
         return array(
             'query_cache' => array('backend' => 'custom', 'lifetime' => '3600', ),
+            'sluggable' => array('slug_column' => 'slug', 'slug_pattern' => '', 'replace_pattern' => '/\W+/', 'replacement' => '-', 'separator' => '-', 'permanent' => 'false', 'scope_column' => '', ),
         );
     } // getBehaviors()
     /**
-     * Method to invalidate the instance pool of all tables related to tag     * by a foreign key with ON DELETE CASCADE
+     * Method to invalidate the instance pool of all tables related to category     * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
     {
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        ArticleTagTableMap::clearInstancePool();
+        ArticleTableMap::clearInstancePool();
     }
 
     /**
@@ -230,7 +248,7 @@ class TagTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? TagTableMap::CLASS_DEFAULT : TagTableMap::OM_CLASS;
+        return $withPrefix ? CategoryTableMap::CLASS_DEFAULT : CategoryTableMap::OM_CLASS;
     }
 
     /**
@@ -244,22 +262,22 @@ class TagTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (Tag object, last column rank)
+     * @return array           (Category object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = TagTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = TagTableMap::getInstanceFromPool($key))) {
+        $key = CategoryTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = CategoryTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + TagTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + CategoryTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = TagTableMap::OM_CLASS;
-            /** @var Tag $obj */
+            $cls = CategoryTableMap::OM_CLASS;
+            /** @var Category $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            TagTableMap::addInstanceToPool($obj, $key);
+            CategoryTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -282,18 +300,18 @@ class TagTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = TagTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = TagTableMap::getInstanceFromPool($key))) {
+            $key = CategoryTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = CategoryTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Tag $obj */
+                /** @var Category $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                TagTableMap::addInstanceToPool($obj, $key);
+                CategoryTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -314,11 +332,17 @@ class TagTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(TagTableMap::COL_ID);
-            $criteria->addSelectColumn(TagTableMap::COL_NAME);
+            $criteria->addSelectColumn(CategoryTableMap::COL_ID);
+            $criteria->addSelectColumn(CategoryTableMap::COL_NAME);
+            $criteria->addSelectColumn(CategoryTableMap::COL_ROOT);
+            $criteria->addSelectColumn(CategoryTableMap::COL_COLOUR);
+            $criteria->addSelectColumn(CategoryTableMap::COL_SLUG);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.root');
+            $criteria->addSelectColumn($alias . '.colour');
+            $criteria->addSelectColumn($alias . '.slug');
         }
     }
 
@@ -331,7 +355,7 @@ class TagTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(TagTableMap::DATABASE_NAME)->getTable(TagTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(CategoryTableMap::DATABASE_NAME)->getTable(CategoryTableMap::TABLE_NAME);
     }
 
     /**
@@ -339,16 +363,16 @@ class TagTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(TagTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(TagTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new TagTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(CategoryTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(CategoryTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new CategoryTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a Tag or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Category or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Tag object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Category object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -359,27 +383,27 @@ class TagTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(TagTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(CategoryTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Tag) { // it's a model object
+        } elseif ($values instanceof \Category) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(TagTableMap::DATABASE_NAME);
-            $criteria->add(TagTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(CategoryTableMap::DATABASE_NAME);
+            $criteria->add(CategoryTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = TagQuery::create()->mergeWith($criteria);
+        $query = CategoryQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            TagTableMap::clearInstancePool();
+            CategoryTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                TagTableMap::removeInstanceFromPool($singleval);
+                CategoryTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -387,20 +411,20 @@ class TagTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the tag table.
+     * Deletes all rows from the category table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return TagQuery::create()->doDeleteAll($con);
+        return CategoryQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Tag or Criteria object.
+     * Performs an INSERT on the database, given a Category or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Tag object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Category object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -409,22 +433,22 @@ class TagTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(TagTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(CategoryTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Tag object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Category object
         }
 
-        if ($criteria->containsKey(TagTableMap::COL_ID) && $criteria->keyContainsValue(TagTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.TagTableMap::COL_ID.')');
+        if ($criteria->containsKey(CategoryTableMap::COL_ID) && $criteria->keyContainsValue(CategoryTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.CategoryTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = TagQuery::create()->mergeWith($criteria);
+        $query = CategoryQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -433,7 +457,7 @@ class TagTableMap extends TableMap
         });
     }
 
-} // TagTableMap
+} // CategoryTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-TagTableMap::buildTableMap();
+CategoryTableMap::buildTableMap();
