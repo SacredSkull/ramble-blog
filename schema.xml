@@ -5,10 +5,12 @@
 		<column name="title" type="varchar" size="255" primaryString="true" default="Untitled" />
 		<column name="bodyHTML" type="longvarchar"/>
 		<column name="body" type="longvarchar" />
+		<column name="excerpt" type="longvarchar" />
 		<column name="category_id" type="integer" required="true" defaultValue="0" />
 		<column name="image" type="varchar" size="255" required="false" default="default/post_img.png" />
 		<column name="draft" type="boolean" required="false" defaultValue="false" />
 		<column name="poll_question" type="varchar" size="255" required="false" default="false"/>
+		<column name="allowComments" type="boolean" required="false" defaultValue="true" />
 		<behavior name="timestampable"/>
 		<behavior name="query_cache">
 			<parameter name="backend" value="custom" />
@@ -41,8 +43,10 @@
 	<table name="category" phpName="Category">
 		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
 		<column name="name" type="varchar" size="60" required="true" primaryString="true" />
-		<column name="root" type="varchar" size="128" required="true" />
+		<column name="root" type="varchar" size="128" required="false" defaultValue="/" />
 		<column name="colour" type="varchar" size="10" required="false" defaultValue="blue" />
+		<column name="font" type="varchar" size="20" required="false" defaultValue="" />
+		<column name="AdditionalCSS" type="varchar" size="256" required="false" defaultValue="" />
 		<behavior name="query_cache">
 			<parameter name="backend" value="custom" />
 		</behavior>

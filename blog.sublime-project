@@ -2,26 +2,25 @@
 	"folders":
 	[
 		{
-			"follow_symlinks": true,
 			"path": "."
-		},
-		{
-			"follow_symlinks": true,
-			"path": "E:\\HND\\Year 2\\Computer Games Design and Development\\Spybots - The Nightfall Incident"
 		}
 	],
-	"settings": {
-        "todoreview": {
-            "exclude_folders": [
-                "*.git*",
-                "*vendor*",
-            ],
-            "exclude_files": [
-                "*bootstrap.css.map",
-                "*epiceditor.js"
-            ],
-            "render_include_folder": true,
-			"render_folder_depth": 3
-        }
-    }
+	"settings":
+	{
+		"todoreview":
+		{
+			"exclude_files":
+			[
+				"*bootstrap.css.map",
+				"*epiceditor.js"
+			],
+			"exclude_folders":
+			[
+				"*.git*",
+				"*vendor*"
+			],
+			"render_folder_depth": 3,
+			"render_include_folder": true
+		}
+	}
 }

@@ -36,9 +36,19 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildCategoryQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildCategoryQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     ChildCategoryQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildCategoryQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildCategoryQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ *
  * @method     ChildCategoryQuery leftJoinArticle($relationAlias = null) Adds a LEFT JOIN clause to the query using the Article relation
  * @method     ChildCategoryQuery rightJoinArticle($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Article relation
  * @method     ChildCategoryQuery innerJoinArticle($relationAlias = null) Adds a INNER JOIN clause to the query using the Article relation
+ *
+ * @method     ChildCategoryQuery joinWithArticle($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Article relation
+ *
+ * @method     ChildCategoryQuery leftJoinWithArticle() Adds a LEFT JOIN clause and with to the query using the Article relation
+ * @method     ChildCategoryQuery rightJoinWithArticle() Adds a RIGHT JOIN clause and with to the query using the Article relation
+ * @method     ChildCategoryQuery innerJoinWithArticle() Adds a INNER JOIN clause and with to the query using the Article relation
  *
  * @method     \ArticleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
@@ -642,9 +652,11 @@ abstract class CategoryQuery extends ModelCriteria
 
             $needsComplexCount = $this->getGroupByColumns()
                 || $this->getOffset()
-                || $this->getLimit()
+                || $this->getLimit() >= 0
                 || $this->getHaving()
-                || in_array(Criteria::DISTINCT, $this->getSelectModifiers());
+                || in_array(Criteria::DISTINCT, $this->getSelectModifiers())
+                || count($this->selectQueries) > 0
+            ;
 
             $params = array();
             if ($needsComplexCount) {

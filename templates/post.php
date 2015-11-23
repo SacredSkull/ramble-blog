@@ -4,7 +4,7 @@
 
 					{% endblock additional_css%}
 					{% block title %}
-						<h1 class="title" id="category_name"><a href="/category/{{post.getCategory.getSlug}}"><p style="color: {{post.getCategory.getColour}};">{{post.getCategory.getName}} &#62;</p></a></h1>
+						<h1 class="title" id="category_name"><a href="/category/{{post.getCategory.getSlug}}"><p style="color: {{post.getCategory.getColour}}; font-family: {{post.getCategory.getFont}};">{{post.getCategory.getName}} &#62;</p></a></h1>
 						<p class="title">{{post.getTitle|title}}</p>
 						<hr>
 						<h4>{{post.getCreatedAt|date("d l, F Y G:i")}}</h4>

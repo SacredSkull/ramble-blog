@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<manifest xmlns="http://schemas.microsoft.com/wlw/manifest/weblog">
+    <options>
+    <clientType>Metaweblog</clientType>
+        <supportsNewCategories>Yes</supportsNewCategories>
+        <supportsNewCategoriesInline>Yes</supportsNewCategoriesInline>
+        <supportsHierarchicalCategories>Yes</supportsHierarchicalCategories>
+        <supportsTrackbacks>No</supportsTrackbacks>
+        <supportsFileUpload>No</supportsFileUpload>
+        <supportsSlug>Yes</supportsTrackbacks>
+        <supportsEmbeds>Yes</supportsEmbeds>
+    </options>
+</manifest>

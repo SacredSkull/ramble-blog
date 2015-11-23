@@ -27,6 +27,8 @@ if (DEBUG == true) {
     error_reporting(0);
 }
 
+date_default_timezone_set("Europe/Belfast");
+
 // Composer
 require './vendor/autoload.php';
 // Propel auto-conf

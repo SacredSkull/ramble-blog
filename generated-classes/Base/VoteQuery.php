@@ -32,13 +32,29 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVoteQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildVoteQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     ChildVoteQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildVoteQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildVoteQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ *
  * @method     ChildVoteQuery leftJoinVoteArticle($relationAlias = null) Adds a LEFT JOIN clause to the query using the VoteArticle relation
  * @method     ChildVoteQuery rightJoinVoteArticle($relationAlias = null) Adds a RIGHT JOIN clause to the query using the VoteArticle relation
  * @method     ChildVoteQuery innerJoinVoteArticle($relationAlias = null) Adds a INNER JOIN clause to the query using the VoteArticle relation
  *
+ * @method     ChildVoteQuery joinWithVoteArticle($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the VoteArticle relation
+ *
+ * @method     ChildVoteQuery leftJoinWithVoteArticle() Adds a LEFT JOIN clause and with to the query using the VoteArticle relation
+ * @method     ChildVoteQuery rightJoinWithVoteArticle() Adds a RIGHT JOIN clause and with to the query using the VoteArticle relation
+ * @method     ChildVoteQuery innerJoinWithVoteArticle() Adds a INNER JOIN clause and with to the query using the VoteArticle relation
+ *
  * @method     ChildVoteQuery leftJoinView($relationAlias = null) Adds a LEFT JOIN clause to the query using the View relation
  * @method     ChildVoteQuery rightJoinView($relationAlias = null) Adds a RIGHT JOIN clause to the query using the View relation
  * @method     ChildVoteQuery innerJoinView($relationAlias = null) Adds a INNER JOIN clause to the query using the View relation
+ *
+ * @method     ChildVoteQuery joinWithView($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the View relation
+ *
+ * @method     ChildVoteQuery leftJoinWithView() Adds a LEFT JOIN clause and with to the query using the View relation
+ * @method     ChildVoteQuery rightJoinWithView() Adds a RIGHT JOIN clause and with to the query using the View relation
+ * @method     ChildVoteQuery innerJoinWithView() Adds a INNER JOIN clause and with to the query using the View relation
  *
  * @method     \ArticleQuery|\ViewQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *

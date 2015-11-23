@@ -48,21 +48,49 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticleQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildArticleQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     ChildArticleQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildArticleQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildArticleQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ *
  * @method     ChildArticleQuery leftJoinCategory($relationAlias = null) Adds a LEFT JOIN clause to the query using the Category relation
  * @method     ChildArticleQuery rightJoinCategory($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Category relation
  * @method     ChildArticleQuery innerJoinCategory($relationAlias = null) Adds a INNER JOIN clause to the query using the Category relation
+ *
+ * @method     ChildArticleQuery joinWithCategory($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Category relation
+ *
+ * @method     ChildArticleQuery leftJoinWithCategory() Adds a LEFT JOIN clause and with to the query using the Category relation
+ * @method     ChildArticleQuery rightJoinWithCategory() Adds a RIGHT JOIN clause and with to the query using the Category relation
+ * @method     ChildArticleQuery innerJoinWithCategory() Adds a INNER JOIN clause and with to the query using the Category relation
  *
  * @method     ChildArticleQuery leftJoinArticleTag($relationAlias = null) Adds a LEFT JOIN clause to the query using the ArticleTag relation
  * @method     ChildArticleQuery rightJoinArticleTag($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ArticleTag relation
  * @method     ChildArticleQuery innerJoinArticleTag($relationAlias = null) Adds a INNER JOIN clause to the query using the ArticleTag relation
  *
+ * @method     ChildArticleQuery joinWithArticleTag($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ArticleTag relation
+ *
+ * @method     ChildArticleQuery leftJoinWithArticleTag() Adds a LEFT JOIN clause and with to the query using the ArticleTag relation
+ * @method     ChildArticleQuery rightJoinWithArticleTag() Adds a RIGHT JOIN clause and with to the query using the ArticleTag relation
+ * @method     ChildArticleQuery innerJoinWithArticleTag() Adds a INNER JOIN clause and with to the query using the ArticleTag relation
+ *
  * @method     ChildArticleQuery leftJoinviewArticleForeign($relationAlias = null) Adds a LEFT JOIN clause to the query using the viewArticleForeign relation
  * @method     ChildArticleQuery rightJoinviewArticleForeign($relationAlias = null) Adds a RIGHT JOIN clause to the query using the viewArticleForeign relation
  * @method     ChildArticleQuery innerJoinviewArticleForeign($relationAlias = null) Adds a INNER JOIN clause to the query using the viewArticleForeign relation
  *
+ * @method     ChildArticleQuery joinWithviewArticleForeign($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the viewArticleForeign relation
+ *
+ * @method     ChildArticleQuery leftJoinWithviewArticleForeign() Adds a LEFT JOIN clause and with to the query using the viewArticleForeign relation
+ * @method     ChildArticleQuery rightJoinWithviewArticleForeign() Adds a RIGHT JOIN clause and with to the query using the viewArticleForeign relation
+ * @method     ChildArticleQuery innerJoinWithviewArticleForeign() Adds a INNER JOIN clause and with to the query using the viewArticleForeign relation
+ *
  * @method     ChildArticleQuery leftJoinVoteArticleForeign($relationAlias = null) Adds a LEFT JOIN clause to the query using the VoteArticleForeign relation
  * @method     ChildArticleQuery rightJoinVoteArticleForeign($relationAlias = null) Adds a RIGHT JOIN clause to the query using the VoteArticleForeign relation
  * @method     ChildArticleQuery innerJoinVoteArticleForeign($relationAlias = null) Adds a INNER JOIN clause to the query using the VoteArticleForeign relation
+ *
+ * @method     ChildArticleQuery joinWithVoteArticleForeign($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the VoteArticleForeign relation
+ *
+ * @method     ChildArticleQuery leftJoinWithVoteArticleForeign() Adds a LEFT JOIN clause and with to the query using the VoteArticleForeign relation
+ * @method     ChildArticleQuery rightJoinWithVoteArticleForeign() Adds a RIGHT JOIN clause and with to the query using the VoteArticleForeign relation
+ * @method     ChildArticleQuery innerJoinWithVoteArticleForeign() Adds a INNER JOIN clause and with to the query using the VoteArticleForeign relation
  *
  * @method     \CategoryQuery|\ArticleTagQuery|\ViewQuery|\VoteQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
@@ -1221,9 +1249,11 @@ abstract class ArticleQuery extends ModelCriteria
 
             $needsComplexCount = $this->getGroupByColumns()
                 || $this->getOffset()
-                || $this->getLimit()
+                || $this->getLimit() >= 0
                 || $this->getHaving()
-                || in_array(Criteria::DISTINCT, $this->getSelectModifiers());
+                || in_array(Criteria::DISTINCT, $this->getSelectModifiers())
+                || count($this->selectQueries) > 0
+            ;
 
             $params = array();
             if ($needsComplexCount) {

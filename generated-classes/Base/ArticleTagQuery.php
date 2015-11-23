@@ -30,13 +30,29 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildArticleTagQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildArticleTagQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     ChildArticleTagQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildArticleTagQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildArticleTagQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ *
  * @method     ChildArticleTagQuery leftJoinArticle($relationAlias = null) Adds a LEFT JOIN clause to the query using the Article relation
  * @method     ChildArticleTagQuery rightJoinArticle($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Article relation
  * @method     ChildArticleTagQuery innerJoinArticle($relationAlias = null) Adds a INNER JOIN clause to the query using the Article relation
  *
+ * @method     ChildArticleTagQuery joinWithArticle($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Article relation
+ *
+ * @method     ChildArticleTagQuery leftJoinWithArticle() Adds a LEFT JOIN clause and with to the query using the Article relation
+ * @method     ChildArticleTagQuery rightJoinWithArticle() Adds a RIGHT JOIN clause and with to the query using the Article relation
+ * @method     ChildArticleTagQuery innerJoinWithArticle() Adds a INNER JOIN clause and with to the query using the Article relation
+ *
  * @method     ChildArticleTagQuery leftJoinTag($relationAlias = null) Adds a LEFT JOIN clause to the query using the Tag relation
  * @method     ChildArticleTagQuery rightJoinTag($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Tag relation
  * @method     ChildArticleTagQuery innerJoinTag($relationAlias = null) Adds a INNER JOIN clause to the query using the Tag relation
+ *
+ * @method     ChildArticleTagQuery joinWithTag($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Tag relation
+ *
+ * @method     ChildArticleTagQuery leftJoinWithTag() Adds a LEFT JOIN clause and with to the query using the Tag relation
+ * @method     ChildArticleTagQuery rightJoinWithTag() Adds a RIGHT JOIN clause and with to the query using the Tag relation
+ * @method     ChildArticleTagQuery innerJoinWithTag() Adds a INNER JOIN clause and with to the query using the Tag relation
  *
  * @method     \ArticleQuery|\TagQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
@@ -655,9 +671,11 @@ abstract class ArticleTagQuery extends ModelCriteria
 
             $needsComplexCount = $this->getGroupByColumns()
                 || $this->getOffset()
-                || $this->getLimit()
+                || $this->getLimit() >= 0
                 || $this->getHaving()
-                || in_array(Criteria::DISTINCT, $this->getSelectModifiers());
+                || in_array(Criteria::DISTINCT, $this->getSelectModifiers())
+                || count($this->selectQueries) > 0
+            ;
 
             $params = array();
             if ($needsComplexCount) {

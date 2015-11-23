@@ -32,13 +32,29 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildViewQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildViewQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     ChildViewQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildViewQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildViewQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ *
  * @method     ChildViewQuery leftJoinViewArticle($relationAlias = null) Adds a LEFT JOIN clause to the query using the ViewArticle relation
  * @method     ChildViewQuery rightJoinViewArticle($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ViewArticle relation
  * @method     ChildViewQuery innerJoinViewArticle($relationAlias = null) Adds a INNER JOIN clause to the query using the ViewArticle relation
  *
+ * @method     ChildViewQuery joinWithViewArticle($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ViewArticle relation
+ *
+ * @method     ChildViewQuery leftJoinWithViewArticle() Adds a LEFT JOIN clause and with to the query using the ViewArticle relation
+ * @method     ChildViewQuery rightJoinWithViewArticle() Adds a RIGHT JOIN clause and with to the query using the ViewArticle relation
+ * @method     ChildViewQuery innerJoinWithViewArticle() Adds a INNER JOIN clause and with to the query using the ViewArticle relation
+ *
  * @method     ChildViewQuery leftJoinVote($relationAlias = null) Adds a LEFT JOIN clause to the query using the Vote relation
  * @method     ChildViewQuery rightJoinVote($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Vote relation
  * @method     ChildViewQuery innerJoinVote($relationAlias = null) Adds a INNER JOIN clause to the query using the Vote relation
+ *
+ * @method     ChildViewQuery joinWithVote($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Vote relation
+ *
+ * @method     ChildViewQuery leftJoinWithVote() Adds a LEFT JOIN clause and with to the query using the Vote relation
+ * @method     ChildViewQuery rightJoinWithVote() Adds a RIGHT JOIN clause and with to the query using the Vote relation
+ * @method     ChildViewQuery innerJoinWithVote() Adds a INNER JOIN clause and with to the query using the Vote relation
  *
  * @method     \ArticleQuery|\VoteQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
@@ -688,9 +704,11 @@ abstract class ViewQuery extends ModelCriteria
 
             $needsComplexCount = $this->getGroupByColumns()
                 || $this->getOffset()
-                || $this->getLimit()
+                || $this->getLimit() >= 0
                 || $this->getHaving()
-                || in_array(Criteria::DISTINCT, $this->getSelectModifiers());
+                || in_array(Criteria::DISTINCT, $this->getSelectModifiers())
+                || count($this->selectQueries) > 0
+            ;
 
             $params = array();
             if ($needsComplexCount) {

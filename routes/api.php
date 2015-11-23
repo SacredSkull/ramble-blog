@@ -11,7 +11,7 @@ $app->group('/api', function () use ($app) {
         $posts[] = null;
         foreach ($allPosts as $post) {
             $title_js_ready = jsFriendly($post->getTitle());
-            $category_js_ready = jsFriendly($post->getCategory()->getName());
+            $category_js_ready = jsFriendly($post->getCategory()->getName() . " (" . $post->getCategory()->getFont() . ")");
             $posts[$post->getId()] = array('title' => $title_js_ready, 'category' =>  $category_js_ready, 'id' => $post->getId() );
         }
         unset($posts[0]);

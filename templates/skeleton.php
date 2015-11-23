@@ -3,8 +3,9 @@
 			<meta charset="UTF-8" />
 		{% block head %}
 			<title>{% block page_title %}{% endblock page_title %}SacredSkull &#9760;</title>
-			<link href='//fonts.googleapis.com/css?family=Passion+One|Basic|Droid+Sans:400,700|Inika:700|Roboto+Slab|Contrail+One' rel='stylesheet' type='text/css'>
+			<!-- <link href='//fonts.googleapis.com/css?family=Passion+One|Basic|Droid+Sans:400,700|Inika:700|Roboto+Slab|Contrail+One' rel='stylesheet' type='text/css'> -->
 			<link href='/include/css/nanoscroller.css' rel='stylesheet' type='text/css'>
+			<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="wlwmanifest.xml" />
 			{%if wireframe%}<link href='/include/css/wireframe.css' rel='stylesheet/css' type='text/css'>{%else%}<link href='/include/css/styles.css' rel='stylesheet' type='text/css'>{%endif%}
             <link rel="stylesheet" type="text/css" href="/include/css/jquery.mCustomScrollbar.min.css">
 		{% endblock head %}
@@ -130,6 +131,14 @@
 		<script type="text/javascript" src="/include/js/min/bootstrap.min.js"></script>
 		<script type="text/javascript" src="/include/js/min/jquery.nanoscroller.min.js"></script>
         <script type="text/javascript" src="/include/js/min/jquery.mCustomScrollbar.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+		<script>
+		  WebFont.load({
+		    google: {
+		      families: ['Passion One', 'Basic', 'Droid Sans:400,700', 'Inika:700', 'Roboto Slab', 'Contrail One'{% for font in additionalFonts %}, '{{font}}'{% endfor %}]
+		    }
+		  });
+		</script>
 		{% block additional_js %}
 		{% endblock additional_js %}
 		<script type="text/javascript" src="/include/js/custom.js"></script>

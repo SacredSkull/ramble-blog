@@ -30,9 +30,19 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildTagQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildTagQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     ChildTagQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildTagQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildTagQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ *
  * @method     ChildTagQuery leftJoinArticleTag($relationAlias = null) Adds a LEFT JOIN clause to the query using the ArticleTag relation
  * @method     ChildTagQuery rightJoinArticleTag($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ArticleTag relation
  * @method     ChildTagQuery innerJoinArticleTag($relationAlias = null) Adds a INNER JOIN clause to the query using the ArticleTag relation
+ *
+ * @method     ChildTagQuery joinWithArticleTag($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ArticleTag relation
+ *
+ * @method     ChildTagQuery leftJoinWithArticleTag() Adds a LEFT JOIN clause and with to the query using the ArticleTag relation
+ * @method     ChildTagQuery rightJoinWithArticleTag() Adds a RIGHT JOIN clause and with to the query using the ArticleTag relation
+ * @method     ChildTagQuery innerJoinWithArticleTag() Adds a INNER JOIN clause and with to the query using the ArticleTag relation
  *
  * @method     \ArticleTagQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
@@ -557,9 +567,11 @@ abstract class TagQuery extends ModelCriteria
 
             $needsComplexCount = $this->getGroupByColumns()
                 || $this->getOffset()
-                || $this->getLimit()
+                || $this->getLimit() >= 0
                 || $this->getHaving()
-                || in_array(Criteria::DISTINCT, $this->getSelectModifiers());
+                || in_array(Criteria::DISTINCT, $this->getSelectModifiers())
+                || count($this->selectQueries) > 0
+            ;
 
             $params = array();
             if ($needsComplexCount) {
