@@ -7,7 +7,7 @@
 						<h1 class="title" id="category_name"><a href="/category/{{post.getCategory.getSlug}}"><p style="color: {{post.getCategory.getColour}}; font-family: {{post.getCategory.getFont}};">{{post.getCategory.getName}} &#62;</p></a></h1>
 						<p class="title">{{post.getTitle|title}}</p>
 						<hr>
-						<h4>{{post.getCreatedAt|date("d l, F Y G:i")}}</h4>
+						<h4>{{post.getCreatedAt|date("jS l, F Y G:i")}}</h4>
 					{% endblock title %}
 					{% block left_side %}
 						<div id="post_details_cont">

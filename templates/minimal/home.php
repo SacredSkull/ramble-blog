@@ -29,7 +29,7 @@
                                     {% set slug = post.getSlug|split('_') %}
                                     <h1 class="title"><a class="title_link" href="{{baseUrl()}}/{{slug[0]|date('Y/m/d/')}}{{slug[1]}}">{{post.getTitle|title}}</a></h1>
                                     <hr>
-                                    <h4>{{post.getCreatedAt|date("jS l, F Y G:i")}}</h4>
+                                    <h4>{{post.getCreatedAt|date("d l, F Y G:i")}}</h4>
                                 </div>
                             </div>
                             <div class="row">

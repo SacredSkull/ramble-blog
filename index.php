@@ -15,6 +15,7 @@ define('CERT_AUTH', false);
 define('BYPASS_AUTH', true);
 define('SITE_ROOT', realpath(dirname(__FILE__)));
 define('USING_PARSEDOWN', false);
+define('MINIMAL_THEME', true);
 if (defined('USING_WINDOWS')) {
     define('USING_WINDOWS', (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'));
 }
@@ -89,7 +90,7 @@ if (!$defaultCategory->findPK(1)) {
 
 $app = new \Slim\Slim(array(
     'view' => new \Slim\Views\Twig(),
-    'templates.path' => './templates',
+    'templates.path' => MINIMAL_THEME? './templates/minimal' : './templates',
     'debug' => DEBUG_SLIM,
     'debug.revealHttpVariables' => DEBUG_SLIM,
 ));

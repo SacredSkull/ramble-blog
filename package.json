@@ -1,0 +1,34 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "My personal blog",
+  "main": "-",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp-concat": "^2.6.0",
+    "gulp-gm": "0.0.8",
+    "gulp-ignore": "^2.0.1",
+    "gulp-jshint": "^2.0.0",
+    "gulp-order": "^1.1.1",
+    "gulp-plumber": "^1.0.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.1.1",
+    "gulp-shell": "^0.5.1",
+    "gulp-uglify": "^1.5.1",
+    "jshint": "^2.8.0",
+    "node-bourbon": "^4.2.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://SacredSkull@bitbucket.org/SacredSkull/sacredskull.git"
+  },
+  "keywords": [
+    "blog"
+  ],
+  "author": "Peter Clotworthy",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/SacredSkull/sacredskull#readme"
+}

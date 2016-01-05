@@ -13,7 +13,7 @@ $app->get('/id/:idArticle(/)', function ($idArticle) use ($app, $quote) {
         'wireframe' => WIREFRAME,
         'skull_greeting' => $quote,
         'post' => $post,
-        'additionalFonts' => array($post->getCategory()->getFont()),
+        'additionalFonts' => $additionalFonts[] = $post->getCategory()->getFont(),
     ));
 })->conditions(array(
     'idArticle' => '\d{1,10}',
@@ -36,7 +36,7 @@ $app->get('/:year/:month/:day/:slugArticle(/)', function ($year, $month, $day, $
         'wireframe' => WIREFRAME,
         'skull_greeting' => $quote,
         'post' => $post,
-        'additionalFonts' => array($post->getCategory()->getFont()),
+        'additionalFonts' => $additionalFonts[] = $post->getCategory()->getFont(),
     ));
 })->conditions(array(
     'year' => '(19|20)\d\d',

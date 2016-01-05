@@ -34,14 +34,16 @@ class TwigExtensionExecutionTime extends \Twig_Extension
         $app = "</code>s.";
 
         $secs = $durationMS / 1000;
-        if ($secs < 0.5) {
+        if($secs < 0.01){
+            $pre = "a scorchingly fast <code>";
+        } elseif ($secs < 0.5) {
             $pre = " <code>";
         } elseif ($secs < 1) {
             $pre = "a decent <code>";
         } elseif ($secs > 1 && $secs < 1.5) {
             $pre = "a lengthy <code>";
         } else {
-            $pre = "a very slow  <code>";
+            $pre = "a very slow <code>";
         }
 
         return "Generated in ".$pre.number_format($secs, 3, '.', '').$app;

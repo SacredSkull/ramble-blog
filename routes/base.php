@@ -1,5 +1,7 @@
 <?php
 
+$additionalFonts = array();
+
 $homepageHandler = function ($page = 1) use ($app, $quote) {
     $maxPerPage = 10;
 
@@ -42,7 +44,7 @@ $homepageHandler = function ($page = 1) use ($app, $quote) {
         'categories' => $categories,
         'max_pages' => $maxPages,
     ));
-};
+};//https://jsfiddle.net/rudyjahchan/u5c4k1xg/
 
 $app->get('/page/:page(/)', $homepageHandler)->conditions(array(
     'page' => '\d{1,4}',
