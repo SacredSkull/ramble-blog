@@ -4,7 +4,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="A layout example that shows off a blog page with a list of posts.">
 		<title>{% block page_title %}{% endblock page_title %}SacredSkull &#9760;</title>
-		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/pure-min.css">
 
 		{% block head %}
 
@@ -18,10 +18,10 @@
 		{% endblock additional_css%}
 		</style>
 		<!--[if lte IE 8]>
-			<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-old-ie-min.css">
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/grids-responsive-old-ie-min.css">
 		<![endif]-->
 		<!--[if gt IE 8]><!-->
-			<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/grids-responsive-min.css">
 		<!--<![endif]-->
 
 		<!--[if lte IE 8]>
