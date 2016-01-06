@@ -83,3 +83,6 @@ gulp.task('skull', function() {
 
 // Default Task
 gulp.task('default', ['lint', 'sass', 'scripts', 'watch', 'skull']);
+
+// Default Task
+gulp.task('batch', ['sass', 'scripts', 'skull']);
