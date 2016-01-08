@@ -4,23 +4,29 @@ use Propel\Runtime\Propel;
 use Map\ArticleTableMap;
 use Map\CategoryTableMap;
 
-$app->get('/test(/)', function () use ($app, $quote, $logger) {
+$app->get('/test(/:count)', function ($count) use ($app, $quote, $logger) {
 
     $generator = Faker\Factory::create('en_UK');
+    if(empty($count))
+        $count = 20;
 
     if (isAdmin()) {
         $postCon = Propel::getWriteConnection(ArticleTableMap::DATABASE_NAME);
         $categoryCon = Propel::getWriteConnection(CategoryTableMap::DATABASE_NAME);
+
+        $category = CategoryQuery::create()->findOneByName("Fake");
+        if($category == NULL){
+            $category = new Category();
+            $category->setName('Fake');
+            $category->setRoot('/');
+            $category->setColour('gold');
+            $category->save($categoryCon);
+        }
+
         $postCon->beginTransaction();
         $categoryCon->beginTransaction();
-        for ($i = 1; $i < 20; $i++) {
-            if ($i == 19) {
-                $category = new Category();
-                $category->setName('A real category!');
-                $category->setRoot('/');
-                $category->setColour('gold');
-                $category->save($categoryCon);
-
+        for ($i = 1; $i < $count; $i++) {
+            if ($i == ($count - 1)) {
                 $post = new Article();
                 $post->setDraft(false);
                 $post->setTitle('An article that was actually typed!');
@@ -29,11 +35,6 @@ $app->get('/test(/)', function () use ($app, $quote, $logger) {
                 $post->save($postCon);
                 break;
             }
-            $category = new Category();
-            $category->setName($generator->bs);
-            $category->setRoot('/');
-            $category->setColour($generator->hexcolor);
-            $category->save($categoryCon);
 
             $post = new Article();
             $post->setDraft(false);
@@ -57,4 +58,6 @@ $app->get('/test(/)', function () use ($app, $quote, $logger) {
         //'posts' => $posts,
         //'json_category' => $jsonCategorys
     ));
-});
+})->conditions(array(
+    'page' => '\d{1,4}',
+));;
