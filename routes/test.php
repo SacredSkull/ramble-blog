@@ -14,7 +14,7 @@ $app->get('/test(/:count)', function ($count) use ($app, $quote, $logger) {
         $postCon = Propel::getWriteConnection(ArticleTableMap::DATABASE_NAME);
         $categoryCon = Propel::getWriteConnection(CategoryTableMap::DATABASE_NAME);
 
-        $category = Category::create()->findOneByName("Fake");
+        $category = CategoryQuery::create()->findOneByName("Fake");
         if($category == NULL){
             $category = new Category();
             $category->setName('Fake');
