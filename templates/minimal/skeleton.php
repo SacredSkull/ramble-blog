@@ -2,7 +2,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="A layout example that shows off a blog page with a list of posts.">
+		<meta name="description" content="Blog of SacredSkull">
 		<title>{% block page_title %}{% endblock page_title %}SacredSkull &#9760;</title>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/pure-min.css">
 
@@ -18,10 +18,10 @@
 		{% endblock additional_css%}
 		</style>
 		<!--[if lte IE 8]>
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/grids-responsive-old-ie-min.css">
+			<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/grids-responsive-old-ie-min.css">
 		<![endif]-->
 		<!--[if gt IE 8]><!-->
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/grids-responsive-min.css">
+			<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/grids-responsive-min.css">
 		<!--<![endif]-->
 
 		<!--[if lte IE 8]>
@@ -84,20 +84,20 @@
 
 					<div class="footer">
 						{% if posts.haveToPaginate %}
-                            <div class="pure-menu pure-menu-horizontal">
-                                <ul>
-                                    <li class="pure-menu-item{% if current_page == 1 %} disabled{% endif %}"><a class="pure-menu-link" href="{{pagination_url|default('/page/')}}1">&laquo;</a></li>
-                                {% for page in page_list %}
-                                    <li class="pure-menu-item{% if current_page == page %} active{% endif %}"><a class="pure-menu-link" href="{{pagination_url|default('/page/')}}{{page}}">{{page}}</a></li>
-                                {% endfor %}
-                                    <li class="pure-menu-item{% if max_pages == current_page %} disabled{% endif %}"><a class="pure-menu-link" href="{{pagination_url|default('/page/')}}{{max_pages}}">&raquo;</a></li>
-                                </ul>
-                            </div>
-                            {% endif %}
+                        <div class="pure-menu pure-menu-horizontal">
+                            <ul>
+                                <li class="pure-menu-item{% if current_page == 1 %} disabled{% endif %}"><a class="pure-menu-link" href="{{pagination_url|default('/page/')}}1">&laquo;</a></li>
+                            {% for page in page_list %}
+                                <li class="pure-menu-item{% if current_page == page %} active{% endif %}"><a class="pure-menu-link" href="{{pagination_url|default('/page/')}}{{page}}">{{page}}</a></li>
+                            {% endfor %}
+                                <li class="pure-menu-item{% if max_pages == current_page %} disabled{% endif %}"><a class="pure-menu-link" href="{{pagination_url|default('/page/')}}{{max_pages}}">&raquo;</a></li>
+                            </ul>
+                        </div>
+                        {% endif %}
 						<div class="pure-menu pure-menu-horizontal">
 							<ul>
 								<li class="pure-menu-item"><a title="Read: how I wasted my time this week" href="//www.stumbleupon.com/stumbler/SacredSkull" class="pure-menu-link">My StumbleUpon</a></li>
-								<li class="pure-menu-item"><a href="//www.last.fm/user/Cl0ttERS" class="pure-menu-link">Last.fm</a></li>
+								<li class="pure-menu-item"><a title="What I listen to" href="//www.last.fm/user/Cl0ttERS" class="pure-menu-link">Last.fm</a></li>
 								<li class="pure-menu-item"><a title="Open-source projects I have tinkered on" href="//github.com/sacredskull" class="pure-menu-link">GitHub</a></li>
 								<li class="pure-menu-item"><a class="pure-menu-link">{{ executeTime() }}</a></li>
 							</ul>
