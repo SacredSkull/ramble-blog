@@ -73,7 +73,7 @@ gulp.task('watch', function() {
 
 gulp.task('skull', function() {
     return gulp.src('include/img/skull.svg')
-    .pipe(plumber())
+    // .pipe(plumber())
     .pipe(gm(function(skull){
         return skull.setFormat('jpg')
                     .resize(450, 450);
