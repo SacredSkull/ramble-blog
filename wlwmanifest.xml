@@ -7,7 +7,7 @@
         <supportsHierarchicalCategories>Yes</supportsHierarchicalCategories>
         <supportsTrackbacks>No</supportsTrackbacks>
         <supportsFileUpload>No</supportsFileUpload>
-        <supportsSlug>Yes</supportsTrackbacks>
+        <supportsSlug>Yes</supportsSlug>
         <supportsEmbeds>Yes</supportsEmbeds>
     </options>
 </manifest>
