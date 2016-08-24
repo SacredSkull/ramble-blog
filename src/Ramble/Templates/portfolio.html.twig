@@ -1,0 +1,27 @@
+{% extends 'skeleton.html.twig' %}
+                    {% block css_block %}
+                    <link href='{{baseUrl()}}/include/css/portfolio.css' rel='stylesheet' type='text/css'>
+                    {% endblock css_block %}
+
+                    {% block content %}
+                        <h1 class="content-subhead">Portfolio</h1>
+                        <!-- A single blog post -->
+                        <section class="post">
+                            <header class="post-header">
+                                <img class="post-avatar" alt="Post's image" src="include/img/edit.png" height="48" width="48">
+                                <h2 class="post-title"><a class="title_link" href="link for project">Projekt</a></h2>
+                                <p class="post-meta">
+                                    &nbsp;2014
+                                </p>
+                            </header>
+
+                            <div class="post-description">
+                                <p>Some project</p>
+                            </div>
+                        </section>
+                    {% endblock content%}
+
+                    {% block additional_js %}
+                        <script type="text/javascript">
+                        </script>
+                    {% endblock additional_js %}

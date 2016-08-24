@@ -1,0 +1,235 @@
+//
+// COLOURS
+//
+
+$sidebar-start: #2C3E50;
+$sidebar-mid: #50738F;
+$sidebar-end: $sidebar-start;
+
+$title-colour: #E74C3C;
+// $quote-colour: #EEE610;
+$quote-colour: #FFF;
+$category-colour: #FFF;
+
+.pure-img-responsive {
+	max-width: 100%;
+	height: auto;
+}
+
+.title span {
+	display: inline-block;
+	padding: 0;
+}
+
+.sidebar {
+	@include linear-gradient(to bottom, $sidebar-start 0%, $sidebar-mid 75%, $sidebar-end 100%, $fallback: $sidebar-start);
+	color: #fff;
+}
+
+.sidebar .nav-item a {
+	background: transparent;
+	border: 4px solid $category-colour;
+	color: $category-colour;
+	margin-top: 4px;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	font-size: 1vw;
+}
+
+.sidebar .nav-item a:hover,
+.sidebar .nav-item a:focus {
+	background: $category-colour;
+	@include animation(fade-hover 0.2s 1);
+	border: 4px solid $category-colour;
+	color: $sidebar-start;
+	text-decoration: none;
+}
+
+#skull {
+	position: relative;
+	top: 0;
+	left: 0;
+	z-index: 0;
+	width: 100%;
+	height: 40%;
+}
+
+.brand-tagline, .brand-title {
+	//position: relative;
+	margin: 0;
+	z-index: 1;
+}
+
+.brand-tagline {
+	i {
+		display: inline;
+		padding-top: 0px;
+		padding-bottom: 0px;
+		padding-left: 8px;
+		padding-right: 10px;
+		-webkit-box-decoration-break: clone;
+		-ms-box-decoration-break: clone;
+		-o-box-decoration-break: clone;
+		box-decoration-break: clone;
+		// @include background(#000);
+	}
+	margin-bottom: 15px;
+	min-height: 70px;
+	font-size: 1.2vw;
+	font-family: $tagline-font;
+	//font-weight: 300;
+	color: $quote-colour;
+}
+
+.brand-title {
+	position: relative;
+	@include padding(1vh 5vw 1vh 5vw);
+	font-size: 2.7vw;
+	font-family: $title-font;
+	//font-variant: small-caps;
+	white-space: nowrap;
+	margin: 0;
+	z-index: 1;
+	left: 0;
+}
+
+// .brand-title {
+//     // display: inline;
+//     // padding: 4px;
+//     // // @include background(#000);
+//     // font-size: 40px;
+//     // font-family: $title-font;
+//     // // color: $title-colour;
+//     // font-variant: small-caps;
+//     // span{
+//     //     //position: relative;
+//     //     left: 1px;
+//     //     font-size: 30px;
+//     // }
+// }
+
+.brand-title span {
+	padding: 0;
+}
+
+.brand-title .title-top{
+	@include animation(hotline-miami-1 2s infinite);
+	@include animation-direction(alternate);
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 1;
+	color: #fff;
+}
+
+.brand-title .title-shadow {
+  @include animation(hotline-miami-2 2s infinite);
+  @include animation-direction(alternate);
+  position: absolute;
+  left: 0px;
+  top: 0;
+  z-index: -1;
+  color: #fff;
+}
+
+/*
+ * ANIMATIONS
+ */
+
+@include keyframes(fade-hover) {
+	0% {
+		background: rgba($category-colour, 0);
+	}
+
+	100% {
+		background: rgba($category-colour, 255);
+	}
+}
+
+@include keyframes(hotline-miami-1) {
+	0% {
+		left: 0.5vw;
+		text-shadow: none;
+		@include animation-timing-function(linear);
+		@include transform(rotate3d(0, 1, 1, 2deg));
+	}
+
+	50% {
+		left: 0;
+		text-shadow: none;
+		@include animation-timing-function(linear);
+	}
+
+	100%{
+		// Slightly off side:
+		left: -0.5vw;
+		text-shadow:
+		0.1vw 0 #fff,
+		// 8px 0 #FFE6E9,
+		// 12px 0 #FFD4DA,
+		0.2vw 0 #FCBCC5,
+		// 20px 0 #FEA9B6,
+		// 24px 0 #FC95A6,
+		0.3vw 0 #FF8297,
+		// 32px 0 #FF738B,
+		// 36px 0 #FF647E,
+		0.4vw 0 #FF516E,
+		// 44px 0 #FF3F5F,
+		// 48px 0 #FF2D50,
+		0.5vw 0 #FF2045,
+		// 56px 0 #FC143A,
+		// 60px 0 #FC0C34,
+		0.6vw 0 #FF001F;
+		@include transform(rotate3d(0, 0, -1, 2deg));
+		@include animation-timing-function(ease-in-out);
+	}
+}
+
+@include keyframes(hotline-miami-2) {
+	0% {
+		left: 0.5vw;
+		text-shadow:
+		-0.1vw 0 #fff,
+		// 8px 0 #FFE6E9,
+		// 12px 0 #FFD4DA,
+		-0.2vw 0 #FCBCC5,
+		// 20px 0 #FEA9B6,
+		// 24px 0 #FC95A6,
+		-0.3vw 0 #FF8297,
+		// 32px 0 #FF738B,
+		// 36px 0 #FF647E,
+		-0.4vw 0 #FF516E,
+		// 44px 0 #FF3F5F,
+		// 48px 0 #FF2D50,
+		-0.5vw 0 #FF2045,
+		// 56px 0 #FC143A,
+		// 60px 0 #FC0C34,
+		-0.6vw 0 #FF001F;
+		@include transform(rotate3d(0, 1, 1, 2deg));
+		@include animation-timing-function(linear);
+	}
+
+	50% {
+		left: 0;
+		text-shadow: none;
+		@include animation-timing-function(linear);
+	}
+
+	100%{
+		left: -0.5vw;
+		text-shadow: none;
+		@include transform(rotate3d(0, 0, -1, 2deg));
+		@include animation-timing-function(ease-in-out);
+	}
+}
+
+@include keyframes(hotline-hover) {
+	0% {
+		@include transform(translate3d(0vw, 0vw, 0vw));
+		@include animation-timing-function(ease-in-out);
+	}
+	100% {
+		@include transform(translate3d(0vw, 0.3vh, 0vw));
+		@include animation-timing-function(ease-in-out);
+	}
+}

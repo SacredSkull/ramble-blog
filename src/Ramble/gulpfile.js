@@ -1,7 +1,7 @@
 // Include gulp
 var gulp = require('gulp');
 
-// Include Our Plugins
+// Include our plugins
 var jshint = require('gulp-jshint');
 var sass = require('gulp-sass');
 var concat = require('gulp-concat');
@@ -13,9 +13,9 @@ var gm = require('gulp-gm');
 var plumber = require('gulp-plumber');
 var livereload = require('gulp-livereload');
 
-// Lint Task
+// Lint task
 gulp.task('lint', function() {
-    return gulp.src('Public/include/js/app/*.js')
+    return gulp.src('Public/include/js/minimal/app/*.js')
         .pipe(plumber())
         .pipe(jshint({
             laxcomma: true
@@ -23,7 +23,7 @@ gulp.task('lint', function() {
         .pipe(jshint.reporter('default'));
 });
 
-// Compile Our Sass
+// Compile our sass
 gulp.task('sass', function() {
     return gulp.src('Public/include/scss/*.scss')
         .pipe(plumber())
@@ -36,31 +36,31 @@ gulp.task('sass', function() {
         .pipe(livereload());
 });
 
-// Concatenate & Minify JS
+// Concatenate & minify JS
 gulp.task('scripts', function() {
-    return gulp.src(['Public/include/js/**/*.js', '!Public/include/js/out/*.js'])
+    return gulp.src(['Public/include/js/minimal/**/*.js', '!Public/include/js/minimal/out/*.js'])
         .pipe(plumber())
         .pipe(order([
             'lib/*.js',
             'app/*.js',
         ], {base: 'Public/include/js/minimal'}))
         .pipe(concat('all.js'))
-        .pipe(gulp.dest('Public/include/js/out'))
+        .pipe(gulp.dest('include/js/minimal/out'))
         .pipe(rename('all.min.js'))
         .pipe(uglify())
-        .pipe(gulp.dest('Public/include/js/out'))
+        .pipe(gulp.dest('Public/include/js/minimal/out'))
         .pipe(livereload());
 });
 
-// Watch Files For Changes
+// Watch files for changes
 gulp.task('watch', function() {
     livereload.listen({host: "0.0.0.0"});
-    gulp.watch('Public/include/js/app/*.js', function() {
+    gulp.watch('Public/include/js/minimal/app/*.js', function() {
         setTimeout(function () {
             gulp.start(['lint', 'scripts']);
         }, 500);
     });
-    gulp.watch(['Public/include/js/lib/*.js', 'Public/include/js/lib/min/*.js'], function() {
+    gulp.watch(['Public/include/js/minimal/lib/*.js', 'Public/include/js/minimal/lib/min/*.js'], function() {
         setTimeout(function () {
             gulp.start('scripts');
         }, 500);
@@ -87,8 +87,8 @@ gulp.task('skull', function() {
         .pipe(gulp.dest('Public/include/img'));
 });
 
-// Default Task
+// Default task
 gulp.task('default', ['lint', 'sass', 'scripts', 'watch', 'skull']);
 
-// Default Task
+// Batch task
 gulp.task('batch', ['sass', 'scripts', 'skull']);

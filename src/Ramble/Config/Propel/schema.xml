@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="blog" defaultIdMethod="native" namespace="Ramble\Models">
+	<table name="article" phpName="Article">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+		<column name="title" type="varchar" size="255" primaryString="true" default="Untitled" />
+		<column name="bodyHTML" type="longvarchar"/>
+		<column name="body" type="longvarchar" />
+		<column name="excerpt" type="longvarchar" />
+		<column name="category_id" type="integer" required="true" defaultValue="0" />
+		<column name="image" type="varchar" size="255" required="false" default="default/post_img.png" />
+		<column name="draft" type="boolean" required="false" defaultValue="false" />
+		<column name="poll_question" type="varchar" size="255" required="false" default="false"/>
+		<column name="allowComments" type="boolean" required="false" defaultValue="true" />
+		<behavior name="timestampable"/>
+		<behavior name="query_cache">
+			<parameter name="backend" value="custom" />
+		</behavior>
+        <behavior name="versionable" />
+		<foreign-key foreignTable="category" phpName="Category" onDelete="CASCADE" refPhpName="Article">
+			<reference local="category_id" foreign="id"/>
+		</foreign-key>
+		<behavior name="sluggable" />
+	</table>
+	<table name="tag" phpName="Tag">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="name" type="varchar" size="60" required="true" primaryString="true" />
+		<behavior name="query_cache">
+			<parameter name="backend" value="custom" />
+		</behavior>
+	</table>
+	<table name="article_tag" phpName="ArticleTag" isCrossRef="true">
+		<column name="articleID" type="integer" required="true" primaryKey="true" />
+		<column name="tagID" type="integer" required="true" primaryKey="true" />
+		<foreign-key foreignTable="article" onDelete="CASCADE">
+			<reference local="articleID" foreign="id"/>
+		</foreign-key>
+		<foreign-key foreignTable="tag" onDelete="CASCADE">
+			<reference local="tagID" foreign="id"/>
+		</foreign-key>
+		<behavior name="query_cache">
+			<parameter name="backend" value="custom" />
+		</behavior>
+	</table>
+	<table name="category" phpName="Category">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="name" type="varchar" size="60" required="true" primaryString="true" />
+		<column name="root" type="varchar" size="128" required="false" defaultValue="/" />
+		<column name="colour" type="varchar" size="10" required="false" defaultValue="blue" />
+<!-- 		<column name="font" type="varchar" size="20" required="false" defaultValue="" /> -->
+		<column name="AdditionalCSS" type="varchar" size="256" required="false" defaultValue="" />
+		<behavior name="query_cache">
+			<parameter name="backend" value="custom" />
+		</behavior>
+		<behavior name="sluggable" />
+	</table>
+ 	<table name="view" phpName="View">
+		<column name="article_id" type="integer" required="true" primaryKey="true" />
+		<column name="ip_address" type="varchar" size="20" required="true" />
+		<column name="time" type="timestamp" defaultExpr="CURRENT_TIMESTAMP" required="true"/>
+		<behavior name="query_cache">
+			<parameter name="backend" value="custom" />
+		</behavior>
+		<foreign-key foreignTable="article" phpName="ViewArticle" onDelete="CASCADE" refPhpName="viewArticleForeign">
+			<reference local="article_id" foreign="id"/>
+	 	</foreign-key>
+	</table>
+	<table name="vote" phpName="Vote" isCrossRef="true">
+		<column name="articleID" type="integer" primaryKey="true" />
+		<column name="ip" type="varchar" size="20" primaryKey="true" />
+		<column name="vote" type="integer" required="true" />
+		<foreign-key foreignTable="article" phpName="VoteArticle" refPhpName="VoteArticleForeign">
+			<reference local="articleID" foreign="id"/>
+		</foreign-key>
+ 		<foreign-key foreignTable="view">
+			<reference local="ip" foreign="ip_address"/>
+		</foreign-key>
+	</table>
+</database>

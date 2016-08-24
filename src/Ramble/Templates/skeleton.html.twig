@@ -1,0 +1,115 @@
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="Blog of SacredSkull">
+		<title>{% block page_title %}{% endblock page_title %}SacredSkull &#9760;</title>
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/pure-min.css">
+		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans|Oswald">
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/styles/monokai-sublime.min.css">
+		{% set OPTIMAL_CSS %}
+			<link href='{{base_url()}}/include/css/styles.css' rel='stylesheet' type='text/css'>
+		{% endset %}
+		{% block css_block %}
+		{% endblock css_block %}
+
+		<style type="text/css">
+			{% block additional_css %}
+			{% endblock additional_css%}
+		</style>
+
+		<!--[if IE]>
+		{{ OPTIMAL_CSS }}
+		<![endif]-->
+		<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="{{base_url()}}/wlwmanifest.xml" />
+
+		{% block head %} {% endblock head %}
+
+		<!--[if lte IE 8]>
+			<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/grids-responsive-old-ie-min.css">
+		<![endif]-->
+		<!--[if gt IE 8]><!-->
+			<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/grids-responsive-min.css">
+		<!--<![endif]-->
+	</head>
+	<body>
+		{{ OPTIMAL_CSS }}
+		<div id="layout" class="pure-g">
+			<div class="sidebar pure-u-1 pure-u-md-1-4">
+				<div class="header">
+					<object id="skull" class="pure-img-responsive" type="image/svg+xml" data="{{base_url()}}/include/img/skull.svg" onerror="this.src = '{{base_url()}}/include/img/skull.png'">
+						<img id="skull" class="pure-img-responsive" src="{{base_url()}}/include/img/skull.svg" onerror="this.src='{{base_url()}}/include/img/skull.png'"/>
+					</object>
+					{# <img id="skull" class="pure-img-responsive" src="{{base_url()}}/include/img/skull.svg" onerror="this.src = '{{base_url()}}/include/img/skull.png'"/> #}
+{# 					<h1 class="brand-title"> #}
+						<a class="brand-title" href="{{ base_url() }}">
+							<span class="title title-top">
+								<span class="char1">S</span><span class="char2">a</span><span class="char3">c</span><span class="char4">r</span><span class="char5">e</span><span class="char6">d</span><span class="char7">S</span><span class="char8">k</span><span class="char9">u</span><span class="char10">l</span><span class="char11">l</span><span class="char12">.</span>
+							</span>
+							<span class="title title-shadow">
+								<span class="char1">S</span><span class="char2">a</span><span class="char3">c</span><span class="char4">r</span><span class="char5">e</span><span class="char6">d</span><span class="char7">S</span><span class="char8">k</span><span class="char9">u</span><span class="char10">l</span><span class="char11">l</span><span class="char12">.</span>
+							</span>
+						</a>
+{# 					</h1> #}
+					<h2 class="brand-tagline"><i>{% if flash['denied'] is defined %}{{ flash['denied'][0] }}{% else %}{{ quote|default('Take note of your nearest emergency exit') }}{% endif %}</i></h2>
+					<nav class="nav">
+						<ul class="nav-list">
+							{% for category in categories %}
+							<li class="nav-item nav-item-tight">
+								<a style="//color: {{category.getColour}};" href="{{base_url()}}/category/{{category.getSlug}}" class="pure-button category">{{category.getName}}</a>
+							</li>
+							{% endfor %}
+						</ul>
+					</nav>
+				</div>
+			</div>
+
+			<div class="content pure-u-1 pure-u-md-3-4">
+				<div>
+					<!-- A wrapper for all the blog posts -->
+					<div class="posts">
+						{% block content %}
+							<p>Nothing to see here!</p>
+						{% endblock content%}
+					</div>
+					<div class="footer">
+						{% if posts.haveToPaginate %}
+						<div id="pagination" class="pure-menu pure-menu-horizontal">
+							<ul>
+								<li class="pure-menu-item{% if current_page == 1 %} disabled{% endif %}"><a class="pure-menu-link" href="{{pagination_url|default('/page/')}}1">&laquo;</a></li>
+							{% for page in page_list %}
+								<li class="pure-menu-item{% if current_page == page %} active{% endif %}"><a class="pure-menu-link" href="{{pagination_url|default('/page/')}}{{page}}">{{page}}</a></li>
+							{% endfor %}
+								<li class="pure-menu-item{% if max_pages == current_page %} disabled{% endif %}"><a class="pure-menu-link" href="{{pagination_url|default('/page/')}}{{max_pages}}">&raquo;</a></li>
+							</ul>
+						</div>
+						{% endif %}
+						<div id="footer" class="pure-menu pure-menu-horizontal">
+							<ul>
+								<li class="pure-menu-item"><a title="Read: how I wasted my time this week" href="//www.stumbleupon.com/stumbler/SacredSkull" class="pure-menu-link">My StumbleUpon</a></li>
+								<li class="pure-menu-item"><a title="What I listen to" href="//www.last.fm/user/Cl0ttERS" class="pure-menu-link">Last.fm</a></li>
+								<li class="pure-menu-item"><a title="Open-source projects I have tinkered on" href="//github.com/sacredskull" class="pure-menu-link">GitHub</a></li>
+								<li class="pure-menu-item"><a class="pure-menu-link">{{ executeTime() }}</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script async type="text/javascript" src="{{base_url()}}/include/js/out/all.min.js"></script>
+		<script async src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.6.0/highlight.min.js"></script>
+		// <script src="//ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+		{% if debug %}<script>document.write('<script src="//192.168.1.123' + ':35729/livereload.js"></' + 'script>')</script>{% endif %}
+		<script>
+		//   WebFont.load({
+		// 	google: {
+		// 	  families: ['Passion One', 'Fugaz One', 'Droid Sans:400,700', 'Droid Serif', 'Roboto Slab', 'Oswald', 'Archivo Narrow', 'Open Sans:400'{% for font in additionalFonts %}, '{{font}}'{% endfor %}]
+		// 	}
+		//   });
+			hljs.initHighlightingOnLoad();
+		</script>
+		{% block additional_js %}
+		{% endblock additional_js %}
+	</body>
+</html>

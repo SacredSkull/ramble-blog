@@ -1,0 +1,42 @@
+{% extends 'skeleton.html.twig' %}
+                    {% block additional_css%}
+                        .do-not-style{
+                            color: black;
+                        }
+                    {% endblock additional_css %}
+
+                    {% block content %}
+                        <h1 class="content-subhead">Posts</h1>
+                        <!-- A single blog post -->
+                        {% for post in posts %}
+                        <section class="post">
+                            <header class="post-header">
+                                {# <img class="post-avatar" alt="Post's image" src="include/img/edit.png" height="48" width="48"> #}
+                                {% set slug = post.getSlug|split('_') %}
+                                <h2 class="post-title"><a class="title_link" href="{{base_url()}}/{{slug[0]|date('Y/m/d/')}}{{slug[1]}}">{{post.title}}</a></h2>
+                                <p class="post-meta">
+                                    <a href="/category/{{post.getCategory.getSlug}}" style="//color: {{post.getCategory.getColour}};" class="post-category">{{post.getCategory.getName}}</a>
+                                    {% for tag in post.getTags  %}
+                                        {% if loop.first %}
+                                            relating to
+                                        {% endif %}
+                                        <a class="tag post-category post-category-design" href="{{base_url}}/tag/{{tag.getName}}">{{tag.getName}}</a>
+                                    {% endfor %}
+                                    &nbsp;{{post.getCreatedAt|date('jS F Y, G:i')}}
+                                </p>
+                            </header>
+
+                            <div class="post-description">
+                                <p>{{post.getBodyhtml|truncateHTML(2000, " ...")}}</p>
+                            </div>
+                        </section>
+                        {% endfor %}
+                    {% endblock content%}
+
+                    {% block additional_js %}
+                        <script type="text/javascript">
+                            $(document).ready(function(){
+                                //$("#left-nav").mCustomScrollbar();
+                            });
+                        </script>
+                    {% endblock additional_js %}
