@@ -5,8 +5,7 @@ namespace Ramble\Ciconia;
 use Ciconia\Common\Text;
 use Ciconia\Extension\ExtensionInterface;
 
-class ColourExtension implements ExtensionInterface
-{
+class ColourExtension implements ExtensionInterface {
     /**
      * {@inheritdoc}
      */
@@ -20,7 +19,6 @@ class ColourExtension implements ExtensionInterface
      */
     public function colourText(Text $text)
     {
-        // Turn @username into [@username](http://example.com/user/username)
         $text->replace('/^{c:([#\w]\w+)}([^{]+){\/c}/', function (Text $w, Text $colour, Text $string) {
             return sprintf("<span style='color: %s'>%s</span>", $colour, $string);
         });

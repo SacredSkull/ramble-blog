@@ -32,6 +32,19 @@
                         </section>
                         {% endfor %}
                     {% endblock content%}
+					{% block footer %}
+						{% if posts.haveToPaginate %}
+							<div id="pagination" class="pure-menu pure-menu-horizontal">
+								<ul>
+									<li class="pure-menu-item{% if current_page == 1 %} pure-menu-disabled{% endif %}"><a class="pure-menu-link" href="{{pagination_url}}/page/1">&laquo;</a></li>
+									{% for page in page_list %}
+										<li class="pure-menu-item{% if current_page == page %} active{% endif %}"><a class="pure-menu-link" href="{{pagination_url}}/page/{{page}}">{{page}}</a></li>
+									{% endfor %}
+									<li class="pure-menu-item{% if max_pages == current_page %} pure-menu-disabled{% endif %}"><a class="pure-menu-link" href="{{pagination_url}}/page/{{max_pages}}">&raquo;</a></li>
+								</ul>
+							</div>
+						{% endif %}
+					{% endblock footer %}
 
                     {% block additional_js %}
                         <script type="text/javascript">

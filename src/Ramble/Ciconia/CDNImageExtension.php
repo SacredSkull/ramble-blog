@@ -5,8 +5,7 @@ namespace Ramble\Ciconia;
 use Ciconia\Common\Text;
 use Ciconia\Extension\ExtensionInterface;
 
-class CDNImageExtension implements ExtensionInterface
-{
+class CDNImageExtension implements ExtensionInterface {
     /**
      * {@inheritdoc}
      */

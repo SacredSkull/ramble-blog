@@ -73,17 +73,8 @@
 						{% endblock content%}
 					</div>
 					<div class="footer">
-						{% if posts.haveToPaginate %}
-						<div id="pagination" class="pure-menu pure-menu-horizontal">
-							<ul>
-								<li class="pure-menu-item{% if current_page == 1 %} disabled{% endif %}"><a class="pure-menu-link" href="{{pagination_url|default('/page/')}}1">&laquo;</a></li>
-							{% for page in page_list %}
-								<li class="pure-menu-item{% if current_page == page %} active{% endif %}"><a class="pure-menu-link" href="{{pagination_url|default('/page/')}}{{page}}">{{page}}</a></li>
-							{% endfor %}
-								<li class="pure-menu-item{% if max_pages == current_page %} disabled{% endif %}"><a class="pure-menu-link" href="{{pagination_url|default('/page/')}}{{max_pages}}">&raquo;</a></li>
-							</ul>
-						</div>
-						{% endif %}
+						{% block footer %}
+						{% endblock footer %}
 						<div id="footer" class="pure-menu pure-menu-horizontal">
 							<ul>
 								<li class="pure-menu-item"><a title="Read: how I wasted my time this week" href="//www.stumbleupon.com/stumbler/SacredSkull" class="pure-menu-link">My StumbleUpon</a></li>
