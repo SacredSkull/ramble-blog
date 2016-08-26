@@ -5,6 +5,7 @@ use Ciconia\Extension\Gfm;
 use DateTime;
 use Ramble\Ciconia\CDNImageExtension;
 use Ramble\Ciconia\ColourExtension;
+use Ramble\Ciconia\CodeExtension;
 use Ramble\Models\Base\Article as BaseArticle;
 
 /**
@@ -17,10 +18,8 @@ use Ramble\Models\Base\Article as BaseArticle;
  * long as it does not already exist in the output directory.
  *
  */
-class Article extends BaseArticle
-{
-    public function createSlug()
-    {
+class Article extends BaseArticle {
+    public function createSlug() {
         $createdAt = $this->getCreatedAt();
         if (empty($createdAt)) {
             $createdAt = new DateTime(date('Y-m-d'));
@@ -38,17 +37,18 @@ class Article extends BaseArticle
 
         return $slug;
     }
-    public function preSave(\Propel\Runtime\Connection\ConnectionInterface $con = null)
-    {
+    
+    public function preSave(\Propel\Runtime\Connection\ConnectionInterface $con = null) {
         $ciconia = new \Ciconia\Ciconia();
-        $ciconia->addExtension(new Gfm\FencedCodeBlockExtension());
-        $ciconia->addExtension(new Gfm\TaskListExtension());
-        $ciconia->addExtension(new Gfm\InlineStyleExtension());
-        $ciconia->addExtension(new Gfm\WhiteSpaceExtension());
-        $ciconia->addExtension(new Gfm\TableExtension());
-        $ciconia->addExtension(new Gfm\UrlAutoLinkExtension());
-        $ciconia->addExtension(new ColourExtension());
-        $ciconia->addExtension(new CDNImageExtension());
+	    $ciconia->addExtension(new ColourExtension());
+	    $ciconia->addExtension(new CDNImageExtension());
+	    $ciconia->addExtension(new CodeExtension());
+	    $ciconia->addExtension(new Gfm\FencedCodeBlockExtension());
+	    $ciconia->addExtension(new Gfm\TaskListExtension());
+	    $ciconia->addExtension(new Gfm\InlineStyleExtension());
+	    $ciconia->addExtension(new Gfm\WhiteSpaceExtension());
+	    $ciconia->addExtension(new Gfm\TableExtension());
+	    $ciconia->addExtension(new Gfm\UrlAutoLinkExtension());
 
         $rendered = $ciconia->render($this->body);
         $this->setBodyhtml($rendered);
