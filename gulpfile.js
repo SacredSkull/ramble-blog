@@ -12,6 +12,9 @@ var order = require("gulp-order");
 var gm = require('gulp-gm');
 var plumber = require('gulp-plumber');
 var livereload = require('gulp-livereload');
+var test = require('bourbon-neat');
+
+console.log(test.includePaths);
 
 // Lint Task
 gulp.task('lint', function() {
@@ -30,7 +33,10 @@ gulp.task('sass', function() {
         .pipe(sass({
             // includePaths: require('node-bourbon').with('other/path', 'another/path')
             // - or -
-            includePaths: require('node-bourbon').includePaths
+            includePaths: [
+                require('node-bourbon').includePaths,
+                require('bourbon-neat').includePaths
+            ]
         }))
         .pipe(gulp.dest('Public/include/css'))
         .pipe(livereload());

@@ -1,27 +1,50 @@
-{% extends 'skeleton.html.twig' %}
-                    {% block css_block %}
-                    <link href='{{baseUrl()}}/include/css/portfolio.css' rel='stylesheet' type='text/css'>
-                    {% endblock css_block %}
+<html>
+	<head>
+		<link href="{{ base_url() }}/include/css/portfolio.css" rel="stylesheet">
+	</head>
 
-                    {% block content %}
-                        <h1 class="content-subhead">Portfolio</h1>
-                        <!-- A single blog post -->
-                        <section class="post">
-                            <header class="post-header">
-                                <img class="post-avatar" alt="Post's image" src="include/img/edit.png" height="48" width="48">
-                                <h2 class="post-title"><a class="title_link" href="link for project">Projekt</a></h2>
-                                <p class="post-meta">
-                                    &nbsp;2014
-                                </p>
-                            </header>
+	<body>
+	<header>
+		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1200" height="400" viewBox="0 0 1200 400">
+			<!-- add title for accessibility -->
+			<title>Adding Background to Text using SVG clipPath</title>
+			<defs>
+				<clippath id="my-path">
+					<text x="50%" y="50%" font-size="200" text-anchor="middle">PROJECTS</text>
+				</clippath>
+			</defs>
+			<image xlink:href="/include/img/skull.jpg" clip-path="url(#my-path)" width="100%" height="100%" preserveAspectRatio="none" ></image>
+		</svg>
+	</header>
+	<ul>
+		<li class="block">
+			<div>
+				{#<img src="{{ base_url() }}/include/img/skull.jpg">#}
+				<div>Test</div>
+			</div>
+		</li>
+		<li class="block">
+			<div>
+				Test
+			</div>
+		</li>
+		<li class="block">
+			<div>
+				Test
+			</div>
+		</li>
 
-                            <div class="post-description">
-                                <p>Some project</p>
-                            </div>
-                        </section>
-                    {% endblock content%}
+		<li class="block">Box</li>
+		<li class="block">Box</li>
+		<li class="block">Box</li>
 
-                    {% block additional_js %}
-                        <script type="text/javascript">
-                        </script>
-                    {% endblock additional_js %}
+		<li class="block">Box</li>
+		<li class="block">Box</li>
+		<li class="block">Box</li>
+
+		<li class="block">Box</li>
+		<li class="block">Box</li>
+		<li class="block">Box</li>
+	</ul>
+	</body>
+</html>
