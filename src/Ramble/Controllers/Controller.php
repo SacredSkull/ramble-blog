@@ -46,7 +46,8 @@ abstract class Controller {
 			'admin' => $this->ci['ramble']['admin'] ?? false,
 			'debug' => $this->ci['ramble']['debug'] ?? false,
 			'quote' => $this->ci['ramble']['quote'] ?? "",
-			'flash' => $this->flash->getMessages()
+			'flash' => $this->flash->getMessages(),
+
 		), $args));
 	}
 }

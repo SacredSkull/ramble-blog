@@ -1,32 +1,32 @@
 {
-    "propel": {
-        "general": {
-            "project": "Ramble blog"
-        },
-        "paths": {
-            "schemaDir": "./",
-            "phpDir": "../../../"
-        },
-        "database": {
-            "connections": {
-                "blog": {
-                    "adapter": "mysql",
-                    "dsn": "mysql:host=localhost;dbname=blog",
-                    "user": "blog",
-                    "password": "sacredskullBlog",
-                    "settings": {
-                        "charset": "utf8"
-                    }
-                }
-            }
-        },
-        "runtime": {
-          "defaultConnection": "blog",
-          "connections": ["blog"]
-        },
-        "generator": {
-          "defaultConnection": "blog",
-          "connections": ["blog"]
+  "propel": {
+    "general": {
+      "project": "Ramble blog"
+    },
+    "paths": {
+      "schemaDir": "./",
+      "phpDir": "../../../"
+    },
+    "database": {
+      "connections": {
+        "blog": {
+          "adapter": "mysql",
+          "dsn": "mysql:host=%env.DB_HOST%;port=%env.DB_PORT%;dbname=%env.DB_NAME%",
+          "user": "%env.DB_USER%",
+          "password": "%env.DB_PASS%",
+          "settings": {
+            "charset": "utf8"
+          }
         }
+      }
+    },
+    "runtime": {
+      "defaultConnection": "blog",
+      "connections": ["blog"]
+    },
+    "generator": {
+      "defaultConnection": "blog",
+      "connections": ["blog"]
     }
+  }
 }

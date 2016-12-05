@@ -1,0 +1,15 @@
+language: php
+php:
+  - '7.0.13'
+addons:
+  mariadb: '10.0'
+services:
+  - maridb
+  - redis-server
+env:
+  - DB_NAME=ramble DB_HOST=127.0.0.1 DB_USER=ramble DB_PASS=asd123
+before_install:
+  - mysql -u root -e "CREATE DATABASE IF NOT EXISTS ramble; GRANT ALL ON blog.* TO 'ramble'@'%' IDENTIFIED BY 'asd123';"
+  - phpenv config-rm xdebug.ini
+install: ./src/Ramble/build.sh unattended
+script: ./src/Ramble/vendor/bin/atoum -d tests/ --autoloader-file src/Ramble/vendor/autoload.php -ebpc

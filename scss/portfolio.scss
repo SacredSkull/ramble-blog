@@ -1,0 +1,259 @@
+@import 'bourbon';
+@import 'portfolio/grid-settings';
+@import 'neat';
+@import 'portfolio/base/_base';
+@import 'portfolio/base/ribbons';
+@import "portfolio/bent-photo";
+
+body {
+    background: $white-noise;
+    margin: 0;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    .hash {
+        color: #1E347B;
+        opacity: 0.6;
+    }
+    p {
+    	text-decoration: underline;
+    }
+}
+
+h1, h2, h3, h4, h5 {
+	text-align: center;
+}
+
+.title {
+    //@include ribbon(#e74c3c, white, 70px, bottom, 100%);
+    //color: black;
+    background: $link-button-colour;
+    border: 0.2em solid $link-button-colour;
+    color: #fff;
+    padding: 30px 0 30px 0;
+    text-align: center;
+    text-transform: uppercase;
+    //font-family: Arial, sans-serif;
+}
+
+.subtitle {
+    margin-bottom: -10px;
+    opacity: 0.7;
+}
+
+.checklist {
+	.completed:before {
+		font-family: FontAwesome, none;
+		content: "\f046";
+		margin-right: 1em;
+	}
+
+	.todo:before {
+		font-family: FontAwesome, none;
+		content: "\f096";
+		margin-right: 1em;
+	}
+}
+
+.button-link {
+	text-transform: uppercase;
+	padding: 0.5em;
+	background: $link-button-colour;
+	border: 0.2em solid $link-button-colour;
+	color: #fff;
+	letter-spacing: 0.05em;
+	font-size: 1.5em;
+}
+
+.button-link:hover,
+.button-link:focus {
+	background: #fff;
+	color: $link-button-colour;
+	text-decoration: none;
+}
+
+.tags {
+	margin-bottom: 50px ;
+}
+
+.tag {
+	display: inline-flex;
+	margin: 5px 0;
+	margin-left: 3px;
+	text-transform: uppercase;
+	background: #fff;
+	padding: 0.5em;
+	box-shadow: 0 0 5px rgba(0,0,0, 0.2);
+	color: forestgreen;
+	.fa {
+		margin: auto 0;
+		margin-right: 9px;
+		color: transparentize(forestgreen, 0.6);
+	}
+
+	.tag-name {
+		margin: auto 0;
+		font-weight: bolder;
+	}
+}
+
+.tag-red {
+	color: #d62c1a;
+	.fa {
+		color: transparentize(#d62c1a, 0.6);
+	}
+}
+
+
+
+a[href^="https://github"]:after:not(.button-link) {
+    font-family: FontAwesome, none;
+    content: "\f09b";
+    vertical-align: super;
+    font-size: .83em;
+}
+
+.language {
+  font-size: 2em;
+}
+
+.wrapper {
+    @include outer-container;
+    min-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+	overflow-x: hidden;
+	@include background($white-noise, $body-background);
+}
+
+section {
+	margin-top: -25px;
+}
+
+#About > .project > .project-wrapper > .project-main {
+	// Not completely sure why, but this is needed to prevent
+	// #About from not being large enough
+	padding-bottom: 1px;
+}
+
+
+
+//#Ramble h2 {
+//    font-family: "Courier New";
+//}
+//
+//#NightfallRecurrence h2 {
+//    font-family: "Liberation Sans";
+//}
+
+$mobile: new-breakpoint(max-width 500px 4);
+$desktop-medium: new-breakpoint(max-width $medium-screen 4);
+section {
+    @include row(table);
+    @include fill-parent;
+    .project {
+        @include span-columns(6);
+        @include media($mobile) {
+            @include span-columns(4);
+        }
+        .project-title {
+			height: 100%;
+			margin: 0 auto;
+			max-width: $maxWidth + ($centralPadding);
+			//background: $white-noise, #ECF0F1;
+			@include flagRibbon($header-ribbon-base-background);
+			.ribbon {
+				z-index: 100;
+			}
+			.ribbon-content {
+				box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+				text-align: center;
+				h2 {
+					height: 100%;
+					line-height: 50px;
+				}
+			}
+        }
+		.project-wrapper {
+			margin: 0 auto;
+			max-width: $maxWidth;
+			.project-main {
+				background: $white-noise, $content-background;
+				@include span-columns(12);
+				@include media($mobile) {
+					@include span-columns(4 of 4);
+				}
+				//margin: auto 0;
+				//margin-left: $centralPadding;
+				//margin-right: $centralPadding;
+				@include pad();
+				display: block;
+				padding: 30px;
+				padding-bottom: 80px;
+				//margin-top: 20px;
+				img {
+					display: block;
+					margin: 0 auto;
+					margin-bottom: 30px;
+				}
+				p {
+					color: #000;
+					text-align: left;
+					margin-bottom: 30px;
+				}
+				h2 {
+					margin-top: 20px;
+					text-align: center;
+					position: absolute !important;
+					left: 25%;
+					width: 50%;
+				}
+				hr {
+					margin-bottom: 75px;
+				}
+			}
+		}
+
+        .project-links {
+            padding-top: 30px;
+            padding-bottom: 1.5em;
+            text-align: center;
+        }
+    }
+
+    .project-sidebar {
+        @include span-columns(3);
+        @include media($mobile) {
+            @include span-columns(4);
+            clear: both;
+        }
+        @include reset-display;
+        @include pad();
+        top: 0;
+        padding: 1em;
+        color: #fff;
+        font-size: 1.5em;
+        .fa {
+            font-weight: lighter;
+        }
+    }
+}
+
+.screenshot {
+    @include bent-photo-effect();
+}
+
+
+//.sidebar {
+//    @include span-columns(3);
+//    @include pad(1em);
+//
+//    //@include reset-display;
+//    //@include pad();
+//    background: $white-noise, #2C3E50;
+//    h1 {
+//        color: #ECF0F1;
+//    }
+//}

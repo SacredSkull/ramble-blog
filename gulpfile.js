@@ -1,7 +1,4 @@
-// Include gulp
 var gulp = require('gulp');
-
-// Include Our Plugins
 var jshint = require('gulp-jshint');
 var sass = require('gulp-sass');
 var concat = require('gulp-concat');
@@ -11,14 +8,13 @@ var ignore = require('gulp-ignore');
 var order = require("gulp-order");
 var gm = require('gulp-gm');
 var plumber = require('gulp-plumber');
-var livereload = require('gulp-livereload');
-var test = require('bourbon-neat');
+var browserSync = require('browser-sync').create();
+var sourcemaps = require('gulp-sourcemaps');
+var csso = require('gulp-csso');
+var browserSync = require('browser-sync').create();
 
-console.log(test.includePaths);
-
-// Lint Task
 gulp.task('lint', function() {
-    return gulp.src('Public/include/js/app/*.js')
+    return gulp.src('js/app/*.js')
         .pipe(plumber())
         .pipe(jshint({
             laxcomma: true
@@ -28,69 +24,86 @@ gulp.task('lint', function() {
 
 // Compile Our Sass
 gulp.task('sass', function() {
-    return gulp.src('Public/include/scss/*.scss')
+    gulp.src('scss/*.scss')
         .pipe(plumber())
+        .pipe(sourcemaps.init())
         .pipe(sass({
             // includePaths: require('node-bourbon').with('other/path', 'another/path')
             // - or -
             includePaths: [
                 require('node-bourbon').includePaths,
                 require('bourbon-neat').includePaths
-            ]
+            ],
+            //outputStyle: 'compressed',
         }))
-        .pipe(gulp.dest('Public/include/css'))
-        .pipe(livereload());
+        .pipe(csso({
+            //sourceMap: true,
+        }))
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest('Public/css'))
+        .pipe(browserSync.stream());
+    // return gulp.src(['Public/css/*.css', '!Public/css/*.min.css'])
+    //     .pipe(csso({
+    //         //sourceMap: true,
+    //     }))
+    //     .pipe(gulp.dest('Public/css/min'));
 });
 
 // Concatenate & Minify JS
 gulp.task('scripts', function() {
-    return gulp.src(['Public/include/js/**/*.js', '!Public/include/js/out/*.js'])
+    return gulp.src(['js/**/*.js'])
         .pipe(plumber())
         .pipe(order([
             'lib/*.js',
-            'app/*.js',
-        ], {base: 'Public/include/js/minimal'}))
-        .pipe(concat('all.js'))
-        .pipe(gulp.dest('Public/include/js/out'))
-        .pipe(rename('all.min.js'))
+            'app/*.js'
+        ], {base: 'js'}))
+        .pipe(sourcemaps.init())
+        .pipe(concat('all.min.js'))
         .pipe(uglify())
-        .pipe(gulp.dest('Public/include/js/out'))
-        .pipe(livereload());
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest('Public/js'))
+        .pipe(browserSync.stream());
 });
 
-// Watch Files For Changes
-gulp.task('watch', function() {
-    livereload.listen({host: "0.0.0.0"});
-    gulp.watch('Public/include/js/app/*.js', function() {
+gulp.task('watch', ['browser-sync'], function() {
+    gulp.watch('js/app/*.js', function() {
         setTimeout(function () {
-            gulp.start(['lint', 'scripts']);
-        }, 500);
+            gulp.start('lint');
+        }, 150);
     });
-    gulp.watch(['Public/include/js/lib/*.js', 'Public/include/js/lib/min/*.js'], function() {
+    gulp.watch(['js/**/*.js'], function() {
         setTimeout(function () {
             gulp.start('scripts');
-        }, 500);
+        }, 150);
     });
-    gulp.watch('Public/include/scss/**/*.scss', function() {
+    gulp.watch('scss/**/*.scss', function() {
         setTimeout(function () {
             gulp.start('sass');
-        }, 500);
+        }, 150);
     });
-    gulp.watch('Public/include/img/skull.svg', function() {
+    gulp.watch('Public/img/skull.svg', function() {
         setTimeout(function () {
             gulp.start('skull');
-        }, 2000);
+        }, 1000);
     });
 });
 
+gulp.task('browser-sync', function() {
+    browserSync.init({
+        proxy: "blog.io"
+    });
+    gulp.watch("src/Ramble/Templates/*.twig").on('change', browserSync.reload);
+});
+
+// Convert SVG to jpg
 gulp.task('skull', function() {
-    return gulp.src('Public/include/img/skull.svg')
+    return gulp.src('Public/img/skull.svg')
         .pipe(plumber())
         .pipe(gm(function(skull){
-            return skull.setFormat('jpg')
+            return skull.setFormat('png')
                         .resize(450, 450);
         }))
-        .pipe(gulp.dest('Public/include/img'));
+        .pipe(gulp.dest('Public/img'));
 });
 
 // Default Task

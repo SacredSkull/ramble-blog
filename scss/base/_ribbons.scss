@@ -1,0 +1,256 @@
+
+// VARIABLES
+
+$small: 150px;
+$medium: 600px;
+$large: 900px;
+
+// MIXINS
+
+@mixin prefixr($property, $value, $prefixes: (webkit, moz, ms, o) ) {
+    @each $prefix in $prefixes {
+        -#{$prefix}-#{$property}: #{$value};
+    }
+    #{$property}: #{$value};
+}
+
+@mixin whiteSpaceReset() {
+    font-size: 0;
+}
+
+@mixin keyframes($name) {
+    @-webkit-keyframes #{$name} {
+        @content;
+    }
+    @-moz-keyframes #{$name} {
+        @content;
+    }
+    @-ms-keyframes #{$name} {
+        @content;
+    }
+    @keyframes #{$name} {
+        @content;
+    }
+}
+
+@mixin ribbon($color: #e74c3c, $textColor: white, $size: 30px, $ribbonPosition: bottom, $width: 160px) {
+
+    // if the direction of the ribbon is neither "bottom" or "top", set the position to "bottom"
+    @if ($ribbonPosition != bottom and $ribbonPosition != top) {
+        $ribbonPosition: bottom;
+    }
+
+    @if ($ribbonPosition == bottom) {
+        //@include translate(30px);
+        @include prefixr(transform, translateY(30px));
+    }
+    @else {
+        @include prefixr(transform, translateY(-30px));
+    }
+
+    //min-width: $width;
+    //max-width: 80%;
+    position: relative;
+    display: block;
+    background: $color;
+    color: $textColor;
+    text-align: center;
+    -webkit-box-sizing: border-box;
+    height: $size*2;
+    line-height: $size*2;
+    -webkit-transform-style: preserve-3d;
+
+    &:before,
+    &:after {
+        content: "";
+        position: absolute;
+        display: block;
+
+        #{$ribbonPosition}: -$size/2;
+
+        border: $size solid darken($color,10%);
+        -webkit-transform: translateZ(-1px);
+    }
+
+    &:before {
+        left: -$size*2 + $size/2;
+        border-left-color: transparent;
+    }
+
+    &:after {
+        right: -$size*2 + $size/2;
+        border-right-color: transparent;
+    }
+
+    & span:before,
+    & span:after {
+        content: "";
+        position: absolute;
+        display: block;
+        border-style: solid;
+        z-index: -1000;
+
+        #{$ribbonPosition}: -$size/2;
+
+        @if $ribbonPosition == bottom {
+            border-color: darken($color, 30%) transparent transparent transparent;
+        }
+        @else {
+            border-color: transparent transparent darken($color, 30%) transparent;
+        }
+
+    }
+
+    & span:before {
+        left: 0;
+
+        @if $ribbonPosition == bottom {
+            border-width: $size/2 0 0 $size/2;
+        }
+        @else {
+            border-width: 0 0 $size/2 $size/2;
+        }
+
+    }
+
+    & span:after {
+        right: 0;
+
+        @if $ribbonPosition == bottom {
+            border-width: $size/2 $size/2 0 0;
+        }
+        @else {
+            border-width: 0 $size/2 $size/2 0;
+        }
+    }
+}
+
+@mixin fromWidth($size) {
+    @media screen and(min-width: $size) {
+        @content;
+    }
+}
+
+@mixin medium() {
+    @include fromWidth($medium) {
+        @content;
+    }
+}
+
+@mixin large() {
+    @include fromWidth($large) {
+        @content;
+    }
+}
+
+@mixin small() {
+    @include fromWidth($small) {
+        @content;
+    }
+}
+
+@mixin ribbonBig($color: #e74c3c, $textColor: white) {
+    @include ribbon($color, $textColor, 15px);
+
+    @include medium {
+        @include ribbon($color, $textColor, 20px);
+        font-size: 22px;
+    }
+
+    @include large {
+        @include ribbon($color, $textColor, 30px);
+        font-size: 25px;
+    }
+
+}
+
+@mixin ribbonMedium($color: #e74c3c, $textColor: white) {
+    @include ribbon($color, $textColor, 10px);
+    font-size: 16px;
+
+    @include medium {
+        @include ribbon($color, $textColor, 15px);
+        font-size: 18px;
+    }
+
+    @include large {
+        @include ribbon($color, $textColor, 20px);
+        font-size: 20px;
+    }
+
+}
+
+@mixin ribbonSmall($color: #e74c3c, $textColor: white, $minWidth: 160px) {
+    @include ribbon($color, $textColor, 5px);
+    font-size: 10px;
+
+    @include small {
+        @include ribbon($color, $textColor, 10px, bottom, $minWidth);
+        font-size: 12px;
+    }
+
+}
+
+@mixin ribbonTopBig($color: #e74c3c, $textColor: white) {
+    @include ribbon($color, $textColor, 15px, top);
+
+    @include medium {
+        @include ribbon($color, $textColor, 20px, top);
+        font-size: 22px;
+    }
+
+    @include large {
+        @include ribbon($color, $textColor, 30px, top);
+        font-size: 25px;
+    }
+
+}
+
+@mixin ribbonTopMedium($color: #e74c3c, $textColor: white) {
+    @include ribbon($color, $textColor, 10px, top);
+    font-size: 16px;
+
+    @include medium {
+        @include ribbon($color, $textColor, 15px, top);
+        font-size: 18px;
+    }
+
+    @include large {
+        @include ribbon($color, $textColor, 20px, top);
+        font-size: 20px;
+    }
+
+}
+
+@mixin ribbonTopSmall($color: #e74c3c, $textColor: white) {
+    @include ribbon($color, $textColor, 5px, top);
+    font-size: 10px;
+
+    @include medium {
+        @include ribbon($color, $textColor, 10px, top);
+        font-size: 12px;
+    }
+
+    @include large {
+        @include ribbon($color, $textColor, 15px, top);
+        font-size: 14px;
+    }
+
+}
+
+@mixin programmingBanner($color: #e74c3c, $textColor: white){
+    @if($programmingLanguageShell) {
+        p::before {
+            content: $programmingLanguageShellPrefix;
+            opacity: $programmingLanguageShellOpacity;
+        }
+    }
+    @include ribbonSmall($color, $textColor, 80%);
+    margin: 0 auto;
+    @if($programmingLanguageShell) {
+        p::after {
+            content: $programmingLanguageShellSuffix;
+            opacity: $programmingLanguageShellOpacity;
+        }
+    }
+}

@@ -49,6 +49,6 @@ class Router {
 		/*
 		 * XMLRPC API
 		 */
-		$app->any('/xmlrpc', XMLRPC_Controller::class)->setName("XMLRPC");
+		$app->any('/xmlrpc[.php]', XMLRPC::class)->setName("XMLRPC");
 	}
 }

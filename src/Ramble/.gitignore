@@ -1,8 +1,6 @@
-.idea/
-Cache/*
-Logs/*
 vendor/*
 composer.lock
 composer.phar
 Models/Base/
 Models/Map/
+Config/auth.php

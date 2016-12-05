@@ -12,7 +12,8 @@
         "slim/twig-view": "^2.1",
         "oscarotero/psr7-middlewares": "v3.16.1"
     },
-    "require-dev": {
+  "require-dev": {
+        "ukko/phpredis-phpdoc": "2.2.x-dev",
         "fzaninotto/faker": "1.*",
         "raveren/kint": "^1.0"
     },
