@@ -1,0 +1,150 @@
+// http://codepen.io/P233/pen/AtzIw
+
+@mixin triangle ($size, $color, $direction) {
+	height: 0;
+	width: 0;
+
+	$width: nth($size, 1);
+	$height: nth($size, length($size));
+
+	$foreground-color: nth($color, 1);
+	$background-color: transparent !default;
+	@if (length($color) == 2) {
+		$background-color: nth($color, 2);
+	}
+
+	@if ($direction == up) or ($direction == down) or ($direction == right) or ($direction == left) {
+
+		$width: $width / 2;
+
+		@if $direction == up {
+			border-left: $width solid $background-color;
+			border-right: $width solid $background-color;
+			border-bottom: $height solid $foreground-color;
+
+		} @else if $direction == right {
+			border-top: $width solid $background-color;
+			border-bottom: $width solid $background-color;
+			border-left: $height solid $foreground-color;
+
+		} @else if $direction == down {
+			border-left: $width solid $background-color;
+			border-right: $width solid $background-color;
+			border-top: $height solid $foreground-color;
+
+		} @else if $direction == left {
+			border-top: $width solid $background-color;
+			border-bottom: $width solid $background-color;
+			border-right: $height solid $foreground-color;
+		}
+	}
+
+	@else if ($direction == up-right) or ($direction == up-left) {
+		border-top: $height solid $foreground-color;
+
+		@if $direction == up-right {
+			border-left:  $width solid $background-color;
+
+		} @else if $direction == up-left {
+			border-right: $width solid $background-color;
+		}
+	}
+
+	@else if ($direction == down-right) or ($direction == down-left) {
+		border-bottom: $height solid $foreground-color;
+
+		@if $direction == down-right {
+			border-left:  $width solid $background-color;
+
+		} @else if $direction == down-left {
+			border-right: $width solid $background-color;
+		}
+	}
+
+	@else if ($direction == inset-up) {
+		border-width: $height $width;
+		border-style: solid;
+		border-color: $background-color $background-color $foreground-color;
+	}
+
+	@else if ($direction == inset-down) {
+		border-width: $height $width;
+		border-style: solid;
+		border-color: $foreground-color $background-color $background-color;
+	}
+
+	@else if ($direction == inset-right) {
+		border-width: $width $height;
+		border-style: solid;
+		border-color: $background-color $background-color $background-color $foreground-color;
+	}
+
+	@else if ($direction == inset-left) {
+		border-width: $width $height;
+		border-style: solid;
+		border-color: $background-color $foreground-color $background-color $background-color;
+	}
+}
+
+@mixin ribbon($colour: #efb23b, $height: 50px) {
+	.ribbon {
+		position: relative;
+		//margin-bottom: 80px;
+		height: $height;
+		//margin-left: -10px;
+		//margin-right: -10px;
+		background: $colour;
+	}
+}
+
+@mixin flagRibbon($colour: #efb23b, $height: 50px, $length: 20px) {
+	@include ribbon($colour, $height);
+
+	.ribbon {
+		&:before, &:after {
+			content: "";
+			position: absolute;
+			z-index: -1;
+		}
+
+		&:before {
+			height: 0;
+			width: 0;
+			@include triangle(($height / 2) $length, transparent darken($colour, 10%), inset-right);
+			top: 20px;
+			left: -30px;
+			bottom: -10px;
+		}
+
+		&:after {
+			height: 0;
+			width: 0;
+			@include triangle(($height / 2) $length, transparent darken($colour, 10%), inset-left);
+			top: 20px;
+			right: -30px;
+			bottom: -10px;
+		}
+	}
+
+	.ribbon-content {
+		height: inherit;
+		margin-bottom: 0;
+		background: $colour;
+		z-index: 1;
+		&:before, &:after {
+			position: absolute;
+			content: "";
+			z-index: 2;
+		}
+		&:before {
+			@include triangle(10px, darken($colour, 20%), up-right);
+			left: 0;
+			bottom: -10px;
+		}
+		&:after {
+			@include triangle(10px, darken($colour, 20%), up-left);
+			right: 0;
+			bottom: -10px;
+		}
+	}
+}

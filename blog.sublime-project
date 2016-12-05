@@ -2,25 +2,22 @@
 	"folders":
 	[
 		{
+			"follow_symlinks": true,
 			"path": "."
-		}
+		},
 	],
-	"settings":
-	{
-		"todoreview":
-		{
-			"exclude_files":
-			[
-				"*bootstrap.css.map",
-				"*epiceditor.js"
-			],
-			"exclude_folders":
-			[
-				"*.git*",
-				"*vendor*"
-			],
-			"render_folder_depth": 3,
-			"render_include_folder": true
-		}
-	}
+	"settings": {
+        "todoreview": {
+            "exclude_folders": [
+                "*.git*",
+                "*vendor*",
+            ],
+            "exclude_files": [
+                "*bootstrap.css.map",
+                "*epiceditor.js"
+            ],
+            "render_include_folder": true,
+			"render_folder_depth": 3
+        }
+    }
 }

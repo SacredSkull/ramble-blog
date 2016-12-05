@@ -38,7 +38,7 @@ class CodeExtension implements ExtensionInterface {
 			}
 			$lineNo .= "</span>";
 
-			return sprintf('<pre><span class="language">%s</span><br>%s<code class="%s">%s</code></pre>', $language, $lineNo, $language, $lined);
+			return sprintf('<pre><span class="language"><p>%s</p></span><br>%s<code class="%s">%s</code></pre>', strtoupper($language), $lineNo, $language, $lined);
 		});
 	}
 

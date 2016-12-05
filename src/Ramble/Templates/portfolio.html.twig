@@ -1,27 +1,302 @@
-{% extends 'skeleton.html.twig' %}
-                    {% block css_block %}
-                    <link href='{{baseUrl()}}/include/css/portfolio.css' rel='stylesheet' type='text/css'>
-                    {% endblock css_block %}
+<html>
+	<head>
+		<link href="{{ base_url() }}/css/portfolio.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans|Oswald|Liberation+Sans">
+		<script async src="https://use.fontawesome.com/7fa01a8486.js"></script>
+		<meta name="viewport" content="width=device-width" />
+	</head>
 
-                    {% block content %}
-                        <h1 class="content-subhead">Portfolio</h1>
-                        <!-- A single blog post -->
-                        <section class="post">
-                            <header class="post-header">
-                                <img class="post-avatar" alt="Post's image" src="include/img/edit.png" height="48" width="48">
-                                <h2 class="post-title"><a class="title_link" href="link for project">Projekt</a></h2>
-                                <p class="post-meta">
-                                    &nbsp;2014
-                                </p>
-                            </header>
+	<body>
+		<div class="wrapper">
+			<section id="About">
+				<div class="project-sidebar"></div>
+				<div class="project">
+					<div class="project-wrapper">
+						<div class="project-main">
+							<hr>
+							<div class="header">
+								{#<h2 class="subtitle">THIS IS A</h2>#}
+								<h1 class="title">Portfolio.</h1>
+							</div>
+							<p>
+								Some assorted works, ordered by recency. The tags give a quick overview of what
+								was involved in each project, such as language, a particular framework or if it was
+								a university assignment or personal project.
+							</p>
+							<p>
+								For websites there's generally always a live example. If that doesn't seem to be working, I'd appreciate
+								if you <a href="mailto:me@sacredskull.net">notified me about it</a>. Or, if you want
+								to see how far the rabbit hole goes, you can take the red pill and see the code behind
+								the matrices (<a href="https://www.youtube.com/watch?v=qAYXgbSlSv0">hair colour encoding, obviously</a>).
+								Some also have links to blog posts I've written about the particular project, which either
+								shows example use or more detailed looks into the projects.
+							</p>
+							<p>
+								My <a href="https://github.com/SacredSkull">GitHub account</a> also has some various other small
+								projects, some in languages I don't regularly use.
+							</p>
+							{#<p>Most of these projects are on my <a href="https://github.com/SacredSkull">GitHub account</a>, but a few#}
+								{#university assignments aren't source controlled at all (in the case that they're too small to bother).#}
+								{#In each case I have listed the technologies I used in creating them & other relevant info.</p>#}
+							<hr>
+						</div>
+					</div>
+				</div>
+				<div class="project-sidebar">
+				</div>
+			</section>
+			<section id="AssembleGroupApp">
+				<div class="project-sidebar"></div>
+				<div class="project">
+					<div class="project-title">
+						<div class="ribbon">
+							<div class="ribbon-content">
+								<h2><a href="#AssembleGroupApp">Assemble Group App (API)</a></h2>
+							</div>
+						</div>
+					</div>
+					<div class="project-wrapper">
+						<div class="project-main">
+							<img class="screenshot" src="{{ base_url() }}/img/portfolio/assemble.png"/>
+							<div class="tags">
+								<span class="tag"><span class="fa fa-cogs"></span><span class="tag-name">HTTP API</span></span>
+								<span class="tag"><span class="fa fa-graduation-cap"></span><span class="tag-name">University Assignment</span></span>
+								<span class="tag"><span class="fa fa-cogs"></span><span class="tag-name">JSON</span></span>
+								<span class="tag"><span class="fa fa-code"></span><span class="tag-name">PHP</span></span>
+								<span class="tag"><span class="fa fa-cogs"></span><span class="tag-name">Back-end</span></span>
+								<span class="tag"><span class="fa fa-cogs"></span><span class="tag-name">REST</span></span>
+								<span class="tag tag-red"><span class="fa fa-code-fork"></span><span class="tag-name">Under Construction</span></span>
+							</div>
+							<p>
+								This JSON API is written in PHP, with a little help from my two favourite buddies
+								<a href="https://github.com/slimphp/Slim">Slim</a> &
+								<a href="https://github.com/propelorm/Propel2">Propel</a> (micro-framework and
+								ORM, respectively). Assemble is a group management app we're making in University,
+								this component being the serving, backend part. The app itself is a group project,
+								but I'm working on the API alone.
+							</p>
+							<p>
+								It's <i>mostly</i> RESTful. I didn't implement
+								<a href="https://en.wikipedia.org/wiki/HATEOAS"><abbr title="Hypermedia As The Engine Of Application State">HATEOAS</abbr></a>
+								as we're likely to be the only ones using it. If that fact changes I will of course
+								implement it immediately <span class="fa fa-smile-o"></span>.
+							</p>
+							<p>
+								There's some <abbr title="pretty">purty</abbr> documentation
+								<a href="https://assemblegroup.github.io/original-group-app-server/">over yonder</a>.
+							</p>
+							<div class="project-links">
+								<a class="button-link" href="https://assemble.sacredskull.net"><span class="fa fa-eye"></span> Experience it</a>
+								<a class="button-link" href="https://github.com/AssembleGroup/original-group-app-server"><span class="fa fa-github"></span> The code</a>
+							</div>
+							<hr>
+						</div>
+					</div>
+				</div>
+				<div class="project-sidebar"></div>
+			</section>
 
-                            <div class="post-description">
-                                <p>Some project</p>
-                            </div>
-                        </section>
-                    {% endblock content%}
+			<section id="NightfallRecurrence">
+				<div class="project-sidebar"></div>
+				<div class="project">
+					<div class="project-title">
+						<div class="ribbon">
+							<div class="ribbon-content">
+								<h2><a href="#NightfallRecurrence">The Nightfall Recurrence</a></h2>
+							</div>
+						</div>
+					</div>
+					<div class="project-wrapper">
+						<div class="project-main">
+							<img class="screenshot" src="{{ base_url() }}/img/portfolio/nightfall.jpg"/>
+							<center>(The original game pictured)</center>
+							<br>
+							<div class="tags">
+								<span class="tag"><span class="fa fa-gamepad"></span><span class="tag-name">Game</span></span>
+								<span class="tag"><span class="fa fa-code"></span><span class="tag-name">C#</span></span>
+								<span class="tag"><span class="fa fa-square-o"></span><span class="tag-name">2D</span></span>
+								<span class="tag"><span class="fa fa-code"></span><span class="tag-name">XML</span></span>
+								<span class="tag tag-red"><span class="fa fa-code-fork"></span><span class="tag-name">Under Construction</span></span>
+							</div>
+							<p>A 2D game made in <a href="https://unity3d.com/">Unity3d</a>... Not quite as conflicting as it sounds. It's a simple
+								puzzle game <span style="text-decoration: line-through;">based</span> ported from the
+								original flash game, <a href="http://jayisgames.com/games/spybot-the-nightfall-incident/">The Nightfall Incident</a> (shown in above picture).
+								It's not quite <i>The Matrix Reloaded</i> to <i>The Matrix</i> (or in other words, it's not a sequel);
+								probably somewhere between an HD remake/remaster (without actually making assets HD?!) and a port.
+							</p>
+							<p>
+								I'm using <a href="https://github.com/SacredSkull/the-nightfall-recurrence/tree/develop/Assets/Resources/Sprites">all of the visual assets from the original game</a> but I'll probably end up
+								recreating them eventually as I want to add new enemies and tools, so will need to make those anyway.
+							</p>
+							<p>
+								Rather than design my own level storage format or editing tools, I opted for
+								<a href="https://github.com/bjorn/tiled">Tiled</a>. The plan is to allow users to create
+								and submit levels to a repository, so using a popular and mature solution is a good idea.
+							</p>
+							<h3>Abstract todo list</h3>
+							<ul class="checklist">
+								<li class="completed">Levels and <a href="https://github.com/SacredSkull/the-nightfall-recurrence/blob/develop/Assets/Entities/Tools.xml">entity data</a>
+									are stored and deserialised from XML.</li>
+								<li class="completed">AI movement (A star)</li>
+								<li class="todo">Turn management</li>
+								<li class="todo">User Interface</li>
+								<li class="todo">Combat</li>
+							</ul>
+							<div class="project-links">
+								<a class="button-link" href="https://sacredskull.net"><span class="fa fa-paper-plane"></span> Read about it</a>
+								<a class="button-link" href="https://github.com/SacredSkull/the-nightfall-recurrence"><span class="fa fa-github"></span> The code</a>
+							</div>
+							<hr>
+						</div>
+					</div>
+				</div>
+				<div class="project-sidebar"></div>
+			</section>
 
-                    {% block additional_js %}
-                        <script type="text/javascript">
-                        </script>
-                    {% endblock additional_js %}
+			<section id="Ramble">
+				<div class="project-sidebar"></div>
+				<div class="project">
+					<div class="project-title">
+						<div class="ribbon">
+							<div class="ribbon-content">
+								<h2><a href="#Ramble">Ramble</a></h2>
+							</div>
+						</div>
+					</div>
+					<div class="project-wrapper">
+						<div class="project-main">
+							<img class="screenshot" src="{{ base_url() }}/img/skull.png"/>
+							<div class="tags">
+								<span class="tag"><span class="fa fa-link"></span><span class="tag-name">Website</span></span>
+								<span class="tag"><span class="fa fa-code"></span><span class="tag-name">PHP</span></span>
+								<span class="tag"><span class="fa fa-cogs"></span><span class="tag-name">Back-end</span></span>
+								<span class="tag"><span class="fa fa-id-card"></span><span class="tag-name">Front-end</span></span>
+								<span class="tag"><span class="fa fa-code"></span><span class="tag-name">PureCSS</span></span>
+							</div>
+							<p>
+								Fully functioning blog CMS, written in PHP, with the <a href="https://github.com/slimphp/Slim">Slim</a> micro-framework & <a href="https://github.com/propelorm/Propel2">Propel ORM</a>
+								and templated with <a class="http://twig.sensiolabs.org/">Twig</a>. With <a href="https://github.com/kzykhys/Ciconia">Ciconia</a> it additionally supports Markdown & a few other custom parsers I've written along the way.
+								Comments are annoying to implement; realistically you need users to log in to prevent spam. That's why I just shrugged and used <a class="">Disqus</a> ;).
+								It initially sported an all-on-site editor, but after swapping to <a href="http://purecss.io/">Pure CSS</a> from Bootstrap,
+								I instead implemented <a href="https://codex.wordpress.org/XML-RPC_Support">WordPress's XMLRPC API</a>.
+								Just like WordPress, the API gracefully degrades features for older blogging standards.
+							<p>
+								In layman's terms desktop applications, mobile apps and web tools that support
+								WordPress's XMLRPC will work with it, such as <a href="http://openlivewriter.org/"><strike>Windows</strike> Open Live Writer</a>.
+							</p>
+							<div class="project-links">
+								<a class="button-link" href="https://sacredskull.net"><span class="fa fa-eye"></span> View</a>
+								<a class="button-link" href="https://github.com/SacredSkull/ramble-blog"><span class="fa fa-github"></span> The code</a>
+							</div>
+							<hr>
+						</div>
+					</div>
+				</div>
+				<div class="project-sidebar"></div>
+			</section>
+
+			<section id="CharityEvents">
+				<div class="project-sidebar"></div>
+				<div class="project">
+					<div class="project-title">
+						<div class="ribbon">
+							<div class="ribbon-content">
+								<h2><a href="#CharityEvents">North East Charity Events</a></h2>
+							</div>
+						</div>
+					</div>
+					<div class="project-wrapper">
+						<div class="project-main">
+							<img class="screenshot" src="{{ base_url() }}/img/skull.png"/>
+							<div class="tags">
+								<span class="tag"><span class="fa fa-link"></span><span class="tag-name">Website</span></span>
+								<span class="tag"><span class="fa fa-graduation-cap"></span><span class="tag-name">University Assignment</span></span>
+								<span class="tag"><span class="fa fa-code"></span><span class="tag-name">PHP</span></span>
+								<span class="tag"><span class="fa fa-group"></span><span class="tag-name">Group Project</span></span>
+								<span class="tag"><span class="fa fa-cogs"></span><span class="tag-name">Back-end</span></span>
+								<span class="tag"><span class="fa fa-cogs"></span><span class="tag-name">Jenkins</span></span>
+								<span class="tag"><span class="fa fa-cogs"></span><span class="tag-name">Docker</span></span>
+							</div>
+							<p>
+								Website for allows users to track charity music events. Uses my standard PHP cocktail
+								of <a href="https://github.com/slimphp/Slim">Slim</a>,
+								<a href="https://github.com/propelorm/Propel2">Propel</a> &
+								<a class="http://twig.sensiolabs.org/">Twig</a>. I was responsible for the backend
+								and connecting that to the front (though not the front itself). No comment on the
+								front's design, nor can I be held responsible for feelings of nausea
+								<span class="fa fa-smile-o"></span>.
+							</p>
+							<p>
+								The project wasn't test <i>driven</i>, but eventually used unit tests to verify some functionality.
+								At this time I was a <a href="https://jenkins.io/">Jenkins</a> user, until <i>I Learned
+								To Stop Worrying And Love The <a href="https://travis-ci.org">Travis CI</a> Server</i>.
+								Jenkins works, but I wouldn't say with any grace. Related to both Jenkins & clumsiness: Apache, I know you
+								love XML, but as a <a href="http://ant.apache.org/manual/index.html#example">task runner's build file</a>? Really?
+							</p>
+							<p>
+								Events, users and charities might appear rather strange on the live site. They were originally
+								randomly generated at some point - I'll probably need to add a re-generation cron to stop
+								events from expiring.
+							</p>
+							<div class="project-links">
+								<a class="button-link" href="https://northeastevents.sacredskull.net/"><span class="fa fa-eye"></span> Experience it</a>
+								<a class="button-link" href="https://github.com/SacredSkull/the-nightfall-recurrence"><span class="fa fa-github"></span> The code</a>
+							</div>
+							<hr>
+						</div>
+					</div>
+				</div>
+				<div class="project-sidebar"></div>
+			</section>
+			<section id="Coffee">
+				<div class="project-sidebar"></div>
+				<div class="project">
+					<div class="project-title">
+						<div class="ribbon">
+							<div class="ribbon-content">
+								<h2><a href="#Coffee">Press 29</a></h2>
+							</div>
+						</div>
+					</div>
+					<div class="project-wrapper">
+						<div class="project-main">
+							<img class="screenshot" src="{{ base_url() }}/img/portfolio/press29.jpg"/>
+							<div class="tags">
+								<span class="tag"><span class="fa fa-link"></span><span class="tag-name">Website</span></span>
+								<span class="tag"><span class="fa fa-graduation-cap"></span><span class="tag-name">University Assignment</span></span>
+								<span class="tag"><span class="fa fa-code"></span><span class="tag-name">PHP</span></span>
+								<span class="tag"><span class="fa fa-id-card"></span><span class="tag-name">Front-end</span></span>
+								<span class="tag"><span class="fa fa-cogs"></span><span class="tag-name">Back-end</span></span>
+								<span class="tag"><span class="fa fa-code"></span><span class="tag-name">Bootstrap</span></span>
+							</div>
+							<p>
+								Say the words "sub-query database assignment" and you don't really get a website out
+								the other end do you? I will go to extremes to avoid using MS Access. This site uses
+								<a href="https://github.com/slimphp/Slim">Slim</a> and <a class="http://twig.sensiolabs.org/">Twig</a>
+								as usual, but no <abbr title="Object Relational Mapping">ORM</abbr>, as it would be kind of hard
+								justifying the use of an ORM for a database assignment for {{ "<sarcasm>"|escape }}some bizarre reason{{ "</sarcasm>"|escape }}.
+							</p>
+							<p>
+								This assignment provided a SQL file and some test data, which is used in the live example.
+								It was a fairly small task and didn't warrant any
+								<abbr title="Revision Control Software (like Git or SVN)">RCS</abbr>, so I don't have any
+								elegant way to show you its code, sorry!
+							</p>
+							<p>
+								Unlike <a href="#CharityEvents">the charity events group assignment</a>, I take responsibility
+								for its (in my opinion) pleasant design! Though, my grasp of sticky footers was obviously
+								lacking at that point.
+							</p>
+							<div class="project-links">
+								<a class="button-link" href="https://magic.sacredskull.net/assignment4/"><span class="fa fa-eye"></span> Experience it</a>
+							</div>
+							<hr>
+						</div>
+					</div>
+
+				</div>
+				<div class="project-sidebar"></div>
+			</section>
+		</div>
+	</body>
+</html>

@@ -42,8 +42,13 @@ class Router {
 		});
 
 		/*
+		 * Portfolio
+		 */
+		$app->get('/portfolio', Portfolio::class);
+
+		/*
 		 * XMLRPC API
 		 */
-		$app->any('/xmlrpc', XMLRPC_Controller::class)->setName("XMLRPC");
+		$app->any('/xmlrpc[.php]', XMLRPC::class)->setName("XMLRPC");
 	}
 }

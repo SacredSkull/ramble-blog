@@ -3,13 +3,13 @@
 namespace Ramble;
 
 use Interop\Container\ContainerInterface;
-use Monolog\Handler\FirePHPHandler;
 use Monolog\Handler\RotatingFileHandler;
-use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use Monolog\Processor\UidProcessor;
 use Propel\Runtime\Propel;
 use Ramble\Controllers\Router;
+use Ramble\Models\NullMemoryDatabase;
+use Ramble\Models\Redis;
+use RedisException;
 use Twig_Extension_Debug;
 
 require __DIR__ . '/vendor/autoload.php';
@@ -46,18 +46,30 @@ class Ramble {
     }
 
     private function init() : \Slim\App {
-    	$app = new \Slim\App(["settings" => require __DIR__ . "/Config/Slim/slim.php"]);
+    	$app = new \Slim\App(["settings" => require __DIR__ . "/Config/Slim/config.php"]);
 
 	    $container = $app->getContainer();
 
-	    $sayings = explode("\n", file_get_contents(Ramble::getPublicDir() . '/include/etc/skull-phrases.txt'));
-	    $random = rand(0, sizeof($sayings)-1);
+	    $container['ramble'] = function (ContainerInterface $c) {
+		    $sayings = explode("\n", file_get_contents(Ramble::getPublicDir() . '/etc/skull-phrases.txt'));
+		    $random = rand(0, sizeof($sayings)-1);
 
-	    $container['ramble'] = [
-		    'quote' => $sayings[$random],
-		    'debug' => static::$DEBUG,
-		    'admin' => $this->isAdmin()
-	    ];
+	    	return [
+			    'quote' => $sayings[$random],
+			    'debug' => static::$DEBUG,
+			    'admin' => $this->isAdmin(),
+		    ];
+	    };
+
+	    $container['memoryDB'] = function (ContainerInterface $c) {
+		    try {
+			    return new Redis($c->get('settings')['redis']['host'], $c->get('settings')['redis']['port']);
+		    } catch (RedisException $exception) {
+			    return new NullMemoryDatabase();
+		    }
+	    };
+
+	    $container['auth'] = require __DIR__ . "/Config/auth.php";
 
 	    // Monolog
 		/* Lazy loading is nice when it works...

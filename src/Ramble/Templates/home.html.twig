@@ -27,7 +27,7 @@
                             </header>
 
                             <div class="post-description">
-                                <p>{{post.getBodyhtml|truncateHTML(2000, " ...")}}</p>
+                                <p>{{post.getBodyhtml}}</p>
                             </div>
                         </section>
                         {% endfor %}
@@ -36,11 +36,11 @@
 						{% if posts.haveToPaginate %}
 							<div id="pagination" class="pure-menu pure-menu-horizontal">
 								<ul>
-									<li class="pure-menu-item{% if current_page == 1 %} pure-menu-disabled{% endif %}"><a class="pure-menu-link" href="{{pagination_url}}/page/1">&laquo;</a></li>
+									<li class="pure-menu-item"><a class="pure-button button-secondary {% if current_page == 1 %} pure-button-disabled{% endif %}" href="{{pagination_url}}/page/1">&laquo;</a></li>
 									{% for page in page_list %}
-										<li class="pure-menu-item{% if current_page == page %} active{% endif %}"><a class="pure-menu-link" href="{{pagination_url}}/page/{{page}}">{{page}}</a></li>
+										<li class="pure-menu-item{% if current_page == page %} active{% endif %}"><a class="pure-button button-secondary" href="{{pagination_url}}/page/{{page}}">{{page}}</a></li>
 									{% endfor %}
-									<li class="pure-menu-item{% if max_pages == current_page %} pure-menu-disabled{% endif %}"><a class="pure-menu-link" href="{{pagination_url}}/page/{{max_pages}}">&raquo;</a></li>
+									<li class="pure-menu-item"><a class="pure-button button-secondary {% if current_page == max_pages %} pure-button-disabled{% endif %}" href="{{pagination_url}}/page/{{max_pages}}">&raquo;</a></li>
 								</ul>
 							</div>
 						{% endif %}
