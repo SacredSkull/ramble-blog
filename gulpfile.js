@@ -22,7 +22,7 @@ gulp.task('lint', function() {
         .pipe(jshint.reporter('default'));
 });
 
-// Compile Our Sass
+// Compile the sass
 gulp.task('sass', function() {
     gulp.src('scss/*.scss')
         .pipe(plumber())
@@ -34,22 +34,14 @@ gulp.task('sass', function() {
                 require('node-bourbon').includePaths,
                 require('bourbon-neat').includePaths
             ],
-            //outputStyle: 'compressed',
         }))
-        .pipe(csso({
-            //sourceMap: true,
-        }))
+        // .pipe(csso())
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('Public/css'))
         .pipe(browserSync.stream());
-    // return gulp.src(['Public/css/*.css', '!Public/css/*.min.css'])
-    //     .pipe(csso({
-    //         //sourceMap: true,
-    //     }))
-    //     .pipe(gulp.dest('Public/css/min'));
 });
 
-// Concatenate & Minify JS
+// Concatenate & minify JS
 gulp.task('scripts', function() {
     return gulp.src(['js/**/*.js'])
         .pipe(plumber())
@@ -106,8 +98,8 @@ gulp.task('skull', function() {
         .pipe(gulp.dest('Public/img'));
 });
 
-// Default Task
+// Default task
 gulp.task('default', ['lint', 'sass', 'scripts', 'watch', 'skull']);
 
-// Default Task
+// Task for compiling everything without watching.
 gulp.task('batch', ['sass', 'scripts', 'skull']);

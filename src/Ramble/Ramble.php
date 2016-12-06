@@ -3,6 +3,7 @@
 namespace Ramble;
 
 use Interop\Container\ContainerInterface;
+use Monolog\Handler\ErrorLogHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Propel\Runtime\Propel;
@@ -82,7 +83,10 @@ class Ramble {
 		    $loggerSettings = $c['settings']['logger'];
 		    $logger = new Logger($loggerSettings['name']);
 		    //$logger->pushProcessor(new UidProcessor());
-		    $logger->pushHandler(new RotatingFileHandler($loggerSettings['path'], 2, $c['ramble']['debug']? Logger::DEBUG : Logger::INFO));
+            if(is_writable($loggerSettings['path']))
+                $logger->pushHandler(new RotatingFileHandler($loggerSettings['path'], 2, $c['ramble']['debug']? Logger::DEBUG : Logger::INFO));
+            else
+                $logger->pushHandler(new ErrorLogHandler());
 		    return $logger;
 	    })($container);
 
@@ -125,7 +129,7 @@ class Ramble {
 	    return $this->app->run();
     }
 
-    public static function getPublicDir() : string {
+    public static function getPublicDir() {
     	return __DIR__ . "/../../Public";
     }
 
@@ -150,7 +154,7 @@ class Ramble {
 		} else {
 			// use a cookie for auth?
 			$allowedips = array('127.0.0.1', '192.168.1.102');
-			$ips = $_SERVER['REMOTE_ADDR'];
+			$ips = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 			if (in_array($ips, $allowedips)) {
 				return true;
 			}
