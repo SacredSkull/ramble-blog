@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns="http://schemas.microsoft.com/wlw/manifest/weblog">
     <options>
-    <clientType>Metaweblog</clientType>
-        <supportsNewCategories>Yes</supportsNewCategories>
-        <supportsNewCategoriesInline>Yes</supportsNewCategoriesInline>
-        <supportsHierarchicalCategories>Yes</supportsHierarchicalCategories>
-        <supportsTrackbacks>No</supportsTrackbacks>
+        <clientType>WordPress</clientType>
         <supportsFileUpload>No</supportsFileUpload>
-        <supportsSlug>Yes</supportsSlug>
+        <supportsMultipleCategories>No</supportsMultipleCategories>
+        <supportsHierarchicalCategories>No</supportsHierarchicalCategories>
+        <!-- <supportsNewCategories>Yes</supportsNewCategories>
+        <supportsNewCategoriesInline>Yes</supportsNewCategoriesInline> -->
+        <supportsKeywords>Yes</supportsKeywords>
+        <supportsPingPolicy>No</supportsPingPolicy>
+        <supportsAuthor>No</supportsAuthor>
+        <supportsSlug>No</supportsSlug>
+        <supportsPassword>No</supportsPassword>
+        <supportsTrackbacks>No</supportsTrackbacks>
+        <supportsPages>No</supportsPages>
+        <supportsPageParent>No</supportsPageParent>
+        <supportsPageOrder>No</supportsPageOrder>
         <supportsEmbeds>Yes</supportsEmbeds>
+        <supportsGetTags>Yes</supportsGetTags>
     </options>
 </manifest>

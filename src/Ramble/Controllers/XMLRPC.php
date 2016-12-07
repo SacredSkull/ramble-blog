@@ -44,7 +44,7 @@ class XMLRPC extends Controller {
 	}
 
 	public function serve() : \PhpXmlRpc\Server{
-		return new \PhpXmlRpc\Server(array(
+		$server = new \PhpXmlRpc\Server(array(
 			//
 			/* The first parameter is the RETURN of the function! */
 			//
@@ -188,6 +188,12 @@ class XMLRPC extends Controller {
 				"docstring" => "Returns [categories]. Parameters: blogID, username, password"
 			),
 
+			"wp.getCategories" => array(
+				"function" => array($this, "getCategories"),
+				"signature" => array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+				"docstring" => "Returns [categories]. Parameters: blogID, username, password"
+			),
+
 			/*
 			 * MISCELLANEOUS
 			 */
@@ -206,7 +212,16 @@ class XMLRPC extends Controller {
 				"docstring" => "Returns array(['pingTitle', 'pingURL', 'pingIP']). Parameters: postID"
 			),
 		));
+
+		$server->setDebug(3);
+		$server->exception_handling = 1;
+
+		return $server;
 	}
+
+	public function rsdRender(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface {
+        return $this->render($response, 'rsd.html.twig');
+    }
 
 	//TODO: if distributing, I'd recommend you change this!
 	public function passwordAdmin($user, $pass) {
@@ -285,7 +300,7 @@ class XMLRPC extends Controller {
 		$post->setCreatedAt($postStruct["dateCreated"] ?? new DateTime());
 
 		// Tag parsing
-		$tagArray = explode(',', $postStruct['mt_keywords']);
+		$tagArray = explode(',', $postStruct['mt_keywords']) ?? [];
 		$this->logger->debug("Parsed tag bundle", $tagArray);
 
 		foreach ($tagArray as $tag) {
@@ -305,10 +320,10 @@ class XMLRPC extends Controller {
 			$post->addTag($exists);
 		}
 		$post->setExcerpt($postStruct["mt_excerpt"] ?? (function($body) : string{
-				$firstWords = "";
-				preg_match("/(?:\w+(?:\W+|$)){0,20}/", $body, $firstWords);
-				return $firstWords[0];
-			})($postStruct["description"]));
+			$firstWords = "";
+			preg_match("/(?:\w+(?:\W+|$)){0,20}/", $body, $firstWords);
+			return $firstWords[0];
+		})($postStruct["description"]));
 
 
 		$post->setAllowComments(isset($postStruct["mt_allow_comments"]) ? $postStruct["mt_allow_comments"] : true);

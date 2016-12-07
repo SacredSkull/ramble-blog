@@ -50,5 +50,6 @@ class Router {
 		 * XMLRPC API
 		 */
 		$app->any('/xmlrpc[.php]', XMLRPC::class)->setName("XMLRPC");
+		$app->get('/rsd[.xml]', XMLRPC::class . ":rsdRender")->setName("RSD");
 	}
 }
