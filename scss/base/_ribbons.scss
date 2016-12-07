@@ -33,7 +33,7 @@ $large: 900px;
     }
 }
 
-@mixin ribbon($color: #e74c3c, $textColor: white, $size: 30px, $ribbonPosition: bottom, $width: 160px) {
+@mixin ribbon($color: #e74c3c, $textColor: white, $size: 30px, $ribbonPosition: bottom, $minWidth: 160px) {
 
     // if the direction of the ribbon is neither "bottom" or "top", set the position to "bottom"
     @if ($ribbonPosition != bottom and $ribbonPosition != top) {
@@ -48,14 +48,14 @@ $large: 900px;
         @include prefixr(transform, translateY(-30px));
     }
 
-    //min-width: $width;
-    //max-width: 80%;
+    width: $minWidth;
     position: relative;
     display: block;
     background: $color;
     color: $textColor;
     text-align: center;
     -webkit-box-sizing: border-box;
+    min-width: 160px;
     height: $size*2;
     line-height: $size*2;
     -webkit-transform-style: preserve-3d;
