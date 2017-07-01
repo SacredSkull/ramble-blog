@@ -82,8 +82,6 @@ class Ramble {
 		 * In this case, the delegate is not stored - rather its result - hence the wrapping ()s.
 		 * Huh? I could've just assigned it directly? Sure, but then I wouldn't get to use an anon function :(
 	     */
-        /** @var Logger $logger */
-        $logger = null;
 
         /** @var Logger $container['logger'] */
         $container['logger'] = (function (ContainerInterface $c) {
@@ -96,8 +94,6 @@ class Ramble {
                 $logger->pushHandler(new ErrorLogHandler());
 		    return $logger;
         })($container);
-
-        $logger = $container['logger'];
 
 	    // Twig
         /** @var Twig $container['view'] */
