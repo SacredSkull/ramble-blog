@@ -8,10 +8,10 @@ var ignore = require('gulp-ignore');
 var order = require("gulp-order");
 var gm = require('gulp-gm');
 var plumber = require('gulp-plumber');
-var browserSync = require('browser-sync').create();
 var sourcemaps = require('gulp-sourcemaps');
 var csso = require('gulp-csso');
 var browserSync = require('browser-sync').create();
+var autoprefixer = require('gulp-autoprefixer');
 
 gulp.task('lint', function() {
     return gulp.src('js/app/*.js')
@@ -36,6 +36,9 @@ gulp.task('sass', function() {
             ],
         }))
         // .pipe(csso())
+        .pipe(autoprefixer({
+            browsers: ['last 2 versions'],
+        }))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('Public/css'))
         .pipe(browserSync.stream());

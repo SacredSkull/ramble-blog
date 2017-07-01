@@ -125,7 +125,7 @@ a[href^="https://github"]:after:not(.button-link) {
     margin-left: 0;
     margin-right: 0;
 	overflow-x: hidden;
-	@include background($white-noise, $body-background);
+	background: $white-noise, $body-background;
 }
 
 section {

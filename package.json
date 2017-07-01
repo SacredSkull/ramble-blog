@@ -4,26 +4,26 @@
   "description": "My personal blog",
   "main": "-",
   "dependencies": {
-    "bourbon-neat": "^1.8.0",
+    "bourbon-neat": "^1.9.0",
+    "browser-sync": "^2.18.12",
     "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.0",
+    "gulp-autoprefixer": "^4.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-csso": "^3.0.0",
     "gulp-gm": "0.0.8",
-    "gulp-ignore": "^2.0.1",
-    "gulp-jshint": "^2.0.0",
+    "gulp-ignore": "^2.0.2",
+    "gulp-jshint": "^2.0.4",
     "gulp-livereload": "^3.8.1",
     "gulp-order": "^1.1.1",
     "gulp-plumber": "^1.0.1",
     "gulp-rename": "^1.2.2",
-    "gulp-sass": "^2.1.1",
-    "gulp-shell": "^0.5.1",
-    "gulp-sourcemaps": "^1.9.1",
-    "gulp-uglify": "^1.5.1",
-    "jshint": "^2.8.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-shell": "^0.6.3",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-uglify": "^3.0.0",
+    "jshint": "^2.9.5",
     "node-bourbon": "^4.2.3",
     "sass-include-paths": "^4.5.1"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -35,9 +35,5 @@
   "author": "Peter Clotworthy",
   "license": "ISC",
   "homepage": "https://github.org/SacredSkull/ramble-blog",
-  "devDependencies": {
-    "browser-sync": "^2.18.2",
-    "gulp": "^3.9.1",
-    "gulp-csso": "^2.0.0"
-  }
+  "devDependencies": {}
 }

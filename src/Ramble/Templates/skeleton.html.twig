@@ -42,7 +42,7 @@
 		{{ OPTIMAL_CSS }}
 		<div id="layout" class="pure-g">
 			<div class="sidebar pure-u-1 pure-u-md-5-24">
-				<div class="floater" style=" overflow-x: hidden; height: 100%; background-image: url({{ random_flickr_image.url }}); background-size: cover">
+				<div class="floater" style=" overflow-x: hidden; height: 100%; background-image: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%,rgba(0,0,0,0) 30%,rgba(0,0,0,0) 70%,rgba(0,0,0,0.3) 100%), url('{{base_url()}}/img/blueprint.jpg') {#url({{ random_flickr_image.url }})#};">
 					<object id="skull" class="pure-img" type="image/svg+xml" data="{{base_url()}}/img/skull.svg" onerror="this.src = '{{base_url()}}/img/skull.png'">
 						<img id="skull" class="pure-img" src="{{base_url()}}/img/skull.svg" onerror="this.src='{{base_url()}}/img/skull.png'"/>
 					</object>
@@ -73,8 +73,9 @@
 					{#</div>#}
 				</div>
 			</div>
-
+			<div id="divider"></div>
 			<div class="content pure-u-1 pure-u-md-17-24">
+
 				<div>
 					<!-- A wrapper for all the blog posts -->
 					<div class="posts">
