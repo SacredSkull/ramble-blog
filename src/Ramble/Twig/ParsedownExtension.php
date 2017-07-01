@@ -12,7 +12,7 @@
 
 namespace Ramble\Twig;
 
-class ParsedownExtension extends Twig_Extension
+class ParsedownExtension extends \Twig_Extension
 {
     public function getFilters()
     {

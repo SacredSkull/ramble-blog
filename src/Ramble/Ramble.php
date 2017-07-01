@@ -8,9 +8,10 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Propel\Runtime\Propel;
 use Ramble\Controllers\Router;
-use Ramble\Models\NullMemoryDatabase;
+use Ramble\Models\Cacher;
 use Ramble\Models\Redis;
 use RedisException;
+use Slim\Views\Twig;
 use Twig_Extension_Debug;
 
 require __DIR__ . '/vendor/autoload.php';
@@ -38,6 +39,7 @@ class Ramble {
 	    } else {
 		    ini_set('display_errors', 'Off');
 		    error_reporting(0);
+		    set_error_handler(null);
 	    }
 
 	    static::$SITE_ROOT = realpath(dirname(__FILE__));
@@ -47,6 +49,7 @@ class Ramble {
     }
 
     private function init() : \Slim\App {
+
     	$app = new \Slim\App(["settings" => require __DIR__ . "/Config/Slim/config.php"]);
 
 	    $container = $app->getContainer();
@@ -66,7 +69,7 @@ class Ramble {
 		    try {
 			    return new Redis($c->get('settings')['redis']['host'], $c->get('settings')['redis']['port']);
 		    } catch (RedisException $exception) {
-			    return new NullMemoryDatabase();
+			    return new Cacher();
 		    }
 	    };
 
@@ -79,7 +82,11 @@ class Ramble {
 		 * In this case, the delegate is not stored - rather its result - hence the wrapping ()s.
 		 * Huh? I could've just assigned it directly? Sure, but then I wouldn't get to use an anon function :(
 	     */
-	    $container['logger'] = (function (ContainerInterface $c) {
+        /** @var Logger $logger */
+        $logger = null;
+
+        /** @var Logger $container['logger'] */
+        $container['logger'] = (function (ContainerInterface $c) {
 		    $loggerSettings = $c['settings']['logger'];
 		    $logger = new Logger($loggerSettings['name']);
 		    //$logger->pushProcessor(new UidProcessor());
@@ -88,39 +95,40 @@ class Ramble {
             else
                 $logger->pushHandler(new ErrorLogHandler());
 		    return $logger;
-	    })($container);
+        })($container);
+
+        $logger = $container['logger'];
 
 	    // Twig
-	    $container['view'] = function (ContainerInterface $c) {
+        /** @var Twig $container['view'] */
+        $container['view'] = function (ContainerInterface $c) {
 		    $view = new \Slim\Views\Twig($c->get('settings')['renderer']['template_path'], [
-			    'cache' => self::$DEBUG ? null : $c->get('settings')['renderer']['cache'],
+			    'cache' => self::$DEBUG ? false : $c->get('settings')['renderer']['cache'],
 			    'debug' => self::$DEBUG,
 			    'autoescape' => false
 		    ]);
 
-		    $view->addExtension(new \Slim\Views\TwigExtension(
+			$view->addExtension(new \Slim\Views\TwigExtension(
 			    $c['router'],
 			    $c['request']->getUri()
 		    ));
 
 		    $view->addExtension(new Twig_Extension_Debug());
-		    $view->addExtension(new \Slim\Views\TwigExtension(
-			    $c['router'],
-			    $c['request']->getUri()
-		    ));
 		    $view->addExtension(new \Twig_Extensions_Extension_Text());
 		    $view->addExtension(new \Ramble\Twig\HTMLTruncaterExtension());
 		    $view->addExtension(new \Ramble\Twig\ExecutionTimeExtension());
 		    return $view;
 	    };
 
+		//$deprecations = new \Twig\Util\DeprecationCollector($container['view']->getEnvironment());
+		//print_r($deprecations->collectDir('/mnt/c/Users/Peter/GitHub/blog/src/Ramble/Templates'));
+
 	    // Register provider
 	    $container['flash'] = function () {
 		    return new \Slim\Flash\Messages();
 	    };
 
-	    Propel::getServiceContainer()->setLogger($container['settings']['logger']["name"], $container->logger);
-
+	    Propel::getServiceContainer()->setLogger('defaultLogger', $container['logger']);
 	    return $app;
     }
 

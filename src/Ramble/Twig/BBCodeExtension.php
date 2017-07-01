@@ -12,7 +12,7 @@
 
 namespace Ramble\Twig;
 
-class BBCodeExtension extends Twig_Extension
+class BBCodeExtension extends \Twig_Extension
 {
     public $bbcode_array;
     public function __construct($bbcode_array)

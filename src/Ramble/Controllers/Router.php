@@ -8,8 +8,16 @@
 
 namespace Ramble\Controllers;
 
+use DebugBar\Bridge\MonologCollector;
+use DebugBar\Bridge\Propel2Collector;
+use DebugBar\Bridge\Twig\TraceableTwigEnvironment;
+use DebugBar\Bridge\Twig\TwigCollector;
+use DebugBar\StandardDebugBar;
+use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\TrailingSlash;
+use Ramble\Ramble;
 use Slim\App;
+use Propel\Runtime\Propel;
 
 class Router {
 	private function __construct(){ }
@@ -17,9 +25,26 @@ class Router {
 	/**
 	 * @param App $app
 	 */
-	public static function pave(App $app){
-		// Middleware
-		$app->add(new TrailingSlash(false));
+	public static function pave(App $app) {
+
+        // Middleware
+        $app->add(Middleware::TrailingSlash(false));
+        $app->add(Middleware::FormatNegotiator());
+        // Debug bar simply does not work
+//        if(Ramble::$DEBUG) {
+//            $debugBar = new StandardDebugBar();
+//            /*
+//            $debugBar->addCollector(new MonologCollector($app->getContainer()->get('logger')));
+//            $debugBar->addCollector(new TwigCollector(new TraceableTwigEnvironment(
+//                $app->getContainer()
+//                    ->get('view')
+//                    ->getEnvironment()
+//            )));*/
+//            //$debugBar->addCollector(new Propel2Collector(Propel::getConnection()));
+//            $mw = Middleware::DebugBar($debugBar);
+//            $mw->captureAjax(false);
+//            $app->add($mw);
+//        }
 
 		/*
 		 * Homepage handlers

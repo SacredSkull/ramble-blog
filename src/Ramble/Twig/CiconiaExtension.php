@@ -14,7 +14,7 @@ namespace Ramble\Twig;
 use Ciconia\Extension\Gfm;
 use Ramble\Ciconia\ColourExtension;
 
-class CiconiaExtension extends Twig_Extension
+class CiconiaExtension extends \Twig_Extension
 {
     public function getFilters()
     {

@@ -2,7 +2,7 @@
 <database name="blog" defaultIdMethod="native" namespace="Ramble\Models">
 	<table name="article" phpName="Article">
 		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-		<column name="title" type="varchar" size="255" primaryString="true" default="Untitled" />
+		<column name="title" type="varchar" size="160" primaryString="true" default="Untitled" />
 		<column name="bodyHTML" type="longvarchar"/>
 		<column name="body" type="longvarchar" />
 		<column name="excerpt" type="longvarchar" />
@@ -19,7 +19,7 @@
 		<foreign-key foreignTable="category" phpName="Category" onDelete="CASCADE" refPhpName="Article">
 			<reference local="category_id" foreign="id"/>
 		</foreign-key>
-		<behavior name="sluggable" />
+		<behavior name="sluggable"/>
 	</table>
 	<table name="tag" phpName="Tag">
 		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />

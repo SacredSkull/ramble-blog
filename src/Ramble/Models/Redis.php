@@ -11,7 +11,7 @@ namespace Ramble\Models;
 
 use RedisException;
 
-class Redis extends NullMemoryDatabase {
+class Redis extends Cacher {
     protected $redis = null;
     public function __construct($host, $port) {
         $this->redis = new \Redis();

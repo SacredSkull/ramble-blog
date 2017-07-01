@@ -13,6 +13,39 @@ error_reporting(E_ALL);
 $GLOBALS['execute_time'] = microtime(true);
 
 require __DIR__ . "/../src/Ramble/Ramble.php";
+
+
+// Register a basic error handler which will be replaced by Slim during actual app init
+set_error_handler(function ($errorNumber, $message, $errfile, $errline) {
+    $debugBar = new \DebugBar\StandardDebugBar();
+    $renderer = $debugBar->getJavascriptRenderer();
+    ?>
+
+    <html>
+        <head><?php echo $renderer->renderHead() ?></head>
+        <body>
+    <?php
+    switch ($errorNumber) {
+        case E_ERROR :
+            $errorLevel = 'Error';
+            break;
+
+        case E_WARNING :
+            $errorLevel = 'Warning';
+            break;
+
+        case E_NOTICE :
+            $errorLevel = 'Notice';
+            break;
+
+        default :
+            $errorLevel = 'Undefined';
+    }
+
+    echo '<br/><b>' . $errorLevel . '</b>: ' . $message . ' in <b>'.$errfile . '</b> on line <b>' . $errline . '</b><br/>' . $renderer->render() . '</body></html>';
+});
+
+
 $blog = new Ramble();
 
 session_start();

@@ -12,13 +12,13 @@ class ExecutionTimeExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'executeTime' => new \Twig_Function_Method($this, 'getExecTime', array(
+            new \Twig_Function('executeTime', array($this, 'executeTime'), array(
                 'is_safe' => array('html'),
             )),
         );
     }
 
-    public function getExecTime()
+    public static function executeTime()
     {
         if (!isset($GLOBALS['execute_time'])) {
             return "";

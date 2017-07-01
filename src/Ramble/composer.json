@@ -1,21 +1,23 @@
 {
     "require": {
         "slim/slim": "3.*",
-		"twig/twig": "1.*",
+		"twig/twig": "2.*",
         "propel/propel": "~2.0@dev",
         "monolog/monolog": "1.*",
         "twig/extensions": "1.*",
-        "aws/aws-sdk-php": "2.*",
+        "aws/aws-sdk-php": "3.*",
         "kzykhys/ciconia":"1.*",
         "phpxmlrpc/phpxmlrpc": "4.*",
-        "slim/flash": "0.1.0",
-        "slim/twig-view": "^2.1",
-        "oscarotero/psr7-middlewares": "v3.16.1"
+        "slim/flash": "^0.2.0",
+        "slim/twig-view": "^2.2",
+        "oscarotero/psr7-middlewares": "^3.20",
+        "fzaninotto/faker": "^1.6",
+        "willdurand/negotiation": "^2.3"
     },
   "require-dev": {
         "ukko/phpredis-phpdoc": "2.2.x-dev",
-        "fzaninotto/faker": "1.*",
-        "raveren/kint": "^1.0"
+        "kint-php/kint": "^2.0",
+        "maximebf/debugbar": "1.*"
     },
     "autoload": {
         "psr-4": {
