@@ -25,6 +25,8 @@ existing(){
         fi
     fi
 }
+
+
 export DB_HOST="${DB_HOST:-127.0.0.1}"
 export DB_NAME="${DB_NAME:-blog}"
 export DB_PORT="${DB_PORT:-3306}"
@@ -49,6 +51,10 @@ PATH="$PWD/vendor/bin":$PATH
 cd ./Config/Propel || exit
 propel config:convert
 propel model:build
+
+if [[ $* == *--ci* ]]; then
+    exit
+fi
 
 if [ -e ../../.existing-ramble-blog ]; then
     existing
