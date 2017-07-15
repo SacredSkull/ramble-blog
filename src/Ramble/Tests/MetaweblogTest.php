@@ -10,6 +10,15 @@ namespace Ramble\Tests;
 
 use PhpXmlRpc\Response;
 
-class MetaweblogTest extends BloggerTest {
+class MetaweblogTest extends BloggerTest
+{
     public $methodNamespace = 'metaWeblog';
+
+    public function testGetCategoriesGoodAuth(Response $response = null) {
+        $this->markTestIncomplete();
+    }
+
+    public function testGetCategoriesBadAuth(Response $response = null) {
+        $this->markTestIncomplete();
+    }
 }

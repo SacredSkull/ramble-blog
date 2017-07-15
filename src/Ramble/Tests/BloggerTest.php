@@ -50,4 +50,44 @@ class BloggerTest extends XmlRpcTest {
         $response = $response ?? $this->deletePost(false);
         $this->assertBadAuth($response);
     }
+
+    public function testGetUserInfoGoodAuth(Response $response = null) {
+        $this->markTestIncomplete();
+    }
+
+    public function testGetUserInfoBadAuth(Response $response = null) {
+        $this->markTestIncomplete();
+    }
+
+    public function testGetPostGoodAuth(Response $response = null) {
+        $this->markTestIncomplete();
+    }
+
+    public function testGetPostBadAuth(Response $response = null) {
+        $this->markTestIncomplete();
+    }
+
+    public function testGetRecentPostsGoodAuth(Response $response = null) {
+        $this->markTestIncomplete();
+    }
+
+    public function testGetRecentPostsBadAuth(Response $response = null) {
+        $this->markTestIncomplete();
+    }
+
+    public function testNewPostGoodAuth(Response $response = null) {
+        $this->markTestIncomplete();
+    }
+
+    public function testNewPostBadAuth(Response $response = null) {
+        $this->markTestIncomplete();
+    }
+
+    public function testEditPostGoodAuth(Response $response = null) {
+        $this->markTestIncomplete();
+    }
+
+    public function testEditPostBadAuth(Response $response = null) {
+        $this->markTestIncomplete();
+    }
 }
