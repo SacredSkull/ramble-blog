@@ -3,3 +3,4 @@
 node_modules/
 Public/include/js/out/
 src/Ramble/.existing-ramble-blog
+src/Ramble/Config/auth\.php

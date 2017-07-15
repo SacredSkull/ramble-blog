@@ -1,76 +1,120 @@
-{% extends 'skeleton.html.twig' %}
-                    {% block additional_css%}
-                        .do-not-style{
-                            color: black;
-                        }
-                    {% endblock additional_css %}
-
-                    {% block content %}
-                        <h1 class="content-subhead">Posts</h1>
-                        <!-- A single blog post -->
-                        {% for post in posts %}
-                        <section class="post">
-                            <header class="post-header">
-                                {# <img class="post-avatar" alt="Post's image" src="include/img/edit.png" height="48" width="48"> #}
-                                {% set slug = post.getSlug|split('_') %}
-                                <h2 class="post-title"><a class="title_link" href="{{base_url()}}/{{slug[0]|date('Y/m/d/')}}{{slug[1]}}">{{post.title}}</a></h2>
-                                <p class="post-meta">
-                                    <a href="/category/{{post.getCategory.getSlug}}" style="//color: {{post.getCategory.getColour}};" class="post-category">{{post.getCategory.getName}}</a>
-                                    {% for tag in post.getTags  %}
-                                        {% if loop.first %}
-                                            relating to
-                                        {% endif %}
-                                        <a class="tag post-category post-category-design" href="{{base_url}}/tag/{{tag.getName}}">{{tag.getName}}</a>
-                                    {% endfor %}
-                                    &nbsp;{{post.getCreatedAt|date('jS F Y, G:i')}}
-                                </p>
-                            </header>
-
-                            <div class="post-description">
-                                <p>{{post.getBodyhtml}}</p>
-                            </div>
-                        </section>
-                        {% endfor %}
-                    {% endblock content%}
-					{% block footer %}
-						{% if posts.haveToPaginate %}
-							<div id="pagination" class="pure-menu pure-menu-horizontal">
-								<ul>
-									<li class="pure-menu-item"><a class="pure-button button-secondary {% if current_page == 1 %} pure-button-disabled{% endif %}" href="{{pagination_url}}/page/1">&laquo;</a></li>
-									{% for page in page_list %}
-										<li class="pure-menu-item{% if current_page == page %} active{% endif %}"><a class="pure-button button-secondary" href="{{pagination_url}}/page/{{page}}">{{page}}</a></li>
-									{% endfor %}
-									<li class="pure-menu-item"><a class="pure-button button-secondary {% if current_page == max_pages %} pure-button-disabled{% endif %}" href="{{pagination_url}}/page/{{max_pages}}">&raquo;</a></li>
-								</ul>
-							</div>
-						{% endif %}
-					{% endblock footer %}
-
-                    {% block floater %}
-                        <div>
-                            <script type="text/javascript" src="{{ base_url() }}/include/js/jquery.stellar.js"></script>
-                            <script type="text/javascript">
-                                $.stellar();
-                                {# CONFIGURATION VARIABLES  #}
-                                var disqus_shortname = 'sacredskull';
-                                var disqus_identifier = '{{post.getId}}';
-                                var disqus_title = '{{post.getTitle}}';
-                                var disqus_url = 'https://sacredskull.net/post/{{post.getSlug}}';
-
-                                {# DON'T EDIT BELOW THIS LINE #}
-                                (function() {
-                                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-                                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-                                })();
-                            </script>
-                        </div>
-                    {% endblock floater %}
-
-                    {% block additional_js %}
-                        <script type="text/javascript">
-                            $(document).ready(function(){
-                                //$("#left-nav").mCustomScrollbar();
-                            });
-                        </script>
-                    {% endblock additional_js %}
+{% extends 'skeleton.html.twig' %}
+                    {% block additional_css%}
+                        .do-not-style{
+                            color: black;
+                        }
+                    {% endblock additional_css %}
+
+                    {% block content %}
+                        <h1 class="content-subhead">Posts</h1>
+
+                        <!-- A single blog post -->
+                        {% for post in posts %}
+                        <section class="post" id="post-id-{{ post.getId }}">
+                            <header class="post-header">
+                                {# <img class="post-avatar" alt="Post's image" src="include/img/edit.png" height="48" width="48"> #}
+                                {% set slug = post.getSlug|split('_') %}
+                                <h2 class="post-title"><a class="title_link" href="{{base_url()}}/{{slug[0]|date('Y/m/d/')}}{{slug[1]}}">{{post.title}}</a></h2>
+                                <p class="post-meta">
+                                    <a href="/category/{{post.getCategory.getSlug}}" style="//color: {{post.getCategory.getColour}};" class="post-category">{{post.getCategory.getName}}</a>
+                                    {% for tag in post.getTags  %}
+                                        {% if loop.first %}
+                                            relating to
+                                        {% endif %}
+                                        <a class="tag post-category post-category-design" href="{{base_url}}/tag/{{tag.getName}}">{{tag.getName}}</a>
+                                    {% endfor %}
+                                    &nbsp;{{post.getCreatedAt|date('jS F Y, G:i')}}
+                                </p>
+                            </header>
+
+                            <div class="post-description">
+                                <p>{{post.getBodyhtml}}</p>
+                            </div>
+
+                        </section>
+                            {% if loop.first %}
+                                <script type="text/javascript">
+                                    var disqus_config = function () {
+                                        this.page.url = 'https://sacredskull.net/post/{{post.getSlug}}';
+                                        this.page.identifier = '{{post.getId}}';
+                                        this.page.title = '{{ post.getTitle }}';
+                                    };
+
+                                    (function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
+                                        var d = document, s = d.createElement('script');
+
+                                        s.src = 'https://sacredskull.disqus.com/embed.js';  // IMPORTANT: Replace EXAMPLE with your forum shortname!
+
+                                        s.setAttribute('data-timestamp', +new Date());
+                                        (d.head || d.body).appendChild(s);
+                                    })();
+                                </script>
+                            {% endif %}
+
+                        {% endfor %}
+                        {{ postArray }}
+                    {% endblock content%}
+
+					{% block footer %}
+                        {{ postArray }}
+						{% if posts.haveToPaginate %}
+							<div id="pagination" class="pure-menu pure-menu-horizontal">
+								<ul>
+									<li class="pure-menu-item"><a class="pure-button button-secondary {% if current_page == 1 %} pure-button-disabled{% endif %}" href="{{pagination_url}}/page/1">&laquo;</a></li>
+									{% for page in page_list %}
+										<li class="pure-menu-item{% if current_page == page %} active{% endif %}"><a class="pure-button button-secondary" href="{{pagination_url}}/page/{{page}}">{{page}}</a></li>
+									{% endfor %}
+									<li class="pure-menu-item"><a class="pure-button button-secondary {% if current_page == max_pages %} pure-button-disabled{% endif %}" href="{{pagination_url}}/page/{{max_pages}}">&raquo;</a></li>
+								</ul>
+							</div>
+						{% endif %}
+					{% endblock footer %}
+
+                    {% block floater %}
+                        <div>
+                            <div id="disqus_thread"></div>
+                            {{ postArray }}
+                        </div>
+                    {% endblock floater %}
+                    {% block additional_js %}
+                        <script type="text/javascript">
+                            postLookup = {
+                            {% for post in posts %}
+                                {{ post.getId }}: '{{ post.getSlug }}'
+                                {% if not loop.last %},{% endif %}
+                            {% endfor %}
+                            };
+
+                            var currentPostComments = -1;
+
+                            $(document).ready(function(){
+                                $.screentime({
+                                    fields: [
+                                        {% for post in posts %} {
+                                        {{ "selector:'#post-id-#{post.getId}',
+                                        name: '#{post.getId}'" }}
+                                        }{% if not loop.last %},{% endif %}
+                                        {% endfor %}
+                                    ],
+                                    callback: function(data) {
+                                        console.log(data);
+                                        largest = Object.keys(data).reduce(function(a, b){ return data[a] > data[b] ? a : b });
+                                        console.log(largest);
+
+                                        disqusSlug = postLookup[largest[Object.keys(largest)[0]]];
+                                        if(currentPostComments !== Object.keys(largest)[0]) {
+                                            DISQUS.reset({
+                                                reload: true,
+                                                config: function () {
+                                                    this.page.identifier = Object.keys(largest)[0];
+                                                    this.page.url = "https://sacredskull.net/post/" + largest.values()[0];
+                                                }
+                                            });
+                                        }
+                                        currentPostComments = Object.keys(largest)[0];
+                                    },
+                                    reportInterval: 1
+                                });
+                            });
+                        </script>
+                    {% endblock additional_js %}
