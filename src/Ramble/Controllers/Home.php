@@ -8,14 +8,10 @@
 
 namespace Ramble\Controllers;
 
-
-use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Ramble\Models\ArticleQuery;
-use Ramble\Models\CategoryQuery;
 
-class Home extends Controller {
+class Home extends HtmlController {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args) {
         $page = $args['page'] ?? 1;
         $maxPerPage = 10;
@@ -26,7 +22,7 @@ class Home extends Controller {
         // your own word for it!
         //
         // TL;DR - paginate() & setQueryKey() do not play well together currently!
-        $posts = ArticleQuery::create()
+        $posts = $this->queryBuilder->ArticleQuery()::create()
 //			->setQueryKey('homepage')
             ->useCategoryQuery()
             ->filterByName('Fake', \Propel\Runtime\ActiveQuery\Criteria::NOT_EQUAL)
@@ -59,7 +55,7 @@ class Home extends Controller {
         $flickr_album_id = $this->ci['settings']['flickr']['album_id']; // ID of the photoset
 
 
-        /** @var Redis $redis */
+        /** @var \Redis $redis */
         $redis = $this->ci->get('memoryDB');
         $flickr_list_of_photos_xml = "";
 
@@ -122,7 +118,7 @@ class Home extends Controller {
     }
 
 	protected function homepageRender(ResponseInterface $res, string $template, array $args = []) : ResponseInterface {
-		$categories = CategoryQuery::create()
+		$categories = $this->queryBuilder->CategoryQuery()::create()
 //			->setQueryKey('get_all_categories')
 			->find();
 

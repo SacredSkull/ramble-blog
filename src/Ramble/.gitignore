@@ -4,3 +4,4 @@ composer.phar
 Models/Base/
 Models/Map/
 Config/auth.php
+build

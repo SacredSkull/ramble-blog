@@ -14,6 +14,7 @@ $GLOBALS['execute_time'] = microtime(true);
 
 require __DIR__ . "/../src/Ramble/Ramble.php";
 
+session_start();
 
 // Register a basic error handler which will be replaced by Slim during actual app init
 set_error_handler(function ($errorNumber, $message, $errfile, $errline) {
@@ -48,7 +49,6 @@ set_error_handler(function ($errorNumber, $message, $errfile, $errline) {
 
 $blog = new Ramble();
 
-session_start();
 $blog();
 
 function jsFriendly($string) {

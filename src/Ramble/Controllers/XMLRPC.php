@@ -16,11 +16,8 @@ use PhpXmlRpc\Value;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramble\Models\Article;
-use Ramble\Models\ArticleQuery;
 use Ramble\Models\Category;
-use Ramble\Models\CategoryQuery;
 use Ramble\Models\Tag;
-use Ramble\Models\TagQuery;
 
 class XMLRPC extends Controller {
 	private $DEBUG = false;
@@ -29,10 +26,18 @@ class XMLRPC extends Controller {
 	 */
 	private $encoder = null;
 
+    /**
+     * @var AuthorisationInterface
+     */
+	private $authorisation = null;
+	protected $methodDefinitions = null;
+
 	public function __construct(ContainerInterface $ci) {
 		parent::__construct($ci);
 		$this->DEBUG = $ci["ramble"]["debug"] ?? false;
 		$this->encoder = new Encoder();
+		$this->authorisation = $ci["auth"]["handler"];
+		$this->methodDefinitions = $this->serviceDefinitions();
 	}
 
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args) {
@@ -40,183 +45,190 @@ class XMLRPC extends Controller {
 		header('X-XMLRPC: blog XMLRPC');
 		// Nice example of how to actually fake an XMLRPC request for testing purposes.
 		//ddd($this->getCategories(new \PhpXmlRpc\Request("metaWeblog.editPost", [new \PhpXmlRpc\Value("1", "string"), new \PhpXmlRpc\Value("SacredSkull", "string"), new \PhpXmlRpc\Value("<insert password here>", "string")])));
-		return $this->serve();
+
+        // Slim will just ob_start() the output (capture it) for this- Phpxmlrpc doesn't implement the Response/Request
+        // interface - so returning it is pointless.
+		$this->serve();
 	}
 
-	public function serve() : \PhpXmlRpc\Server{
-		$server = new \PhpXmlRpc\Server(array(
-			//
-			/* The first parameter is the RETURN of the function! */
-			//
+	public function serviceDefinitions() : array {
+        return array(
+            //
+            /* The first parameter is the RETURN of the function! */
+            //
 
-			// Additionally, some clients (charm) will try to be good citizens and send an Int where there should be a string
-			// (perhaps the opposite too - though that probably makes you a dick client - looking at you Blogilo!),
-			// so those fields use Value::$xmlrpcValue, rather than Value::$xmlrpcString or Value::$xmlrpcInt.
-			// PHP can take it - because it's not a hero.
+            // Additionally, some clients (charm) will try to be good citizens and send an Int where there should be a string
+            // (perhaps the opposite too - though that probably makes you a dick client - looking at you Blogilo!),
+            // so those fields use Value::$xmlrpcValue, rather than Value::$xmlrpcString or Value::$xmlrpcInt.
+            // PHP can take it - because it's not a hero.
 
-			/*
-			 * GET BLOG INFO
-			 */
+            /*
+             * GET BLOG INFO
+             */
 
-			// returns: array of struct - parameters: API key, username, password
-			"blogger.getUsersBlogs" => array(
-				"function" => array($this, "getBlog"),
-				"signature" => array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-				"docstring" => 'Gets blog info',
-			),
+            // returns: array of struct - parameters: API key, username, password
+            "blogger.getUsersBlogs" => array(
+                "function" =>   $getUserBlogsFunc = array($this, "getBlog"),
+                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                "docstring" =>  $getUserBlogsDoc = 'Gets blog info',
+            ),
 
-			"metaWeblog.getUsersBlogs" => array(
-				"function" => array($this, "getBlog"),
-				"signature" => array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-				"docstring" => 'Gets blog info',
-			),
+            "metaWeblog.getUsersBlogs" => array(
+                "function" =>   $getUserBlogsFunc,
+                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                "docstring" =>  $getUserBlogsDoc,
+            ),
 
-			"wp.getUsersBlogs" => array(
-				"function" => array($this, "wpGetBlog"),
-				"signature" => array(array(Value::$xmlrpcArray, Value::$xmlrpcString, Value::$xmlrpcString)),
-				"docstring" => 'Gets blog info',
-			),
+            "wp.getUsersBlogs" => array(
+                "function" =>   array($this, "wpGetBlog"),
+                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcString, Value::$xmlrpcString)),
+                "docstring" =>  $getUserBlogsDoc,
+            ),
 
-			/*
-			 * CREATE/EDIT POST
-			 */
+            /*
+             * CREATE/EDIT POST
+             */
 
-			// returns: string - parameters: $blogid, $username, $password, $struct, $publish
-			"metaWeblog.newPost" => array(
-				"function" => array($this, "newPost"),
-				"signature" => array(array(Value::$xmlrpcString, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcStruct, Value::$xmlrpcValue)),
-				"docstring" => 'Creates a new post from the associative array/struct. Parameters: blogID, username, password, post data struct, publish bool',
-			),
+            // returns: string - parameters: $blogid, $username, $password, $struct, $publish
+            "metaWeblog.newPost" => array(
+                "function" =>   array($this, "newPost"),
+                "signature" =>  array(array(Value::$xmlrpcString, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcStruct, Value::$xmlrpcValue)),
+                "docstring" =>  'Creates a new post from the associative array/struct. Parameters: blogID, username, password, post data struct, publish bool',
+            ),
 
-			// returns: bool - parameters: API key (ignored), $blogid, $username, $password, $struct, $publish
-			"metaWeblog.editPost" => array(
-				"function" => array($this, "editPost"),
-				"signature" => array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcStruct, Value::$xmlrpcValue)),
-				"docstring" => 'Edits the post of a a certain ID. Parameters: postID, username, password, post data struct, publish',
-			),
+            // returns: bool - parameters: API key (ignored), $blogid, $username, $password, $struct, $publish
+            "metaWeblog.editPost" => array(
+                "function" =>   array($this, "editPost"),
+                "signature" =>  array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcStruct, Value::$xmlrpcValue)),
+                "docstring" =>  'Edits the post of a a certain ID. Parameters: postID, username, password, post data struct, publish',
+            ),
 
-			// returns: bool - parameters: $postId, $username, $password
-			"mt.publishPost" => array(
-				"function" => array($this, "publishPost"),
-				"signature" => array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-				"docstring" => 'Publishes a certain post. Parameters: postID, username, password',
-			),
+            // returns: bool - parameters: $postId, $username, $password
+            "mt.publishPost" => array(
+                "function" =>   array($this, "publishPost"),
+                "signature" =>  array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                "docstring" =>  'Publishes a certain post. Parameters: postID, username, password',
+            ),
 
-			// returns: bool - parameters: $postId, $username, $password, struct
-			"mt.setPostCategories" => array(
-				"function" => array($this, "setCategory"),
-				"signature" => array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcArray)),
-				"docstring" => 'Edits the post of a a certain ID. Parameters: postID, username, password, struct of categories (only parses the primary or first category)',
-			),
+            // returns: bool - parameters: $postId, $username, $password, struct
+            "mt.setPostCategories" => array(
+                "function" =>   array($this, "setCategory"),
+                "signature" =>  array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcArray)),
+                "docstring" =>  'Edits the post of a a certain ID. Parameters: postID, username, password, struct of categories (only parses the primary or first category)',
+            ),
 
-			/*
-			 * DELETE
-			 */
+            /*
+             * DELETE
+             */
 
-			// returns: bool - parameters: API key (ignored), $postid, $username, $password, $publish (ignored - what the hell is this doing here?!)
-			"blogger.deletePost" => array(
-				"function" => array($this, "deletePost"),
-				"signature" => array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcValue)),
-				"docstring" => "Deletes a post, returns true if deleted. Parameters: appKey, postID, username, password, publish bool (ignored)",
-			),
+            // returns: bool - parameters: API key (ignored), $postid, $username, $password, $publish (ignored - what the hell is this doing here?!)
+            "blogger.deletePost" => array(
+                "function" =>   $deletePostFunc = array($this, "deletePost"),
+                "signature" =>  $deletePostSig = array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcValue)),
+                "docstring" =>  $deletePostDoc = "Deletes a post, returns true if deleted. Parameters: appKey, postID, username, password, publish bool (ignored)",
+            ),
 
-			// returns: bool - parameters: API key (ignored), $postid, $username, $password, $publish (ignored - what the hell is this doing here?!)
-			"metaWeblog.deletePost" => array(
-				"function" => array($this, "deletePost"),
-				"signature" => array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcValue)),
-				"docstring" => "Deletes a post, returns true if deleted. Parameters: appKey, postID, username, password, publish bool (ignored)",
-			),
+            // returns: bool - parameters: API key (ignored), $postid, $username, $password, $publish (ignored - what the hell is this doing here?!)
+            "metaWeblog.deletePost" => array(
+                "function" =>   $deletePostFunc,
+                "signature" =>  $deletePostSig,
+                "docstring" =>  $deletePostDoc,
+            ),
 
-			/*
-			 * GET POST(S)
-			 */
+            /*
+             * GET POST(S)
+             */
 
-			// returns: struct - parameters: $postid, $username, $password
-			"metaWeblog.getPost" => array(
-				"function" => array($this, "getPost"),
-				"signature" => array(array(Value::$xmlrpcStruct, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-				"docstring" => 'Gets a specific post. Parameters: postID, username, password',
-			),
+            // returns: struct - parameters: $postid, $username, $password
+            "metaWeblog.getPost" => array(
+                "function" =>   array($this, "getPost"),
+                "signature" =>  array(array(Value::$xmlrpcStruct, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                "docstring" =>  'Gets a specific post. Parameters: postID, username, password',
+            ),
 
-			// returns: array - blogID, username, password, noOfPosts
-			"metaWeblog.getRecentPosts" => array(
-				"function" => array($this, "getRecentPosts"),
-				"signature" => array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcInt)),
-				"docstring" => 'Gets a certain number of posts, ordered by recency. Parameters: blogID, username, password, noOfPosts',
-			),
+            // returns: array - blogID, username, password, noOfPosts
+            "metaWeblog.getRecentPosts" => array(
+                "function" =>   $metawbGetRecentPostsFunc = array($this, "getRecentPosts"),
+                "signature" =>  $metawbGetRecentPostsSig = array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcInt)),
+                "docstring" =>  $metawbGetRecentPostsDoc = 'Gets a certain number of posts, ordered by recency. Parameters: blogID, username, password, noOfPosts',
+            ),
 
-			// returns: array - blogID, username, password, noOfPosts
-			"mt.getRecentPostTitles" => array(
-				"function" => array($this, "getRecentPosts"),
-				"signature" => array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcInt)),
-				"docstring" => 'Gets a certain number of posts, ordered by recency. Parameters: blogID, username, password, noOfPosts',
-			),
+            // returns: array - blogID, username, password, noOfPosts
+            "mt.getRecentPostTitles" => array(
+                "function" =>   $metawbGetRecentPostsFunc,
+                "signature" =>  $metawbGetRecentPostsSig,
+                "docstring" =>  $metawbGetRecentPostsDoc,
+            ),
 
-			// returns: array - blogID, username, password, noOfPosts
-			"mt.getPostCategories" => array(
-				"function" => array($this, "getPostCategories"),
-				"signature" => array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-				"docstring" => 'Gets a certain number of posts, ordered by recency. Parameters: blogID, username, password, noOfPosts',
-			),
+            // returns: array - blogID, username, password, noOfPosts
+            "mt.getPostCategories" => array(
+                "function" =>   array($this, "getPostCategories"),
+                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                "docstring" =>  'Gets a certain number of posts, ordered by recency. Parameters: blogID, username, password, noOfPosts',
+            ),
 
-			/*
-			 * CREATE CATEGORY
-			 */
+            /*
+             * CREATE CATEGORY
+             */
 
-			// returns: int (category ID) - parameters blogID, username, password, category struct
-			"wp.newCategory" => array(
-				"function" => array($this, "addCategory"),
-				"signature" => array(array(Value::$xmlrpcInt, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcStruct)),
-				"docstring" => "Creates a category. Parameters: blogID, username, password, category struct/array name"
-			),
+            // returns: int (category ID) - parameters blogID, username, password, category struct
+            "wp.newCategory" => array(
+                "function" =>   array($this, "addCategory"),
+                "signature" =>  array(array(Value::$xmlrpcInt, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcStruct)),
+                "docstring" =>  "Creates a category. Parameters: blogID, username, password, category struct/array name"
+            ),
 
-			/*
-			 * GET CATEGORIES
-			 */
+            /*
+             * GET CATEGORIES
+             */
 
-			// returns: array - parameters blogID, username, password
-			"metaWeblog.getCategories" => array(
-				"function" => array($this, "getCategories"),
-				"signature" => array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-				"docstring" => "Returns [categories]. Parameters: blogID, username, password"
-			),
+            // returns: array - parameters blogID, username, password
+            "metaWeblog.getCategories" => array(
+                "function" =>   $metawbGetCatsFunc = array($this, "getCategories"),
+                "signature" =>  $metawbGetCatsSig = array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                "docstring" =>  $metawbGetCatsDoc = "Returns [categories]. Parameters: blogID, username, password"
+            ),
 
-			// returns: array - parameters blogID, username, password
-			"mt.getCategoryList" => array(
-				"function" => array($this, "getCategories"),
-				"signature" => array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-				"docstring" => "Returns [categories]. Parameters: blogID, username, password"
-			),
+            // returns: array - parameters blogID, username, password
+            "mt.getCategoryList" => array(
+                "function" =>   $metawbGetCatsFunc,
+                "signature" =>  $metawbGetCatsSig,
+                "docstring" =>  $metawbGetCatsDoc
+            ),
 
-			"wp.getCategories" => array(
-				"function" => array($this, "getCategories"),
-				"signature" => array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-				"docstring" => "Returns [categories]. Parameters: blogID, username, password"
-			),
+            "wp.getCategories" => array(
+                "function" =>   $metawbGetCatsFunc,
+                "signature" =>  $metawbGetCatsSig,
+                "docstring" =>  $metawbGetCatsDoc
+            ),
 
-			/*
-			 * MISCELLANEOUS
-			 */
+            /*
+             * MISCELLANEOUS
+             */
 
-			// Gets trackbacks/pings on a post, not implemented currently.
-			"mt.getTrackbackPings" => array(
-				"function" => array($this, "returnEmpty"),
-				"signature" => array(array(Value::$xmlrpcArray, Value::$xmlrpcValue)),
-				"docstring" => "Returns array(['pingTitle', 'pingURL', 'pingIP']). Parameters: postID"
-			),
+            // Gets trackbacks/pings on a post, not implemented currently.
+            "mt.getTrackbackPings" => array(
+                "function" =>   array($this, "returnEmpty"),
+                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue)),
+                "docstring" =>  "Returns array(['pingTitle', 'pingURL', 'pingIP']). Parameters: postID"
+            ),
 
-			// Not supported by WP, will probably ignore it
-			"mt.supportedTextFilters" => array(
-				"function" => array($this, "returnEmpty"),
-				"signature" => array(array(Value::$xmlrpcArray)),
-				"docstring" => "Returns array(['pingTitle', 'pingURL', 'pingIP']). Parameters: postID"
-			),
-		));
+            // Not supported by WP, will probably ignore it
+            "mt.supportedTextFilters" => array(
+                "function" =>   array($this, "returnEmpty"),
+                "signature" =>  array(array(Value::$xmlrpcArray)),
+                "docstring" =>  "Returns array(['pingTitle', 'pingURL', 'pingIP']). Parameters: postID"
+            ),
+        );
+    }
+
+	public function serve(){
+		$server = new \PhpXmlRpc\Server($this->serviceDefinitions(), false);
 
 		$server->setDebug(3);
 		$server->exception_handling = 1;
 
-		return $server;
+		$server->service();
 	}
 
 	public function rsdRender(ServerRequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface {
@@ -225,13 +237,7 @@ class XMLRPC extends Controller {
 
 	//TODO: if distributing, I'd recommend you change this!
 	public function passwordAdmin($user, $pass) {
-		$verified = (strcmp($user, $this->ci['auth']['user']) == 0) && password_verify($pass, $this->ci['auth']['password']);
-		if(!$verified) {
-			$this->logger->warn('[XMLRPC] Bad login details used.', ['Username' => $user, 'Password' => preg_replace('/./', '*', $pass)]);
-		} else {
-			$this->logger->debug('[XMLRPC] Successful login', ['Username' => $user]);
-		}
-		return $verified;
+        return $this->authorisation->checkAuthentication($user, $pass);
 	}
 
 	public function returnEmpty(Request $req, $empty = array(), int $responseCode = 200){
@@ -258,7 +264,8 @@ class XMLRPC extends Controller {
 			"url" => "http://" . $_SERVER['SERVER_NAME'],
 			"blogName" => "Main",
 			"isAdmin" => $this->passwordAdmin($user, $pass),
-			"xmlrpc" => "http://" . $_SERVER['SERVER_NAME'] . str_replace('.php', '', $this->router->pathFor('XMLRPC'))
+			"xmlrpc" => "http://" . $_SERVER['SERVER_NAME'] .
+                str_replace('.php', '', $this->router->pathFor('XMLRPC'))
 		));
 
 		if ($return[0]["isAdmin"] != 1) {
@@ -294,7 +301,8 @@ class XMLRPC extends Controller {
 		$post = new Article();
 		$post->setDraft(!$publish);
 		$cat = $postStruct["categories"][0];
-		$post->setCategory(CategoryQuery::create()->findOneBySlug($cat) ?? CategoryQuery::create()->findOne());
+		$post->setCategory($this->queryBuilder->CategoryQuery()->findOneBySlug($cat) ??
+            $this->queryBuilder->CategoryQuery()->findOne());
 		$post->setTitle($postStruct["title"]);
 		$post->setBody(html_entity_decode($postStruct["description"]));
 		$post->setCreatedAt($postStruct["dateCreated"] ?? new DateTime());
@@ -305,7 +313,7 @@ class XMLRPC extends Controller {
 
 		foreach ($tagArray as $tag) {
 			$tag = trim($tag, ', ');
-			$exists = TagQuery::create()->setIgnoreCase(true)->findOneByName($tag);
+			$exists = $this->queryBuilder->TagQuery()->setIgnoreCase(true)->findOneByName($tag);
 			if ($exists != null) {
 				$this->logger->debug("Existing tag found", ['Name' => $tag]);
 			} else if(!empty($tag)){
@@ -347,7 +355,7 @@ class XMLRPC extends Controller {
 			return $this->badAuth($req);
 		}
 
-		$post = ArticleQuery::create()->findOneById($postID);
+		$post = $this->queryBuilder->ArticleQuery()->findOneById($postID);
 		$post->setDraft(!$publish);
 		$originalVersion = $post->getVersion();
 		// Allows direct use of mt.publishPost without any real modification (see publishPost())
@@ -356,7 +364,7 @@ class XMLRPC extends Controller {
 
 			if (!empty($category)) {
 				$category = $postStruct["categories"][0];
-				$post->setCategory(CategoryQuery::create()->findOneBySlug($category));
+				$post->setCategory($this->queryBuilder->CategoryQuery()->findOneBySlug($category));
 			}
 			$post->setTitle($postStruct["title"]);
 			$post->setBody(html_entity_decode($postStruct["description"]));
@@ -367,7 +375,7 @@ class XMLRPC extends Controller {
 
 			foreach ($tagArray as $tag) {
 				$tag = trim($tag, ',');
-				$exists = TagQuery::create()->setIgnoreCase(true)->findOneByName($tag);
+				$exists = $this->queryBuilder->TagQuery()->setIgnoreCase(true)->findOneByName($tag);
 				if ($exists != null) {
 					$this->logger->debug("Existing tag found", ['Name' => $tag]);
 				} else if (!empty($tag)) {
@@ -389,13 +397,20 @@ class XMLRPC extends Controller {
 		$post->save();
 		$this->logger->info("Edited existing post", ['ID' => $post->getId(), 'Title' => $post->getTitle(),
 			'Changes' => ($originalVersion == $post->getVersion())? "None" : $post->compareVersions($originalVersion,
-				$post->getVersion(), 'columns', null, ['UpdatedAt', 'CreatedAt', 'Slug', 'BodyHTML', 'Body'])]);
+				$post->getVersion(), 'columns', null,
+                ['UpdatedAt', 'CreatedAt', 'Slug', 'BodyHTML', 'Body'])]);
 
 		return new \PhpXmlRpc\Response(new \PhpXmlRpc\Value("true", "boolean"));
 	}
 
 	public function publishPost(Request $req){
 		$params = $this->encoder->decode($req);
+
+        $username = $params[1];
+        $password = $params[2];
+
+        if (!$this->passwordAdmin($username, $password))
+            return $this->badAuth($req);
 
 		$wrappedReq = new Request($req->methodname);
 		$wrappedReq->addParam(new Value($params[0], Value::$xmlrpcInt));
@@ -419,7 +434,7 @@ class XMLRPC extends Controller {
 		if (!$this->passwordAdmin($username, $password))
 			return $this->badAuth($req);
 
-		$post = ArticleQuery::create()->findPK($id);
+		$post = $this->queryBuilder->ArticleQuery()->findPK($id);
 
 		if($post == null)
 			return $this->notFound($req);
@@ -435,13 +450,13 @@ class XMLRPC extends Controller {
 		foreach ($categories as $category) {
 			if(isset($category[0])) {
 				if ($first) {
-					$prime = CategoryQuery::create()->findOneById($category[0]) ??
-						CategoryQuery::create()->findOneBySlug($category[0]);
+					$prime = $this->queryBuilder->CategoryQuery()->findOneById($category[0]) ??
+                        $this->queryBuilder->CategoryQuery()->findOneBySlug($category[0]);
 					$first = false;
 				} else if (isset($category[1])) {
 					if (boolval($category[1])) {
-						$prime = CategoryQuery::create()->findOneById($category[0]) ??
-							CategoryQuery::create()->findOneBySlug($category[0]);
+						$prime = $this->queryBuilder->CategoryQuery()->findOneById($category[0]) ??
+                            $this->queryBuilder->CategoryQuery()->findOneBySlug($category[0]);
 						break;
 					}
 				}
@@ -456,7 +471,7 @@ class XMLRPC extends Controller {
 		$params = $this->encoder->decode($req);
 
 		$postID = $params[0];
-		$post = ArticleQuery::create()->findPK($postID);
+		$post = $this->queryBuilder->ArticleQuery()->findPK($postID);
 
 		if($post == null){
 			return $this->notFound($req);
@@ -497,7 +512,7 @@ class XMLRPC extends Controller {
 		if (strlen($postCount) < 1)
 			$postCount = 10;
 
-		$posts = ArticleQuery::create()->lastCreatedFirst()->limit($postCount)->find();
+		$posts = $this->queryBuilder->ArticleQuery()->lastCreatedFirst()->limit($postCount)->find();
 
 		$allPosts = array();
 
@@ -538,7 +553,7 @@ class XMLRPC extends Controller {
 
 		$id = $params[0];
 
-		$post = ArticleQuery::create()->findOneById($id);
+		$post = $this->queryBuilder->ArticleQuery()->findOneById($id);
 
 		if($post == null){
 			return $this->notFound($req);
@@ -559,9 +574,9 @@ class XMLRPC extends Controller {
 		$username = $params[1];
 		$password = $params[2];
 
-		$categoriesArr = "";
+		$categoriesArr = null;
 
-		$categories = CategoryQuery::create()->find();
+		$categories = $this->queryBuilder->CategoryQuery()->find();
 
 		foreach ($categories as $category) {
 			$categoriesArr[] = array(
@@ -587,7 +602,7 @@ class XMLRPC extends Controller {
 		$username = $params[2];
 		$password = $params[3];
 
-		$post = ArticleQuery::create()->findOneById($postID);
+		$post = $this->queryBuilder->ArticleQuery()->findOneById($postID);
 
 		if (!$this->passwordAdmin($username, $password)) {
 			return $this->badAuth($req);
@@ -616,7 +631,7 @@ class XMLRPC extends Controller {
 
 		$name = $categoryStruct['name'] ?? $categoryStruct[0];
 
-		$category = CategoryQuery::create()->findOneByName($name);
+		$category = $this->queryBuilder->CategoryQuery()->findOneByName($name);
 
 		if ($category == null) {
 			$category = new Category();

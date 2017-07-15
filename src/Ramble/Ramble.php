@@ -8,7 +8,9 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Propel\Runtime\Propel;
 use Ramble\Controllers\Router;
+use Ramble\Controllers\SimpleAuthorisation;
 use Ramble\Models\Cacher;
+use Ramble\Models\QueryBuilder;
 use Ramble\Models\Redis;
 use RedisException;
 use Slim\Views\Twig;
@@ -99,7 +101,7 @@ class Ramble {
         /** @var Twig $container['view'] */
         $container['view'] = function (ContainerInterface $c) {
 		    $view = new \Slim\Views\Twig($c->get('settings')['renderer']['template_path'], [
-			    'cache' => self::$DEBUG ? false : $c->get('settings')['renderer']['cache'],
+			    'cache' => self::$DEBUG ? $c->get('settings')['renderer']['cache'] : $c->get('settings')['renderer']['cache'],
 			    'debug' => self::$DEBUG,
 			    'autoescape' => false
 		    ]);
@@ -125,6 +127,16 @@ class Ramble {
 	    };
 
 	    Propel::getServiceContainer()->setLogger('defaultLogger', $container['logger']);
+
+	    $container['queryBuilder'] = function() {
+	        return new QueryBuilder();
+        };
+
+	    $container['auth'] = array(
+	            'handler' => new SimpleAuthorisation($container['auth']['user'],
+                    $container['auth']['password'], $container['logger'])
+        );
+
 	    return $app;
     }
 

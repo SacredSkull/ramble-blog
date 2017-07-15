@@ -17,8 +17,10 @@
   "require-dev": {
         "ukko/phpredis-phpdoc": "2.2.x-dev",
         "kint-php/kint": "^2.0",
-        "maximebf/debugbar": "1.*"
-    },
+        "maximebf/debugbar": "1.*",
+        "mockery/mockery": "0.9.9",
+        "phpunit/phpunit": "^6.2"
+  },
     "autoload": {
         "psr-4": {
             "Ramble\\": "./"

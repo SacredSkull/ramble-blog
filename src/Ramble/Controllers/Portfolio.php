@@ -12,7 +12,7 @@ namespace Ramble\Controllers;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class Portfolio extends Controller {
+class Portfolio extends HtmlController {
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args) {
 		return $this->view->render($response, 'portfolio.html.twig', [
 

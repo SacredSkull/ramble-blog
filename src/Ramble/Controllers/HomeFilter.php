@@ -10,12 +10,8 @@ namespace Ramble\Controllers;
 
 
 use DateTime;
-use Ramble\Models\Article;
-use Ramble\Models\ArticleQuery;
-use Ramble\Models\CategoryQuery;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Ramble\Models\TagQuery;
 
 class HomeFilter extends Home {
 
@@ -36,7 +32,7 @@ class HomeFilter extends Home {
 
 		$page = $args['page'] ?? 1;
 
-		$specificCategory = CategoryQuery::create()
+		$specificCategory = $this->queryBuilder->CategoryQuery()::create()
 			->findOneBySlug($categorySlug);
 
 		$maxPerPage = 10;
@@ -46,7 +42,7 @@ class HomeFilter extends Home {
 			return $response->withStatus(302)->withHeader("Location", $this->router->pathFor("GET_HOME"));
 		}
 
-		$posts = ArticleQuery::create()
+		$posts = $this->queryBuilder->ArticleQuery::create()
 			//->setQueryKey('homepage')
 			->orderById('DESC')
 			->filterByCategory($specificCategory)
@@ -79,7 +75,7 @@ class HomeFilter extends Home {
 
 	public function filterByPost(ServerRequestInterface $request, ResponseInterface $response, array $args){
 		$slug = $args['year']."-".$args['month']."-".$args['day']."_".$args['slugArticle'];
-		$post = ArticleQuery::create()->findOneBySlug($slug);
+		$post = $this->queryBuilder->ArticleQuery()::create()->findOneBySlug($slug);
 
 		if ($post == null) {
 			$this->flash->addMessage('error', 'No post found with that information, sorry!');
@@ -164,7 +160,7 @@ class HomeFilter extends Home {
 		$maxPerPage = 10;
 
 		// See the main home route ("/") for information about why setQueryKey should always be commented out for paginations
-		$posts = ArticleQuery::create()
+		$posts = $this->queryBuilder->ArticleQuery()::create()
 			//->setQueryKey('homepage')
 			->orderById('DESC')
 			->filterByCreatedAt(array('min' => $firstDate, 'max' => $secondDate))
@@ -202,10 +198,10 @@ class HomeFilter extends Home {
 		$page = $args['page'] ?? 1;
 
 		$maxPerPage = 10;
-		$selectedTag = TagQuery::create()->findOneByName($tag);
+		$selectedTag = $this->queryBuilder->TagQuery()::create()->findOneByName($tag);
 
 		if ($selectedTag != null) {
-			$posts = ArticleQuery::create()
+			$posts = $this->queryBuilder->ArticleQuery()::create()
 				->filterByTag($selectedTag)
 				->filterByDraft(false)
 				->paginate($page, $maxPerPage);
