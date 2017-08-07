@@ -165,18 +165,10 @@ class Ramble {
 			if (($_SERVER['HTTPS'] == "on" && $_SERVER['VERIFIED'] == "SUCCESS") || $_SERVER['VERIFIED'] == "OVERRIDE") {
 				return true;
 			}
-			return false;
 		} else if(static::$BYPASS_AUTH){
 			return true;
-		} else {
-			// use a cookie for auth?
-			$allowedips = array('127.0.0.1', '192.168.1.102');
-			$ips = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-			if (in_array($ips, $allowedips)) {
-				return true;
-			}
-
-			return false;
 		}
+
+		return false;
 	}
 }

@@ -31,19 +31,16 @@
 }());
 
 document.addEventListener("DOMContentLoaded", function() {
-	$('.title-top span').each(function(index){
-	  var letter = $(this);
-	  setTimeout(function(){
-		$(letter).css({'animation': 'hotline-hover 0.6s infinite', 'animation-direction': 'alternate'});
-	  }, 100 * index);
-	});
+    var hotlineHandler = function(index){
+        var letter = $(this);
+        setTimeout(function(){
+            $(letter).css({'animation': 'hotline-hover 0.6s infinite', 'animation-direction': 'alternate'});
+        }, 100 * index);
+    };
 
-	$('.title-shadow span').each(function(index){
-	  var letter = $(this);
-	  setTimeout(function(){
-		$(letter).css({'animation': 'hotline-hover 0.6s infinite', 'animation-direction': 'alternate'});
-	  }, 100 * index);
-	});
+	$('.title-top span').each(hotlineHandler);
+
+	$('.title-shadow span').each(hotlineHandler);
 
     $('.post-description > pre > code').each(function(){
         $(this).css({ 'overflow-x': 'hidden' });

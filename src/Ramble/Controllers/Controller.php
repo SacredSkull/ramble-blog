@@ -10,9 +10,7 @@ namespace Ramble\Controllers;
 
 
 use Interop\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Ramble\Models\QueryBuilder;
-use Slim\Views\Twig;
 
 abstract class Controller {
 	protected $ci;
@@ -35,6 +33,4 @@ abstract class Controller {
 		$this->logger = $ci->logger;
 		$this->router = $ci->router;
 	}
-
-
 }

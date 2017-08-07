@@ -210,30 +210,15 @@ class Metaweblog extends Blogger
         $post->setCreatedAt($postStruct["dateCreated"] ?? new DateTime());
 
         // Tag parsing
-        $tagArray = explode(',', $postStruct['mt_keywords']) ?? [];
-        $this->logger->debug("Parsed tag bundle", $tagArray);
+        $this->parseTags($postStruct['mt_keywords'], $post);
 
-        foreach ($tagArray as $tag) {
-            $tag = trim($tag, ', ');
-            $exists = $this->queryBuilder->TagQuery()->setIgnoreCase(true)->findOneByName($tag);
-            if ($exists != null) {
-                $this->logger->debug("Existing tag found", ['Name' => $tag]);
-            } else if(!empty($tag)){
-                $exists = new Tag();
-                $exists->setName($tag);
-                $this->logger->debug('Non-existing tag found, creating now', ['Name' => $tag]);
-                $exists->save();
-            } else {
-                // Malformed tag (probably an empty string)
-                continue;
-            }
-            $post->addTag($exists);
-        }
-        $post->setExcerpt($postStruct["mt_excerpt"] ?? (function($body) : string{
+        $post->setExcerpt(
+            $postStruct["mt_excerpt"] ?? (function($body) : string{
                 $firstWords = "";
                 preg_match("/(?:\w+(?:\W+|$)){0,20}/", $body, $firstWords);
                 return $firstWords[0];
-            })($postStruct["description"]));
+            })($postStruct["description"])
+        );
 
 
         $post->setAllowComments(isset($postStruct["mt_allow_comments"]) ? $postStruct["mt_allow_comments"] : true);
@@ -271,26 +256,7 @@ class Metaweblog extends Blogger
             $post->setTitle($postStruct["title"]);
             $post->setBody(html_entity_decode($postStruct["description"]));
 
-            // Tag parsing
-            $tagArray = explode(',', $postStruct['mt_keywords']);
-            $this->logger->debug("Parsed tag bundle", $tagArray);
-
-            foreach ($tagArray as $tag) {
-                $tag = trim($tag, ',');
-                $exists = $this->queryBuilder->TagQuery()->setIgnoreCase(true)->findOneByName($tag);
-                if ($exists != null) {
-                    $this->logger->debug("Existing tag found", ['Name' => $tag]);
-                } else if (!empty($tag)) {
-                    $exists = new Tag();
-                    $exists->setName($tag);
-                    $this->logger->debug('Non-existing tag found, creating now', ['Name' => $tag]);
-                    $exists->save();
-                } else {
-                    // Malformed tag (probably an empty string)
-                    continue;
-                }
-                $post->addTag($exists);
-            }
+            $this->parseTags($postStruct['mt_keywords'], $post);
 
             $post->setExcerpt($postStruct["mt_excerpt"]);
             $post->setAllowComments(isset($postStruct["mt_allow_comments"]) ? $postStruct["mt_allow_comments"] : true);
@@ -303,5 +269,27 @@ class Metaweblog extends Blogger
                 ['UpdatedAt', 'CreatedAt', 'Slug', 'BodyHTML', 'Body'])]);
 
         return new \PhpXmlRpc\Response(new \PhpXmlRpc\Value("true", "boolean"));
+    }
+
+    protected function parseTags(string $rawTagString, Article $post) {
+        $tagArray = explode(',', $rawTagString);
+        $this->logger->debug("Parsed tag bundle", $tagArray);
+
+        foreach ($tagArray as $tag) {
+            $tag = trim($tag, ',');
+            $exists = $this->queryBuilder->TagQuery()->setIgnoreCase(true)->findOneByName($tag);
+            if ($exists != null) {
+                $this->logger->debug("Existing tag found", ['Name' => $tag]);
+            } else if (!empty($tag)) {
+                $exists = new Tag();
+                $exists->setName($tag);
+                $this->logger->debug('Non-existing tag found, creating now', ['Name' => $tag]);
+                $exists->save();
+            } else {
+                // Malformed tag (probably an empty string)
+                continue;
+            }
+            $post->addTag($exists);
+        }
     }
 }
