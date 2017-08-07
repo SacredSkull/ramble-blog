@@ -9,7 +9,7 @@
 namespace Ramble\Models;
 
 
-class Cacher {
+abstract class Cacher {
     private $db = [];
     public function get($key){
         if(!in_array($key, $this->db))

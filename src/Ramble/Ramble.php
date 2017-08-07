@@ -10,6 +10,7 @@ use Propel\Runtime\Propel;
 use Ramble\Controllers\Router;
 use Ramble\Controllers\SimpleAuthorisation;
 use Ramble\Models\Cacher;
+use Ramble\Models\InMemoryCacher;
 use Ramble\Models\QueryBuilder;
 use Ramble\Models\Redis;
 use RedisException;
@@ -71,7 +72,7 @@ class Ramble {
 		    try {
 			    return new Redis($c->get('settings')['redis']['host'], $c->get('settings')['redis']['port']);
 		    } catch (RedisException $exception) {
-			    return new Cacher();
+			    return new InMemoryCacher();
 		    }
 	    };
 
