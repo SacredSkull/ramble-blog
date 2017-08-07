@@ -1,4 +1,6 @@
-#ramble [![Build Status](https://travis-ci.com/SacredSkull/ramble-blog.svg?token=QKzv71dggVPNcG9JsNYR&branch=master)](https://travis-ci.com/SacredSkull/ramble-blog) [![Code Climate](https://codeclimate.com/repos/596a3d4596054a0274001265/badges/9dd2158c3bc7d4762f65/gpa.svg)](https://codeclimate.com/repos/596a3d4596054a0274001265/feed) [![Test Coverage](https://codeclimate.com/repos/596a3d4596054a0274001265/badges/9dd2158c3bc7d4762f65/coverage.svg)](https://codeclimate.com/repos/596a3d4596054a0274001265/coverage)
+#ramble 
+[![Build Status](https://travis-ci.com/SacredSkull/ramble-blog.svg?token=QKzv71dggVPNcG9JsNYR&branch=master)](https://travis-ci.com/SacredSkull/ramble-blog) [![Code Climate](https://codeclimate.com/repos/596a3d4596054a0274001265/badges/9dd2158c3bc7d4762f65/gpa.svg)](https://codeclimate.com/repos/596a3d4596054a0274001265/feed) [![Test Coverage](https://codeclimate.com/repos/596a3d4596054a0274001265/badges/9dd2158c3bc7d4762f65/coverage.svg)](https://codeclimate.com/repos/596a3d4596054a0274001265/coverage)
+
 ####ramb(ə)l
 
     1. talk or write at length in a confused or inconsequential way.
