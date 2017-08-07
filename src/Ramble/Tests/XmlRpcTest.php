@@ -14,13 +14,12 @@ namespace Ramble\Tests {
     use Mockery;
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
     use Monolog\Logger;
-    use Negotiation\Exception\InvalidArgument;
     use PhpXmlRpc\Request;
     use PhpXmlRpc\Response;
     use PhpXmlRpc\Server;
     use PhpXmlRpc\Value;
     use Ramble\Controllers\AuthorisationInterface;
-    use Ramble\Controllers\XMLRPC;
+    use Ramble\Controllers\XMLRPC\XMLRPCServer;
     use Ramble\Models\Article;
     use Ramble\Models\ArticleQuery;
     use Ramble\Models\Category;
@@ -44,7 +43,7 @@ namespace Ramble\Tests {
          */
         protected $xmlrpcServer = null;
         /**
-         * @var XMLRPC
+         * @var Server
          */
         protected $xmlrpcController = null;
 
@@ -205,7 +204,7 @@ namespace Ramble\Tests {
                 return ['handler' => $authorisationInterface];
             };
 
-            $this->xmlrpcController = new XMLRPC($this->ci);
+            $this->xmlrpcController = new XMLRPCServer($this->ci);
             $this->xmlrpcServer = new Server($this->xmlrpcController->serviceDefinitions(), false);
         }
 

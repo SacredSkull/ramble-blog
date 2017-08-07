@@ -18,55 +18,67 @@ use Ramble\Models\Tag;
 
 class Metaweblog extends Blogger
 {
+    protected function getNamespace() : string{
+        return "metaWeblog";
+    }
+
     public function getServiceDefinitions(): array {
-        return array(
+        // TODO: convert these to ServiceFunction objects
+        return $this->functions = array(
             // returns: array of struct - parameters: API key, username, password
-            "metaWeblog.getUsersBlogs" => array(
-                "function" =>   function($req){return $this->getBlog($req);},
-                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-                "docstring" =>  'Gets blog info',
+            $this->createFunction(
+                "getUsersBlogs",
+                function($req){return $this->getBlog($req);},
+                array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                'Gets blog info'
             ),
 
             // returns: struct - parameters: $postid, $username, $password
-            "metaWeblog.getPost" => array(
-                "function" =>   function($req){return $this->getPost($req);},
-                "signature" =>  array(array(Value::$xmlrpcStruct, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-                "docstring" =>  'Gets a specific post. Parameters: postID, username, password',
+            $this->createFunction(
+                "getPost",
+                function($req){return $this->getPost($req);},
+                array(array(Value::$xmlrpcStruct, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                'Gets a specific post. Parameters: postID, username, password'
             ),
 
             // returns: array - blogID, username, password, noOfPosts
-            "metaWeblog.getRecentPosts" => array(
-                "function" =>   function($req){return $this->getRecentPosts($req);},
-                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcInt)),
-                "docstring" =>  'Gets a certain number of posts, ordered by recency. Parameters: blogID, username, password, noOfPosts',
+            $this->createFunction(
+                "getRecentPosts",
+                function($req){return $this->getRecentPosts($req);},
+                array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcInt)),
+                'Gets a certain number of posts, ordered by recency. Parameters: blogID, username, password, noOfPosts'
             ),
 
             // returns: array - parameters blogID, username, password
-            "metaWeblog.getCategories" => array(
-                "function" =>   function($req){return $this->getCategories($req);},
-                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-                "docstring" =>  "Returns [categories]. Parameters: blogID, username, password"
+            $this->createFunction(
+                "getCategories",
+                function($req){return $this->getCategories($req);},
+                array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                "Returns [categories]. Parameters: blogID, username, password"
             ),
 
             // returns: string - parameters: $blogid, $username, $password, $struct, $publish
-            "metaWeblog.newPost" => array(
-                "function" =>   function($req){return $this->newPost($req);},
-                "signature" =>  array(array(Value::$xmlrpcString, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcStruct, Value::$xmlrpcValue)),
-                "docstring" =>  'Creates a new post from the associative array/struct. Parameters: blogID, username, password, post data struct, publish bool',
+            $this->createFunction(
+                "newPost",
+                function($req){return $this->newPost($req);},
+                array(array(Value::$xmlrpcString, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcStruct, Value::$xmlrpcValue)),
+                'Creates a new post from the associative array/struct. Parameters: blogID, username, password, post data struct, publish bool'
             ),
 
             // returns: bool - parameters: API key (ignored), $blogid, $username, $password, $struct, $publish
-            "metaWeblog.editPost" => array(
-                "function" =>   function($req){return $this->editPost($req);},
-                "signature" =>  array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcStruct, Value::$xmlrpcValue)),
-                "docstring" =>  'Edits the post of a a certain ID. Parameters: postID, username, password, post data struct, publish',
+            $this->createFunction(
+                "editPost",
+                function($req){return $this->editPost($req);},
+                array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcStruct, Value::$xmlrpcValue)),
+                'Edits the post of a a certain ID. Parameters: postID, username, password, post data struct, publish'
             ),
 
             // returns: bool - parameters: API key (ignored), $postid, $username, $password, $publish (ignored - what the hell is this doing here?!)
-            "metaWeblog.deletePost" => array(
-                "function" =>   function($req){return $this->deletePost($req);},
-                "signature" =>  array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcValue)),
-                "docstring" =>  'Deletes a post, returns true if deleted. Parameters: appKey, postID, username, password, publish bool (ignored)',
+            $this->createFunction(
+                "deletePost",
+                function($req){return $this->deletePost($req);},
+                array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcValue)),
+                'Deletes a post, returns true if deleted. Parameters: appKey, postID, username, password, publish bool (ignored)'
             ),
         );
     }

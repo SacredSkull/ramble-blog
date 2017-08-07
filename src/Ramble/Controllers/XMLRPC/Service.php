@@ -16,7 +16,9 @@ use Ramble\Controllers\AuthorisationInterface;
 use Ramble\Models\QueryBuilder;
 use Slim\Interfaces\RouterInterface;
 
-abstract class XMLRPCService {
+abstract class Service {
+    protected abstract function getNamespace() : string;
+
     /**
      * @var bool
      */
@@ -52,6 +54,11 @@ abstract class XMLRPCService {
      */
     protected $logger;
 
+    /**
+     * @var ServiceFunction[]
+     */
+    protected $functions;
+
     public function __construct(ContainerInterface $ci) {
         $this->debug = $ci['ramble']['debug'] ?? false;
         $this->encoder = new Encoder();
@@ -63,7 +70,7 @@ abstract class XMLRPCService {
     }
 
     /**
-     * @return array
+     * @return ServiceFunction[]
      * The first parameter is the RETURN of the function!
      *
      * Additionally, some clients (charm) will try to be good citizens and send an Int where there should be a string
@@ -91,5 +98,9 @@ abstract class XMLRPCService {
 
     protected function unsupportedRequest(Request $req) {
         return $this->returnValue($req, false, 501);
+    }
+
+    protected function createFunction(string $name, callable $func, array $sig, string $docs = "") : ServiceFunction {
+        return new ServiceFunction($this->getNamespace() . "." . $name, $func, $sig, $docs);
     }
 }

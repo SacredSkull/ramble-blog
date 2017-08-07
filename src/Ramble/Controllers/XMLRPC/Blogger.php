@@ -16,38 +16,46 @@ use PhpXmlRpc\Response;
 use PhpXmlRpc\Value;
 use Psr\Container\ContainerInterface;
 
-class Blogger extends XMLRPCService
+class Blogger extends Service
 {
-    public function getServiceDefinitions(): array {
-        return array (
+    protected function getNamespace() : string{
+        return "blogger";
+    }
+
+    public function getServiceDefinitions() : array {
+        return $this->functions = [
             // returns: array of struct - parameters: API key, username, password
-            "blogger.getUsersBlogs" => array(
-                "function" =>   function($req) {return $this->getBlog($req);},
-                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-                "docstring" =>  'Gets blog info',
+            $this->createFunction(
+                "getUsersBlogs",
+                function($req) {return $this->getBlog($req);},
+                array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                'Gets blog info'
             ),
 
             // returns: struct - parameters: $postid, $username, $password
-            "blogger.getPost" => array(
-                "function" =>   function($req) {return $this->getPost($req);},
-                "signature" =>  array(array(Value::$xmlrpcStruct, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-                "docstring" =>  'Gets a specific post. Parameters: postID, username, password',
+            $this->createFunction(
+                "getPost",
+                function($req) {return $this->getPost($req);},
+                array(array(Value::$xmlrpcStruct, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                'Gets a specific post. Parameters: postID, username, password'
             ),
 
             // returns: array - parameters blogID, username, password, noOfPosts
-            "blogger.getRecentPosts" => array(
-                "function" =>   function($req) {return $this->getRecentPosts($req);},
-                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcInt)),
-                "docstring" =>  'Gets a certain number of posts, ordered by recency. Parameters: blogID, username, password, noOfPosts',
+            $this->createFunction(
+                "getRecentPosts",
+                function($req) {return $this->getRecentPosts($req);},
+                array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcInt)),
+                'Gets a certain number of posts, ordered by recency. Parameters: blogID, username, password, noOfPosts'
             ),
 
             // returns: bool - parameters: API key (ignored), $postid, $username, $password, $publish (ignored - what the hell is this doing here?!)
-            "blogger.deletePost" => array(
-                "function" =>   function($req) {return $this->deletePost($req);},
-                "signature" =>  array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcValue)),
-                "docstring" =>  "Deletes a post, returns true if deleted. Parameters: appKey, postID, username, password, publish bool (ignored)",
+            $this->createFunction(
+                "deletePost",
+                function($req) {return $this->deletePost($req);},
+                array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcValue)),
+                "Deletes a post, returns true if deleted. Parameters: appKey, postID, username, password, publish bool (ignored)"
             ),
-        );
+        ];
     }
 
     public function getBlog(Request $req) {

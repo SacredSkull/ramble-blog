@@ -103,7 +103,7 @@ class HomeFilter extends Home {
 			$rawDate = $firstDate->format('Y');
 			$rawDate = "in ".$rawDate;
 		} elseif ($day === false ) {
-			// The day has been omitted (so we're fetching posts from month x)
+			// The day has been omitted (so we're fetching posts from year x & month y)
 			if ($month > 12 || $month < 1) {
 				$month = 1;
 				$badDate = true;

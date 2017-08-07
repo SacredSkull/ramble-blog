@@ -15,6 +15,7 @@ use DebugBar\Bridge\Twig\TwigCollector;
 use DebugBar\StandardDebugBar;
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\TrailingSlash;
+use Ramble\Controllers\XMLRPC\XMLRPCServer;
 use Ramble\Ramble;
 use Slim\App;
 use Propel\Runtime\Propel;
@@ -74,7 +75,7 @@ class Router {
 		/*
 		 * XMLRPC API
 		 */
-		$app->any('/xmlrpc[.php]', XMLRPC::class)->setName("XMLRPC");
-		$app->get('/rsd[.xml]', XMLRPC::class . ":rsdRender")->setName("RSD");
+		$app->any('/xmlrpc[.php]', XMLRPCServer::class)->setName("XMLRPC");
+		$app->get('/rsd[.xml]', XMLRPCServer::class . ":rsdRender")->setName("RSD");
 	}
 }

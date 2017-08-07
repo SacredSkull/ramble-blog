@@ -8,18 +8,7 @@
 
 namespace Ramble\Tests;
 
-
-use Mockery;
-use PhpXmlRpc\Encoder;
-use PhpXmlRpc\Request;
 use PhpXmlRpc\Response;
-use PhpXmlRpc\Server;
-use PhpXmlRpc\Value;
-use Ramble\Controllers\AuthorisationInterface;
-use Ramble\Controllers\XMLRPC;
-use Ramble\Models\Article;
-use Ramble\Models\ArticleQuery;
-use Ramble\Models\QueryBuilder;
 
 class BloggerTest extends XmlRpcTest {
     public $methodNamespace = 'blogger';

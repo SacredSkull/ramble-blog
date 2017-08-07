@@ -14,54 +14,65 @@ use PhpXmlRpc\Value;
 
 class MovingType extends Metaweblog
 {
+    protected function getNamespace() : string{
+        return "mt";
+    }
+
     public function getServiceDefinitions(): array {
         return array(
             // returns: bool - parameters: $postId, $username, $password
-            "mt.publishPost" => array(
-                "function" =>   function($req){return $this->publishPost($req);},
-                "signature" =>  array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-                "docstring" =>  'Publishes a certain post. Parameters: postID, username, password',
+            $this->createFunction(
+                "publishPost",
+                function($req){return $this->publishPost($req);},
+                array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                'Publishes a certain post. Parameters: postID, username, password'
             ),
 
             // returns: bool - parameters: $postId, $username, $password, struct
-            "mt.setPostCategories" => array(
-                "function" =>   function($req){return $this->setPostCategory($req);},
-                "signature" =>  array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcArray)),
-                "docstring" =>  'Edits the post of a a certain ID. Parameters: postID, username, password, struct of categories (only parses the primary or first category)',
+            $this->createFunction(
+                "setPostCategories",
+                function($req){return $this->setPostCategory($req);},
+                array(array(Value::$xmlrpcBoolean, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcArray)),
+                'Edits the post of a a certain ID. Parameters: postID, username, password, struct of categories (only parses the primary or first category)'
             ),
 
-            "mt.getRecentPostTitles" => array(
-                "function" =>   function($req){return $this->getRecentPosts($req);},
-                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcInt)),
-                "docstring" =>  'Gets a certain number of posts, ordered by recency. Parameters: blogID, username, password, noOfPosts',
+            $this->createFunction(
+                "getRecentPostTitles",
+                function($req){return $this->getRecentPosts($req);},
+                array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcInt)),
+                'Gets a certain number of posts, ordered by recency. Parameters: blogID, username, password, noOfPosts'
             ),
 
             // returns: array - blogID, username, password, noOfPosts
-            "mt.getPostCategories" => array(
-                "function" =>   function($req){return $this->getPostCategories($req);},
-                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-                "docstring" =>  'Gets a certain number of posts, ordered by recency. Parameters: blogID, username, password, noOfPosts',
+            $this->createFunction(
+                "getPostCategories",
+                function($req){return $this->getPostCategories($req);},
+                array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                'Gets a certain number of posts, ordered by recency. Parameters: blogID, username, password, noOfPosts'
             ),
 
             // returns: array - parameters blogID, username, password
-            "mt.getCategoryList" => array(
-                "function" =>   function($req){return $this->getCategories($req);},
-                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-                "docstring" =>  "Returns [categories]. Parameters: blogID, username, password"
+            $this->createFunction(
+                "getCategoryList",
+                function($req){return $this->getCategories($req);},
+                array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                "Returns [categories]. Parameters: blogID, username, password"
             ),
 
             // Gets trackbacks/pings on a post, not implemented currently.
-            "mt.getTrackbackPings" => array(
-                "function" =>   function($req){return $this->returnValue($req, false, 501);},
-                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue)),
-                "docstring" =>  "Returns array(['pingTitle', 'pingURL', 'pingIP']). Parameters: postID"
+            $this->createFunction(
+                "getTrackbackPings",
+                function($req){return $this->returnValue($req, false, 501);},
+                array(array(Value::$xmlrpcArray, Value::$xmlrpcValue)),
+                "Returns array(['pingTitle', 'pingURL', 'pingIP']). Parameters: postID"
             ),
 
             // Not supported by WP, will probably ignore it
-            "mt.supportedTextFilters" => array(
-                "function" =>   function($req){return $this->returnValue($req, false, 501);},
-                "signature" =>  array(array(Value::$xmlrpcArray)),
-                "docstring" =>  "Returns array(['pingTitle', 'pingURL', 'pingIP']). Parameters: postID"
+            $this->createFunction(
+                "supportedTextFilters",
+                function($req){return $this->returnValue($req, false, 501);},
+                array(array(Value::$xmlrpcArray)),
+                "Returns array(['pingTitle', 'pingURL', 'pingIP']). Parameters: postID"
             ),
         );
     }

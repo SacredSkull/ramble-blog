@@ -14,26 +14,33 @@ use PhpXmlRpc\Value;
 use Ramble\Models\Category;
 
 class Wordpress extends MovingType {
+    protected function getNamespace() : string{
+        return "wp";
+    }
+
     public function getServiceDefinitions(): array {
         return array(
-            "wp.getUsersBlogs" => array(
-                "function" =>   function($req){return $this->wpGetBlog($req);},
-                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcString, Value::$xmlrpcString)),
-                "docstring" =>  'Gets blog info',
+            $this->createFunction(
+                "getUsersBlogs",
+                function($req){return $this->wpGetBlog($req);},
+                array(array(Value::$xmlrpcArray, Value::$xmlrpcString, Value::$xmlrpcString)),
+                'Gets blog info'
             ),
 
             // returns: int (category ID) - parameters blogID, username, password, category struct
-            "wp.newCategory" => array(
-                "function" =>   function($req){return $this->newCategory($req);},
-                "signature" =>  array(array(Value::$xmlrpcInt, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcStruct)),
-                "docstring" =>  "Creates a category. Parameters: blogID, username, password, category struct/array name"
+            $this->createFunction(
+                "newCategory",
+                function($req){return $this->newCategory($req);},
+                array(array(Value::$xmlrpcInt, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcString, Value::$xmlrpcStruct)),
+                "Creates a category. Parameters: blogID, username, password, category struct/array name"
             ),
 
-            "wp.getCategories" => array(
-                "function" =>   function($req){return $this->getCategories($req);},
-                "signature" =>  array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
-                "docstring" =>  "Returns [categories]. Parameters: blogID, username, password"
-            ),
+            $this->createFunction(
+                "getCategories",
+                function($req){return $this->getCategories($req);},
+                array(array(Value::$xmlrpcArray, Value::$xmlrpcValue, Value::$xmlrpcString, Value::$xmlrpcString)),
+                "Returns [categories]. Parameters: blogID, username, password"
+            )
         );
     }
 

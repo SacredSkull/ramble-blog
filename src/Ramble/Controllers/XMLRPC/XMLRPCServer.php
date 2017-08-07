@@ -6,19 +6,21 @@
  * Time: 21:59
  */
 
-namespace Ramble\Controllers;
+namespace Ramble\Controllers\XMLRPC;
 
 use Interop\Container\ContainerInterface;
 use PhpXmlRpc\Encoder;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Ramble\Controllers\AuthorisationInterface;
+use Ramble\Controllers\Controller;
 use Ramble\Controllers\XMLRPC\Blogger;
 use Ramble\Controllers\XMLRPC\Metaweblog;
 use Ramble\Controllers\XMLRPC\MovingType;
 use Ramble\Controllers\XMLRPC\Wordpress;
-use Ramble\Controllers\XMLRPC\XMLRPCService;
+use Ramble\Controllers\XMLRPC\Service;
 
-class XMLRPC extends Controller {
+class XMLRPCServer extends Controller {
 	private $DEBUG = false;
 	/**
 	 * @var Encoder
@@ -52,7 +54,7 @@ class XMLRPC extends Controller {
         $arr = [];
 
         /**
-         * @var $services XMLRPCService[]
+         * @var $services Service[]
          */
         $services = [
             new Blogger($this->ci),
@@ -62,7 +64,9 @@ class XMLRPC extends Controller {
         ];
 
         foreach($services as $service) {
-            $arr = array_merge($arr, $service->getServiceDefinitions());
+            foreach ($service->getServiceDefinitions() as $function) {
+                $arr = array_merge($arr, $function->toFunctionDescriptor());
+            }
         }
 
         return $arr;
@@ -71,8 +75,8 @@ class XMLRPC extends Controller {
 	public function serve(){
 		$server = new \PhpXmlRpc\Server($this->serviceDefinitions(), false);
 
-		$server->setDebug(3);
-		$server->exception_handling = 1;
+		$server->setDebug($this->DEBUG? 3 : 0);
+		$server->exception_handling = 2;
 
 		$server->service();
 	}
