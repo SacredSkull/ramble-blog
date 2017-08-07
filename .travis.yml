@@ -3,7 +3,6 @@ dist: trusty
 sudo: false
 php:
   - 7.0
-  - 7.1
 env:
   global:
     - CC_TEST_REPORTER_ID=55c94a6d98194c030ecbdfda52c4b51bf2c330b3618a7fe2a1a4dcdfcd58ae4d

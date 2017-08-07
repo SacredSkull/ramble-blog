@@ -23,7 +23,6 @@ class Metaweblog extends Blogger
     }
 
     public function getServiceDefinitions(): array {
-        // TODO: convert these to ServiceFunction objects
         return $this->functions = array(
             // returns: array of struct - parameters: API key, username, password
             $this->createFunction(
