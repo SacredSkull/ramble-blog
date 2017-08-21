@@ -68,13 +68,7 @@ class Ramble {
 		    ];
 	    };
 
-	    $container['memoryDB'] = function (ContainerInterface $c) {
-		    try {
-			    return new Redis($c->get('settings')['redis']['host'], $c->get('settings')['redis']['port']);
-		    } catch (RedisException $exception) {
-			    return new InMemoryCacher();
-		    }
-	    };
+
 
 	    $container['auth'] = require __DIR__ . "/Config/auth.php";
 
@@ -97,6 +91,19 @@ class Ramble {
                 $logger->pushHandler(new ErrorLogHandler());
 		    return $logger;
         })($container);
+
+		$container['memoryDB'] = function (ContainerInterface $c) {
+			try {
+				if(class_exists('\Redis'))
+					return new Redis($c->get('settings')['redis']['host'], $c->get('settings')['redis']['port']);
+				else {
+					$c['logger']->warn("Is the Redis extension installed? Class 'Redis' doesn't seem to exist.");
+					return new InMemoryCacher();
+				}
+			} catch (RedisException $exception) {
+				return new InMemoryCacher();
+			}
+		};
 
 	    // Twig
         /** @var Twig $container['view'] */
